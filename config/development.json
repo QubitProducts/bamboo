@@ -1,0 +1,22 @@
+{
+  "Marathon": {
+    "Endpoint": "http://localhost:8080",
+    "Zookeeper": {
+      "Host": "localhost:2181",
+      "Path": "/marathon/state"
+    }
+  },
+
+  "ServicesMapping": {
+    "Zookeeper": {
+      "Host": "localhost:2181",
+      "Path": "/bamboo/services_mapping"
+    }
+  },
+
+  "HAProxy": {
+    "TemplatePath": "config/haproxy_template.cfg",
+    "OutputPath": "/etc/haproxy/haproxy.cfg",
+    "ReloadCommand": "haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -sf $(cat /var/run/haproxy.pid)"
+  }
+}
