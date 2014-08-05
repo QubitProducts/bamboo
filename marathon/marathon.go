@@ -10,7 +10,6 @@ import (
 type Task struct {
 	Host string
 	Port string
-
 }
 
 // An app may have multiple processes
@@ -22,6 +21,7 @@ type App struct {
 
 
 func fetchTasks(endpoint string) (string, error) {
+	
 	response, err := http.Get(endpoint + "/v2/tasks")
 	if err != nil {
 		return "", err
