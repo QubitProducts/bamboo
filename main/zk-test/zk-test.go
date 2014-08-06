@@ -7,7 +7,8 @@ import (
 
 	"github.com/samuel/go-zookeeper/zk"
 
-	"bamboo/qzk"
+	conf "bamboo/configuration"
+	"bamboo/zk"
 )
 
 func showEvents(evts chan zk.Event) {
@@ -21,12 +22,14 @@ func showEvents(evts chan zk.Event) {
 	}
 }
 
+var config *conf.Configuration
+
+func init() {
+}
+
 func main() {
 
-	servers := []string{"localhost"}
-
-	qzk.
-	evts, quit := qzk.ListenToZooKeeper(servers, "/foo")
+	evts, quit := qzk.ListenToZooKeeper(config.ServicesMapping.Zookeeper)
 	go showEvents(evts)
 	reader := bufio.NewReader(os.Stdin)
 	_, _ = reader.ReadString('\n')
