@@ -1,17 +1,17 @@
 package main
 
 import (
-	"fmt"
-  	"io"
+	"encoding/json"
 	"flag"
-  	"net/http"
-  	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
 
 	"github.com/zenazn/goji"
- 	"github.com/zenazn/goji/web"
+	"github.com/zenazn/goji/web"
 
-	"./marathon"
 	conf "./configuration"
+	"./marathon"
 )
 
 func hello(c web.C, w http.ResponseWriter, r *http.Request) {
@@ -33,9 +33,9 @@ func marathonAppsHandler(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, string(payload))
 }
 
-
 // Commandline arguments
 var configFilePath string
+
 // shared configuration
 var config *conf.Configuration
 
@@ -51,7 +51,9 @@ func main() {
 	config = &conf.Configuration{}
 	err := config.FromFile(configFilePath)
 
-	if err != nil { panic(err) }
+	if err != nil {
+		panic(err)
+	}
 
 	fmt.Println("", config.Marathon.Endpoint)
 
