@@ -3,3 +3,4 @@
 .vendor
 *.gitignore
 config/private.json
+Gedeps/_workspace
