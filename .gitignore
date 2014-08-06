@@ -4,3 +4,4 @@
 *.gitignore
 config/private.json
 Godeps/_workspace
+Godeps/Readme
