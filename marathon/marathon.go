@@ -19,7 +19,6 @@ type App struct {
 	Tasks []Task
 }
 
-
 func fetchTasks(endpoint string) (string, error) {
 	
 	response, err := http.Get(endpoint + "/v2/tasks")
@@ -37,8 +36,7 @@ func fetchTasks(endpoint string) (string, error) {
 	}
 }
 
-
-func parseApps(contents string) ([]App) {
+func parseApps(contents string) []App {
 	lines := strings.Split(contents, "\n")
 	apps := []App{}
 	for _, line := range lines {
@@ -51,7 +49,7 @@ func parseApps(contents string) ([]App) {
 	return apps
 }
 
-func parseTasks(line string) (appId string, appPort string, tasks []Task) {
+func parseTasks(line string) (appId string, appPort string, tasks []Task)  {
 	columns := strings.Split(line, "\t")
 	appId = columns[0]
 	appPort = columns[1]
