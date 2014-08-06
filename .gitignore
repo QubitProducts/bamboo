@@ -2,3 +2,5 @@
 .idea
 .vendor
 *.gitignore
+config/private.json
+Godeps/_workspace

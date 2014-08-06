@@ -10,8 +10,8 @@ import (
 	"github.com/zenazn/goji"
 	"github.com/zenazn/goji/web"
 
-	conf "./configuration"
-	"./marathon"
+	conf "bamboo/configuration"
+	"bamboo/marathon"
 )
 
 func hello(c web.C, w http.ResponseWriter, r *http.Request) {
