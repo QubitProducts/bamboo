@@ -66,7 +66,6 @@ func parseTasks(line string) (appId string, appPort string, tasks []Task)  {
 	return appId, appPort, tasks
 }
 
-
 /*
 	Apps returns a struct that describes Marathon current app and their
 	sub tasks information.
