@@ -13,7 +13,7 @@ type Configuration struct {
 	Marathon Marathon
 
 	// Services mapping configuration
-	ServicesMapping ServicesMapping
+	DomainMapping DomainMapping
 
 	// HAProxy output configuration
 	HAProxy HAProxy
