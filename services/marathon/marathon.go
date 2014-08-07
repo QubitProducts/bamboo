@@ -73,7 +73,7 @@ func parseTasks(line string) (appId string, appPort string, tasks []Task)  {
 	Parameters:
 		endpoint: Marathon HTTP endpoint, e.g. http://localhost:8080
 */
-func Apps(endpoint string) ([]App, error) {
+func FetchApps(endpoint string) ([]App, error) {
 	contents, err := fetchTasks(endpoint)
 
 	if err != nil {

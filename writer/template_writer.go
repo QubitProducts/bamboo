@@ -4,25 +4,17 @@ import (
 	"bytes"
 	"io/ioutil"
 	"text/template"
-
-	"bamboo/marathon"
 )
 
 /*
 	Writes template a given output file path
 */
-func WriteTemplate(templatePath string, outputFilePath string, apps []marathon.App, services map[string]string) error {
+func WriteTemplate(templatePath string, outputFilePath string, data interface{}) error {
 
 	templateContent, err := ioutil.ReadFile(templatePath)
 	if err != nil {
 		return err
 	}
-
-	// data for rendering template
-	data := struct {
-		Apps     []marathon.App
-		Services map[string]string
-	}{apps, services}
 
 	content, errRender := RenderTemplate(templatePath, string(templateContent), data)
 	if errRender != nil {
