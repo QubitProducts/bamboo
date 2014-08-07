@@ -7,7 +7,7 @@
     }
   },
 
-  "ServicesMapping": {
+  "DomainMapping": {
     "Zookeeper": {
       "Host": "localhost",
       "Path": "/foo"
