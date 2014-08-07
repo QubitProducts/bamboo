@@ -30,6 +30,11 @@ func (config *Configuration) FromFile(filePath string) error {
 	if err != nil {
 		panic(err)
 	}
-	e := json.Unmarshal(content, &config)
-	return e
+	return json.Unmarshal(content, &config)
+}
+
+func FromFile(filePath string) (Configuration, error) {
+	conf := &Configuration{}
+	err := conf.FromFile(filePath)
+	return *conf, err
 }
