@@ -4,7 +4,7 @@ import "strings"
 
 /*
 	Zookeeper configuration set
- */
+*/
 type Zookeeper struct {
 	// comma separated host:port connection strings set
 	Host string
