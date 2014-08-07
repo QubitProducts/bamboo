@@ -4,6 +4,8 @@ import (
 	"time"
 
 	"github.com/samuel/go-zookeeper/zk"
+
+	c "bamboo/configuration"
 )
 
 func pollZooKeeper(host []string, path string, evts chan zk.Event, quit chan bool) {
@@ -35,9 +37,9 @@ func pollZooKeeper(host []string, path string, evts chan zk.Event, quit chan boo
 
 }
 
-func ListenToZooKeeper(host []string, path string) (chan zk.Event, chan bool) {
+func ListenToZooKeeper(config c.Zookeeper) (chan zk.Event, chan bool) {
 	quit := make(chan bool)
 	evts := make(chan zk.Event)
-	go pollZooKeeper(host, path, evts, quit)
+	go pollZooKeeper(config.ConnectionString(), config.Path, evts, quit)
 	return evts, quit
 }

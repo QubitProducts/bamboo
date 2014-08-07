@@ -1,6 +1,6 @@
 package marathon
 
-import (
+import(
 	"net/http"
 	"io/ioutil"
 	"strings"
@@ -20,14 +20,15 @@ type App struct {
 }
 
 func fetchTasks(endpoint string) (string, error) {
-	
+
 	response, err := http.Get(endpoint + "/v2/tasks")
+
 	if err != nil {
 		return "", err
 	} else {
+
 		defer response.Body.Close()
 		contents, err := ioutil.ReadAll(response.Body)
-
 		if err != nil {
 			return "", err
 		}

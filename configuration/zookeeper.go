@@ -1,6 +1,5 @@
 package configuration
 
-
 import "strings"
 
 /*

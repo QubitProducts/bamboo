@@ -3,4 +3,5 @@
 .vendor
 *.gitignore
 config/private.json
-Gedeps/_workspace
+Godeps/_workspace
+Godeps/Readme

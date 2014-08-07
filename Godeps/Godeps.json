@@ -1,0 +1,14 @@
+{
+	"ImportPath": "bamboo",
+	"GoVersion": "go1.3",
+	"Deps": [
+		{
+			"ImportPath": "github.com/zenazn/goji",
+			"Rev": "17b9035bcd162f59e1a1247d4a755124c37052c5"
+		},
+    {
+      "ImportPath": "github.com/samuel/go-zookeeper",
+      "Rev": "041700315ab94d5f506317d8798adc9a6674c547"
+    }
+	]
+}
