@@ -9,8 +9,8 @@
 
   "ServicesMapping": {
     "Zookeeper": {
-      "Host": "localhost:2181",
-      "Path": "/bamboo/services_mapping"
+      "Host": "localhost",
+      "Path": "/foo"
     }
   },
 
