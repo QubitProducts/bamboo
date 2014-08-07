@@ -9,7 +9,7 @@ import (
 	"github.com/samuel/go-zookeeper/zk"
 
 	conf "bamboo/configuration"
-	qzk "bamboo/zk"
+	"bamboo/qzk"
 )
 
 func showEvents(evts chan zk.Event) {
