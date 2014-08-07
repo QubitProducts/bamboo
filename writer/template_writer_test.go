@@ -6,7 +6,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestHAProxyCfgWriter(t *testing.T) {
+func TestTemplateWriter(t *testing.T) {
 	Convey("#RenderTemplate", t, func() {
 		templateName := "templateName"
 		templateContent := "{{.id}} {{.domain}}"
