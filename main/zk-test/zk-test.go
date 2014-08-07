@@ -29,7 +29,7 @@ func init() {
 
 func main() {
 
-	evts, quit := qzk.ListenToZooKeeper(config.ServicesMapping.Zookeeper)
+	evts, quit := qzk.ListenToZooKeeper(config.DomainMapping.Zookeeper)
 	go showEvents(evts)
 	reader := bufio.NewReader(os.Stdin)
 	_, _ = reader.ReadString('\n')
