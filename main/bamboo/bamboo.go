@@ -37,12 +37,19 @@ func iniServer() {
 		panic(err)
 	}
 
-	state := api.State{Config: conf, Zookeeper: *conn}
+	apiState := api.State{Config: conf, Zookeeper: *conn}
+	apiDomain := api.Domain{Config: conf, Zookeeper: *conn}
 
 	goji.Get("/status", api.HandleStatus)
 
-	goji.Get("/api/state", state.Get)
+	// All state API
+	goji.Get("/api/state", apiState.Get)
 
-	goji.Post("/api/haproxy/update", haproxyConfigUpdateHandler)
+	// Domains API
+	goji.Get("/api/state/domains", apiDomain.All)
+	goji.Post("/api/state/domains", apiDomain.Create)
+	goji.Delete("/api/state/domains/:id", apiDomain.Delete)
+	goji.Put("/api/state/domains/:id", apiDomain.Put)
+
 	goji.Serve()
 }
