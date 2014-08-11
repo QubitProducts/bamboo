@@ -1,10 +1,9 @@
 package haproxy
 
 import (
-	"bamboo/services/marathon"
-
 	conf "bamboo/configuration"
-	writer "bamboo/writer"
+	"bamboo/services/marathon"
+	"bamboo/writer"
 )
 
 type templateData struct {

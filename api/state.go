@@ -13,7 +13,7 @@ import (
 
 type State struct {
 	Config    configuration.Configuration
-	Zookeeper zk.Conn
+	Zookeeper *zk.Conn
 }
 
 func (state State) Get(w http.ResponseWriter, r *http.Request) {

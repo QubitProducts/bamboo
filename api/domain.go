@@ -12,11 +12,11 @@ import (
 
 type Domain struct {
 	Config    conf.Configuration
-	Zookeeper zk.Conn
+	Zookeeper *zk.Conn
 }
 
 func (d Domain) All(w http.ResponseWriter, r *http.Request) {
-	domains, err := service.All(&d.Zookeeper, d.Config.DomainMapping.Zookeeper)
+	domains, err := service.All(d.Zookeeper, d.Config.DomainMapping.Zookeeper)
 
 	if err != nil {
 		fmt.Println(err)
