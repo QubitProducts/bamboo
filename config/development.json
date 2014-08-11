@@ -2,7 +2,7 @@
   "Marathon": {
     "Endpoint": "http://localhost:8080",
     "Zookeeper": {
-      "Host": "localhost:2181",
+      "Host": "localhost",
       "Path": "/marathon/state"
     }
   },

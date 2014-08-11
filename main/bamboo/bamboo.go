@@ -29,20 +29,15 @@ func haproxyConfigUpdateHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 
 	conf := cmd.GetConfiguration()
-	conn, _, err := zk.Connect(conf.DomainMapping.Zookeeper.ConnectionString(), time.Second)
+	conns := listenToZookeeper(conf)
 
-	if err != nil {
-		panic(err)
-	}
-
-	initServer(conf, conn)
-	go listenToZookeeper(conf, conn)
+	initServer(conf, conns)
 }
 
-func initServer(conf configuration.Configuration, conn *zk.Conn) {
+func initServer(conf configuration.Configuration, conns Conns) {
 
-	stateAPI := api.State{Config: conf, Zookeeper: conn}
-	domainAPI := api.Domain{Config: conf, Zookeeper: conn}
+	stateAPI := api.State{Config: conf, Zookeeper: conns.DomainMapping}
+	domainAPI := api.Domain{Config: conf, Zookeeper: conns.DomainMapping}
 
 	goji.Get("/status", api.HandleStatus)
 
@@ -58,17 +53,44 @@ func initServer(conf configuration.Configuration, conn *zk.Conn) {
 	goji.Serve()
 }
 
-func listenToZookeeper(conf configuration.Configuration, conn *zk.Conn) {
-	ch, err := qzk.ListenToConn(conn, conf.DomainMapping.Zookeeper.Path, true)
+type Conns struct {
+	Marathon      *zk.Conn
+	DomainMapping *zk.Conn
+}
+
+func listenToZookeeper(conf configuration.Configuration) Conns {
+
+	marathonCh, marathonConn := createAndListen(conf.Marathon.Zookeeper)
+	domainCh, domainConn := createAndListen(conf.DomainMapping.Zookeeper)
+
+	go func() {
+		for {
+			select {
+			case _ = <-marathonCh:
+				handleHAPUpdate(conf)
+			case _ = <-domainCh:
+				handleHAPUpdate(conf)
+			}
+		}
+	}()
+
+	return Conns{marathonConn, domainConn}
+}
+
+func handleHAPUpdate(conf configuration.Configuration) {
+	err := haproxy.WriteHAProxyConfig(conf.HAProxy, new(map[string]string))
+	if err != nil {
+		panic(err)
+	}
+}
+func createAndListen(conf configuration.Zookeeper) (chan zk.Event, *zk.Conn) {
+	conn, _, err := zk.Connect(conf.ConnectionString(), time.Second)
+
 	if err != nil {
 		panic(err)
 	}
 
-	for {
-		_ = <-ch
-		writeErr := haproxy.WriteHAProxyConfig(conf.HAProxy, data)
-		if writeErr != nil {
-			panic(err)
-		}
-	}
+	ch, _ := qzk.ListenToConn(conn, conf.Path, true)
+
+	return ch, conn
 }

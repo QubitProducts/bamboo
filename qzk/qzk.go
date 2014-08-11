@@ -15,7 +15,7 @@ const (
 
 type Err int32
 
-func pollZooKeeper(c zk.Conn, path string, evts chan zk.Event, quit chan bool) {
+func pollZooKeeper(c *zk.Conn, path string, evts chan zk.Event, quit chan bool) {
 	_, _, selfCh, err := c.GetW(path)
 	_, _, childrenCh, err := c.ChildrenW(path)
 	if err != nil {
@@ -68,10 +68,10 @@ func ListenToZooKeeper(config c.Zookeeper, deb bool) (chan zk.Event, chan bool) 
 		panic(err)
 	}
 
-	return ListenToConn(*c, config.Path, deb)
+	return ListenToConn(c, config.Path, deb)
 }
 
-func ListenToConn(c zk.Conn, path string, deb bool) (chan zk.Event, chan bool) {
+func ListenToConn(c *zk.Conn, path string, deb bool) (chan zk.Event, chan bool) {
 
 	quit := make(chan bool)
 	evts := make(chan zk.Event)
