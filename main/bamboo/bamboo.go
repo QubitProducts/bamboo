@@ -38,7 +38,6 @@ func main() {
 }
 
 func initServer(conf configuration.Configuration, conns Conns) {
-
 	stateAPI := api.State{Config: conf, Zookeeper: conns.DomainMapping}
 	domainAPI := api.Domain{Config: conf, Zookeeper: conns.DomainMapping}
 
@@ -63,7 +62,6 @@ type Conns struct {
 }
 
 func listenToZookeeper(conf configuration.Configuration) Conns {
-
 	marathonCh, marathonConn := createAndListen(conf.Marathon.Zookeeper)
 	domainCh, domainConn := createAndListen(conf.DomainMapping.Zookeeper)
 
@@ -86,7 +84,6 @@ func listenToZookeeper(conf configuration.Configuration) Conns {
 }
 
 func handleHAPUpdate(conf configuration.Configuration, conn * zk.Conn) {
-
 	err := haproxy.WriteHAProxyConfig(conf.HAProxy, haproxy.GetTemplateData(conf, conn))
 	if err != nil {
 		log.Panic(err)

@@ -6,8 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-//	"github.com/zenazn/goji/web"
-
+	"github.com/zenazn/goji/web"
 	"github.com/samuel/go-zookeeper/zk"
 
 
@@ -56,12 +55,35 @@ func (d Domain) Create(w http.ResponseWriter, r *http.Request) {
 	responseJSON(w, domainModel)
 }
 
-func (d Domain) Delete(w http.ResponseWriter, r *http.Request) {
+func (d Domain) Put(c web.C, w http.ResponseWriter, r *http.Request) {
+	identifier := c.URLParams["id"]
+	domainModel, err := extractDomainModel(r)
+	if err != nil {
+		responseError(w, err.Error())
+		return
+	}
 
+	_, err1 := service.Put(d.Zookeeper, d.Config.DomainMapping.Zookeeper, identifier, domainModel.Value)
+	if err1 != nil {
+		responseError(w, err1.Error())
+		return
+	}
+
+	responseJSON(w, domainModel)
 }
 
-func (d Domain) Put(w http.ResponseWriter, r *http.Request) {
+
+func (d Domain) Delete(c web.C, w http.ResponseWriter, r *http.Request) {
+	identifier := c.URLParams["id"]
+	err := service.Delete(d.Zookeeper, d.Config.DomainMapping.Zookeeper, identifier)
+	if err != nil {
+		responseError(w, err.Error())
+		return
+	}
+
+	responseJSON(w, new(map[string]string))
 }
+
 
 func extractDomainModel(r *http.Request) (DomainModel, error) {
 	var domainModel DomainModel
