@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"time"
 	"os/exec"
 	"log"
@@ -11,13 +12,26 @@ import (
 	"bamboo/api"
 	"bamboo/configuration"
 	"bamboo/qzk"
-	"bamboo/services/cmd"
 	"bamboo/services/haproxy"
 )
 
-/* HTTP Service */
+
+
+
+/*
+	Commandline arguments
+ */
+var configFilePath string
+func init() {
+	flag.StringVar(&configFilePath, "config", "config/development.json", "Full path of the configuration JSON file")
+}
+
+
 func main() {
-	conf := cmd.GetConfiguration()
+	flag.Parse()
+	conf, err := configuration.FromFile(configFilePath)
+	if err != nil { log.Fatal(err) }
+
 	conns := listenToZookeeper(conf)
 
 	initServer(conf, conns)
