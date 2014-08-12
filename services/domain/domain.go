@@ -33,10 +33,9 @@ func All(conn *zk.Conn, zkConf conf.Zookeeper) (map[string]string, error) {
 }
 
 /*
-   Read about ZK ACL:
+   Read ZK ACL:
    http://zookeeper.apache.org/doc/trunk/zookeeperProgrammers.html#sc_ACLPermissions
 */
-
 func Create(conn *zk.Conn, zkConf conf.Zookeeper, appId string, domainValue string) (string, error) {
 	path := concatPath(zkConf.Path, appId)
 	resPath, err := conn.Create(path, []byte(domainValue), 0, defaultACL())
@@ -47,14 +46,16 @@ func Create(conn *zk.Conn, zkConf conf.Zookeeper, appId string, domainValue stri
 	return resPath, nil
 }
 
+
 func Put(conn *zk.Conn, zkConf conf.Zookeeper, appId string, domainValue string) (*zk.Stat, error) {
 	path := concatPath(zkConf.Path, appId)
-	// use default version
 	stats, err := conn.Set(path, []byte(domainValue), -1)
 
 	if err != nil {
 		return nil, err
 	}
+	// Force triger an event on parent
+	conn.Set(zkConf.Path, []byte{}, -1)
 
 	return stats, nil
 }

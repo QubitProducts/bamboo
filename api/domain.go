@@ -100,7 +100,7 @@ func extractDomainModel(r *http.Request) (DomainModel, error) {
 
 
 func responseError(w http.ResponseWriter, message string) {
-	http.Error(w, message, http.StatusInternalServerError)
+	http.Error(w, message, http.StatusBadRequest)
 }
 
 func responseJSON(w http.ResponseWriter, data interface {}) {
