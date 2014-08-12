@@ -1,8 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"time"
+	"os/exec"
+	"log"
 
 	"github.com/samuel/go-zookeeper/zk"
 	"github.com/zenazn/goji"
@@ -56,11 +57,13 @@ func listenToZookeeper(conf configuration.Configuration) Conns {
 		for {
 			select {
 			case _ = <-marathonCh:
-				fmt.Println("Marathon state changed")
+				log.Println("Marathon: State changed")
 				handleHAPUpdate(conf, marathonConn)
+				execCommand(conf.HAProxy.ReloadCommand)
 			case _ = <-domainCh:
-				fmt.Println("Domain mapping stated changed")
+				log.Println("Domain mapping: Stated changed")
 				handleHAPUpdate(conf, marathonConn)
+				execCommand(conf.HAProxy.ReloadCommand)
 			}
 		}
 	}()
@@ -69,19 +72,26 @@ func listenToZookeeper(conf configuration.Configuration) Conns {
 }
 
 func handleHAPUpdate(conf configuration.Configuration, conn * zk.Conn) {
+
 	err := haproxy.WriteHAProxyConfig(conf.HAProxy, haproxy.GetTemplateData(conf, conn))
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
-	fmt.Println("HAProxy cfg Updated")
+	log.Println("HAProxy: Configuration updated")
+}
+
+func execCommand(command string) {
+	out, err := exec.Command(command).Output()
+	if err != nil {
+		log.Println(err.Error())
+	}
+	log.Printf("executed %s \n", out)
 }
 
 func createAndListen(conf configuration.Zookeeper) (chan zk.Event, *zk.Conn) {
-	conn, _, err := zk.Connect(conf.ConnectionString(), time.Second)
+	conn, _, err := zk.Connect(conf.ConnectionString(), time.Second * 10)
 
-	if err != nil {
-		panic(err)
-	}
+	if err != nil { log.Panic(err) }
 
 	ch, _ := qzk.ListenToConn(conn, conf.Path, true)
 
