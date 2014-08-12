@@ -1,13 +1,19 @@
 package api
 
 import (
+	"errors"
 	"encoding/json"
 	"fmt"
 	"net/http"
 
+//	"github.com/zenazn/goji/web"
+
+	"github.com/samuel/go-zookeeper/zk"
+
+
 	conf "bamboo/configuration"
 	service "bamboo/services/domain"
-	"github.com/samuel/go-zookeeper/zk"
+
 )
 
 type Domain struct {
@@ -15,19 +21,39 @@ type Domain struct {
 	Zookeeper *zk.Conn
 }
 
+
+type DomainModel struct {
+	Id string `param:"id"`
+	Value string `param:"value"`
+}
+
 func (d Domain) All(w http.ResponseWriter, r *http.Request) {
 	domains, err := service.All(d.Zookeeper, d.Config.DomainMapping.Zookeeper)
 
 	if err != nil {
 		fmt.Println(err)
-		http.Error(w, "something went wrong", http.StatusBadRequest)
+		responseError(w, err.Error())
+		return
 	}
-	bites, _ := json.Marshal(domains)
-	w.Write(bites)
+
+	responseJSON(w, domains)
 }
 
 func (d Domain) Create(w http.ResponseWriter, r *http.Request) {
+	domainModel, err := extractDomainModel(r)
 
+	if err != nil {
+		responseError(w, err.Error())
+		return
+	}
+
+	_, err2 := service.Create(d.Zookeeper, d.Config.DomainMapping.Zookeeper, domainModel.Id, domainModel.Value)
+	if err2 != nil {
+		responseError(w, "Service id might already exist")
+		return
+	}
+
+	responseJSON(w, domainModel)
 }
 
 func (d Domain) Delete(w http.ResponseWriter, r *http.Request) {
@@ -35,5 +61,28 @@ func (d Domain) Delete(w http.ResponseWriter, r *http.Request) {
 }
 
 func (d Domain) Put(w http.ResponseWriter, r *http.Request) {
+}
 
+func extractDomainModel(r *http.Request) (DomainModel, error) {
+	var domainModel DomainModel
+	payload := make([]byte, r.ContentLength)
+	r.Body.Read(payload)
+
+	err1 := json.Unmarshal(payload, &domainModel)
+	if err1 != nil {
+		return domainModel, errors.New("Unable to decode JSON request")
+	}
+
+	return domainModel, nil
+}
+
+
+func responseError(w http.ResponseWriter, message string) {
+	http.Error(w, message, http.StatusInternalServerError)
+}
+
+func responseJSON(w http.ResponseWriter, data interface {}) {
+	w.Header().Set("Content-Type", "application/json")
+	bites, _ := json.Marshal(data)
+	w.Write(bites)
 }

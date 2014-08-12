@@ -1,15 +1,11 @@
 package domain
 
 import (
-	"fmt"
-
 	conf "bamboo/configuration"
 	"github.com/samuel/go-zookeeper/zk"
 )
 
 func All(conn *zk.Conn, zkConf conf.Zookeeper) (map[string]string, error) {
-
-	fmt.Println(zkConf.Path)
 
 	// TODO: ensure nested state is created
 	// check path exists
@@ -26,7 +22,7 @@ func All(conn *zk.Conn, zkConf conf.Zookeeper) (map[string]string, error) {
 	}
 
 	for _, childPath := range keys {
-		bite, _, e := conn.Get(childPath)
+		bite, _, e := conn.Get(concatPath(zkConf.Path, childPath))
 		if e != nil {
 			return nil, e
 			break
