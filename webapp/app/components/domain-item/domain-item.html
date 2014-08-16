@@ -1,0 +1,23 @@
+<div class="row domain-item domain-action-type-{{domainActionType}}">
+    <span ng-bind="domainId" class="col-xs-4"></span>
+    <span ng-bind="domainValue" class="col-xs-4"></span>
+
+    <span ng-bind="instancesCount()" class="col-xs-1 col-instances-count"></span>
+
+    <span class="col-xs-3 item-actions" ng-switch="domainActionType">
+        <span ng-switch-when="default" class="item-actions-group">
+            <domain-edit-btn domain-id="domainId" domain-value="domainValue"></domain-edit-btn>
+            <domain-delete-btn domain-id="domainId" domain-value="domainValue"></domain-delete-btn>
+        </span>
+
+        <span ng-switch-when="marathon" class="item-actions-group">
+            <i class="message"> Missing app in Marathon </i>
+            <domain-delete-btn domain-id="domainId" domain-value="domainValue"></domain-delete-btn>
+        </span>
+
+        <span ng-switch-when="domain" class="item-actions-group">
+            <i class="message"> Domain not assigned </i>
+            <domain-new-btn domain-id="domainId" title="Create a domain mapping to Marathon ID" text="<i class='icon ion-plus-round'><i>" ></domain-new-btn>
+        </span>
+    </span>
+</div>

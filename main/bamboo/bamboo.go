@@ -3,8 +3,9 @@ package main
 import (
 	"flag"
 	"time"
-	"os/exec"
 	"log"
+	"os/exec"
+	"net/http"
 
 	"github.com/samuel/go-zookeeper/zk"
 	"github.com/zenazn/goji"
@@ -44,7 +45,7 @@ func initServer(conf configuration.Configuration, conns Conns) {
 	// Status live information
 	goji.Get("/status", api.HandleStatus)
 
-	// All state API
+	// State API
 	goji.Get("/api/state", stateAPI.Get)
 
 	// Domains API
@@ -52,6 +53,9 @@ func initServer(conf configuration.Configuration, conns Conns) {
 	goji.Post("/api/state/domains", domainAPI.Create)
 	goji.Delete("/api/state/domains/:id", domainAPI.Delete)
 	goji.Put("/api/state/domains/:id", domainAPI.Put)
+
+	// Static pages
+	goji.Get("/*", http.FileServer(http.Dir("./webapp")))
 
 	goji.Serve()
 }
