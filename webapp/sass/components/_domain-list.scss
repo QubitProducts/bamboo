@@ -1,10 +1,13 @@
 
 .domain-list {
+  background: white;
+
   .domain-list-title {
     padding: 5px 0px;
     font-weight: bold;
     vertical-align: text-bottom;
-    border-bottom: 2px solid #777;
+    background: #EEF3F4;
+    border-bottom: 2px solid #CCC;
     span {
       display: table-cell;
       vertical-align: middle;
@@ -14,19 +17,19 @@
 
   .domain-item {
     vertical-align: text-bottom;
-    border-bottom: 1px solid #777;
+    border-bottom: 1px solid #CCC;
     padding: 5px 0px;
 
     &.domain-action-type-marathon {
-      background: #5D6A64;
+      color: rgba(0,0,0,0.5);
     }
 
     &.domain-action-type-domain {
-      background: #5D6A64;
+        color: rgba(0,0,0,0.5);
     }
 
     &.domain-action-type-default {
-      background: #396F2D;
+      background: rgba(103, 164, 111, 0.3);
     }
 
     .item-actions {
@@ -34,15 +37,6 @@
 
       .item-actions-group {
         float: right;
-      }
-
-      .btn-danger {
-        background: #CF055C;
-      }
-
-      .btn-default {
-        background: #A8DCA8;
-        border-color: #A8DCA8;
       }
     }
 
