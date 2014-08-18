@@ -4,8 +4,6 @@ import (
 	"flag"
 	"time"
 	"log"
-	"sync"
-	"strings"
 	"os/exec"
 	"net/http"
 
@@ -77,15 +75,11 @@ func listenToZookeeper(conf configuration.Configuration) Conns {
 			case _ = <-marathonCh:
 				log.Println("Marathon: State changed")
 				handleHAPUpdate(conf, marathonConn)
-				wg := new(sync.WaitGroup)
-				wg.Add(1)
-				execCommand(conf.HAProxy.ReloadCommand, wg)
+				execCommand(conf.HAProxy.ReloadCommand)
 			case _ = <-domainCh:
 				log.Println("Domain mapping: Stated changed")
 				handleHAPUpdate(conf, marathonConn)
-				wg := new(sync.WaitGroup)
-				wg.Add(1)
-				execCommand(conf.HAProxy.ReloadCommand, wg)
+				execCommand(conf.HAProxy.ReloadCommand)
 			}
 		}
 	}()
@@ -101,18 +95,12 @@ func handleHAPUpdate(conf configuration.Configuration, conn * zk.Conn) {
 	log.Println("HAProxy: Configuration updated")
 }
 
-func execCommand(cmd string, wg *sync.WaitGroup) {
-	log.Println("Exec command: ", cmd)
-	parts := strings.Fields(cmd)
-	head := parts[0]
-	parts = parts[1:len(parts)]
-
-	out, err := exec.Command(head,parts...).Output()
+func execCommand(cmd string) {
+	_, err := exec.Command("sh", "-c", cmd).Output()
 	if err != nil {
-		log.Printf("%s \n", err)
+		log.Println(err.Error())
 	}
-	log.Printf("%s \n", out)
-	wg.Done()
+	log.Printf("Exec cmd: %s \n", cmd)
 }
 
 func createAndListen(conf configuration.Zookeeper) (chan zk.Event, *zk.Conn) {
