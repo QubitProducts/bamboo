@@ -34,7 +34,6 @@ func (s *StatsD) Increment(sampleRate float32, bucket string, n int) {
 	}
 }
 
-
 func (s *StatsD) Timing(sampleRate float32, bucket string, d time.Duration) {
 	if s.Client != nil {
 		s.Client.Timing(sampleRate, fullBucket(s.Prefix, bucket), d)

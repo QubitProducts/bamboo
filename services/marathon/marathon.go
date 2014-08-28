@@ -4,6 +4,7 @@ import(
 	"net/http"
 	"io/ioutil"
 	"strings"
+	"encoding/json"
 )
 
 // Describes an app process running
@@ -16,7 +17,50 @@ type Task struct {
 type App struct {
 	Id string
 	Port string
+	HealthCheckPath string
 	Tasks []Task
+}
+
+type AppConfigResponse struct {
+	Apps []AppConfiguration `json:apps`
+}
+
+type AppConfiguration struct {
+	Id string `json:id`
+	HealthChecks []HealthChecks `json:healthChecks`
+}
+
+type HealthChecks struct {
+	Path string `json:path`
+}
+
+func fetchAppConfiguration(endpoint string) (map[string]AppConfiguration, error) {
+	response, err := http.Get(endpoint + "/v2/apps")
+
+	if err != nil {
+		return nil, err
+	} else {
+		defer response.Body.Close()
+		var appResponse AppConfigResponse
+
+		contents, err := ioutil.ReadAll((response.Body))
+		if (err != nil) {
+			return nil, err
+		}
+
+		err = json.Unmarshal(contents, &appResponse)
+		if err != nil {
+			return nil, err
+		}
+
+		dataById := map[string]AppConfiguration{}
+
+		for _, appConfig := range appResponse.Apps {
+			dataById[appConfig.Id] = appConfig
+		}
+
+		return dataById, nil
+	}
 }
 
 func fetchTasks(endpoint string) (string, error) {
@@ -37,17 +81,30 @@ func fetchTasks(endpoint string) (string, error) {
 	}
 }
 
-func parseApps(contents string) []App {
+func parseApps(contents string, appConfiguration map[string]AppConfiguration) []App {
 	lines := strings.Split(contents, "\n")
 	apps := []App{}
 	for _, line := range lines {
 		if len(line) > 0 {
 			appId, appPort, tasks := parseTasks(line)
-			app := App{ Id: appId, Port: appPort, Tasks: tasks }
+
+			app := App {
+				Id: appId,
+				Port: appPort,
+				Tasks: tasks,
+				HealthCheckPath: parseHealthCheckPath(appConfiguration[appId].HealthChecks),
+			}
 			apps = append(apps, app)
 		}
 	}
 	return apps
+}
+
+func parseHealthCheckPath(checks []HealthChecks) string {
+	if (len(checks) > 0) {
+		return checks[0].Path
+	}
+	return ""
 }
 
 func parseTasks(line string) (appId string, appPort string, tasks []Task)  {
@@ -74,12 +131,12 @@ func parseTasks(line string) (appId string, appPort string, tasks []Task)  {
 		endpoint: Marathon HTTP endpoint, e.g. http://localhost:8080
 */
 func FetchApps(endpoint string) ([]App, error) {
-	contents, err := fetchTasks(endpoint)
+	taskContents, err := fetchTasks(endpoint)
+	if err != nil { return nil, err }
 
-	if err != nil {
-		return nil, err
-	}
+	appConfiguration, err := fetchAppConfiguration(endpoint)
+	if err != nil { return nil, err }
 
-	apps := parseApps(contents)
+	apps := parseApps(taskContents, appConfiguration)
 	return apps, nil
 }
