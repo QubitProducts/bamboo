@@ -39,6 +39,7 @@ func main() {
 	conf, err := configuration.FromFile(configFilePath)
 	if err != nil { log.Fatal(err) }
 
+	conf.StatsD.CreateClient()
 
 	conns := listenToZookeeper(conf)
 
@@ -48,7 +49,7 @@ func main() {
 func initServer(conf configuration.Configuration, conns Conns) {
 	stateAPI := api.State{Config: conf, Zookeeper: conns.DomainMapping}
 	domainAPI := api.Domain{Config: conf, Zookeeper: conns.DomainMapping}
-
+	conf.StatsD.Increment(1.0, "restart", 1)
 	// Status live information
 	goji.Get("/status", api.HandleStatus)
 
@@ -68,9 +69,10 @@ func initServer(conf configuration.Configuration, conns Conns) {
 }
 
 type Conns struct {
-	Marathon      *zk.Conn
-	DomainMapping *zk.Conn
+	Marathon       *zk.Conn
+	DomainMapping  *zk.Conn
 }
+
 
 func listenToZookeeper(conf configuration.Configuration) Conns {
 	marathonCh, marathonConn := createAndListen(conf.Marathon.Zookeeper)
@@ -83,10 +85,12 @@ func listenToZookeeper(conf configuration.Configuration) Conns {
 				log.Println("Marathon: State changed")
 				handleHAPUpdate(conf, marathonConn)
 				execCommand(conf.HAProxy.ReloadCommand)
+				conf.StatsD.Increment(1.0, "reload.marathon", 1)
 			case _ = <-domainCh:
 				log.Println("Domain mapping: Stated changed")
-				handleHAPUpdate(conf, marathonConn)
+				handleHAPUpdate(conf, domainConn)
 				execCommand(conf.HAProxy.ReloadCommand)
+				conf.StatsD.Increment(1.0, "reload.domain", 1)
 			}
 		}
 	}()
