@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+	"io"
 	"flag"
 	"time"
 	"log"
@@ -23,15 +25,20 @@ import (
 	Commandline arguments
  */
 var configFilePath string
+var logPath string
 func init() {
 	flag.StringVar(&configFilePath, "config", "config/development.json", "Full path of the configuration JSON file")
+	flag.StringVar(&logPath, "log", "", "Log path to a file. Default logs to stdout")
 }
 
 
 func main() {
 	flag.Parse()
+	configureLog()
+
 	conf, err := configuration.FromFile(configFilePath)
 	if err != nil { log.Fatal(err) }
+
 
 	conns := listenToZookeeper(conf)
 
@@ -101,6 +108,16 @@ func execCommand(cmd string) {
 		log.Println(err.Error())
 	}
 	log.Printf("Exec cmd: %s \n", cmd)
+}
+
+func configureLog() {
+	if len(logPath) > 0 {
+		file, err := os.OpenFile(logPath, os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+		if err != nil {
+			log.Fatalf("error opening file: %v", err)
+		}
+		log.SetOutput(io.MultiWriter(file, os.Stdout))
+	}
 }
 
 func createAndListen(conf configuration.Zookeeper) (chan zk.Event, *zk.Conn) {

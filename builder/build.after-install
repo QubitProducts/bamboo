@@ -9,8 +9,8 @@ SHELL="/bin/false"
 
 case "$1" in
 	configure)
-        if [ ! -d "${DATADIR}" ]; then
-			mkdir -p ${DATADIR}
+        if [ ! -d "${DATADIR}/log" ]; then
+			mkdir -p ${DATADIR}/log
 		fi
 
         # Copy haproxy template without overrides

@@ -22,5 +22,5 @@ setgid root
 
 script
     cd $HOME
-    exec ./bamboo -config /var/bamboo/production.json
+    exec ./bamboo -config /var/bamboo/production.json -log /var/bamboo/log/bamboo-server.log
 end script
