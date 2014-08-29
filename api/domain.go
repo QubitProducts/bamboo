@@ -26,7 +26,7 @@ type DomainModel struct {
 	Value string `param:"value"`
 }
 
-func (d Domain) All(w http.ResponseWriter, r *http.Request) {
+func (d *Domain) All(w http.ResponseWriter, r *http.Request) {
 	domains, err := service.All(d.Zookeeper, d.Config.DomainMapping.Zookeeper)
 
 	if err != nil {
@@ -38,7 +38,7 @@ func (d Domain) All(w http.ResponseWriter, r *http.Request) {
 	responseJSON(w, domains)
 }
 
-func (d Domain) Create(w http.ResponseWriter, r *http.Request) {
+func (d *Domain) Create(w http.ResponseWriter, r *http.Request) {
 	domainModel, err := extractDomainModel(r)
 
 	if err != nil {
@@ -55,7 +55,7 @@ func (d Domain) Create(w http.ResponseWriter, r *http.Request) {
 	responseJSON(w, domainModel)
 }
 
-func (d Domain) Put(c web.C, w http.ResponseWriter, r *http.Request) {
+func (d *Domain) Put(c web.C, w http.ResponseWriter, r *http.Request) {
 	identifier := c.URLParams["id"]
 	domainModel, err := extractDomainModel(r)
 	if err != nil {
@@ -73,7 +73,7 @@ func (d Domain) Put(c web.C, w http.ResponseWriter, r *http.Request) {
 }
 
 
-func (d Domain) Delete(c web.C, w http.ResponseWriter, r *http.Request) {
+func (d *Domain) Delete(c web.C, w http.ResponseWriter, r *http.Request) {
 	identifier := c.URLParams["id"]
 	err := service.Delete(d.Zookeeper, d.Config.DomainMapping.Zookeeper, identifier)
 	if err != nil {
@@ -89,6 +89,7 @@ func extractDomainModel(r *http.Request) (DomainModel, error) {
 	var domainModel DomainModel
 	payload := make([]byte, r.ContentLength)
 	r.Body.Read(payload)
+	defer r.Body.Close()
 
 	err1 := json.Unmarshal(payload, &domainModel)
 	if err1 != nil {
