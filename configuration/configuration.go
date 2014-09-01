@@ -17,6 +17,9 @@ type Configuration struct {
 
 	// HAProxy output configuration
 	HAProxy HAProxy
+
+	// StatsD configuration
+	StatsD StatsD
 }
 
 /*

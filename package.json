@@ -1,0 +1,88 @@
+{
+  "name": "angular-boot",
+  "description": "",
+  "version": "0.1.0",
+  "dependencies": {
+    "lodash": "2.4.1",
+    "jquery": "~2.1.0",
+    "angular-moment": "~0.7.0",
+    "moment": "~2.6.0"
+  },
+  "devDependencies": {
+    "browserify": "~3.38.0",
+    "grunt": "~0.4.4",
+    "grunt-browserify": "~2.0.8",
+    "grunt-contrib-copy": "~0.5.0",
+    "grunt-contrib-sass": "~0.7.3",
+    "grunt-contrib-watch": "~0.6.1",
+    "hbsfy": "1.3.2",
+    "karma": "~0.12.14",
+    "karma-bro": "^0.2.2",
+    "karma-chrome-launcher": "^0.1.3",
+    "mocha": "~1.18.2",
+    "napa": "~0.4.1",
+    "partialify": "*",
+    "watchify": "^0.8.2",
+    "expect.js": "^0.3.1"
+  },
+  "script": {
+    "install": "napa"
+  },
+  "napa": {
+    "angular-strap": "mgcrea/angular-strap#v2.0.5",
+    "angular": "angular/bower-angular#v1.2.22-build.376+sha.93b0c2d",
+    "angular-animate": "angular/bower-angular-animate#v1.2.22-build.376+sha.93b0c2d",
+    "angular-resource": "angular/bower-angular-resource#v1.2.22-build.376+sha.93b0c2d",
+    "angular-ui-router": "angular-ui/ui-router#0.2.10"
+  },
+  "shims": {
+    "jquery": {
+      "path": "./node_modules/jquery/dist/jquery.js",
+      "exports": "$"
+    },
+    "angular": {
+      "path": "./node_modules/angular/angular.js",
+      "exports": "angular"
+    },
+    "angular-resource": {
+      "path": "./node_modules/angular-resource/angular-resource.js",
+      "depends": [
+        "angular"
+      ]
+    },
+    "angular-animate": {
+      "path": "./node_modules/angular-animate/angular-animate.js",
+      "depends": [
+        "angular"
+      ]
+    },
+    "angular-strap": {
+      "path": "./node_modules/angular-strap/dist/angular-strap.js",
+      "depends": [
+        "angular",
+        "angular-animate",
+        "angular-strap-tpl"
+      ]
+    },
+    "angular-strap-tpl": {
+      "path": "./node_modules/angular-strap/dist/angular-strap.tpl.js"
+    },
+    "angular-ui-router": {
+      "path": "./node_modules/angular-ui-router/release/angular-ui-router.js",
+      "depends": [
+        "angular"
+      ]
+    },
+    "moment": {
+      "path": "./node_modules/moment/moment.js",
+      "exports": "moment"
+    },
+    "angular-moment": {
+      "path": "./node_modules/angular-moment/angular-moment.js",
+      "depends": [
+        "moment",
+        "angular"
+      ]
+    }
+  }
+}

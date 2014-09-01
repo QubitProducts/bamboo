@@ -1,0 +1,62 @@
+
+.domain-list {
+  background: white;
+
+  .domain-list-title {
+    padding: 5px 0px;
+    font-weight: bold;
+    vertical-align: text-bottom;
+    background: #EEF3F4;
+    border-bottom: 2px solid #CCC;
+    span {
+      display: table-cell;
+      vertical-align: middle;
+      line-height: 30px;
+    }
+  }
+
+  .domain-item {
+    vertical-align: text-bottom;
+    border-bottom: 1px solid #CCC;
+    padding: 5px 0px;
+
+    &.domain-action-type-marathon {
+      color: rgba(0,0,0,0.5);
+    }
+
+    &.domain-action-type-domain {
+        color: rgba(0,0,0,0.5);
+    }
+
+    &.domain-action-type-default {
+      background: rgba(103, 164, 111, 0.3);
+    }
+
+    .item-actions {
+      text-align: right;
+
+      .item-actions-group {
+        float: right;
+      }
+    }
+
+    i.message {
+      font-size: 11px;
+      font-style: normal;
+    }
+
+    .btn {
+      &.btn-danger, &.btn-create-domain {
+        margin-left: 10px;
+      }
+    }
+
+    .col-instances-count {}
+
+    span {
+      display: table-cell;
+      vertical-align: middle;
+      line-height: 30px;
+    }
+  }
+}

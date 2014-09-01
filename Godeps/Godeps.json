@@ -3,12 +3,16 @@
 	"GoVersion": "go1.3",
 	"Deps": [
 		{
+			"ImportPath": "github.com/peterbourgon/g2s",
+			"Rev": "44d08dabf4b5a94ed9c24e47e7f4badcf0d3b034"
+		},
+		{
+			"ImportPath": "github.com/samuel/go-zookeeper/zk",
+			"Rev": "041700315ab94d5f506317d8798adc9a6674c547"
+		},
+		{
 			"ImportPath": "github.com/zenazn/goji",
 			"Rev": "17b9035bcd162f59e1a1247d4a755124c37052c5"
-		},
-    {
-      "ImportPath": "github.com/samuel/go-zookeeper",
-      "Rev": "041700315ab94d5f506317d8798adc9a6674c547"
-    }
+		}
 	]
 }

@@ -1,0 +1,9 @@
+.btn-primary {
+  background: #4C8654;
+  border-color: #38663F;
+  &:hover, &.active, &:focus {
+    background: #3d7345;
+    border-color: #295230;
+  }
+}
+

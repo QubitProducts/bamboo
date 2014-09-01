@@ -7,3 +7,7 @@ Godeps/_workspace
 Godeps/Readme
 *.iml
 bamboo
+node_modules
+.sass-cache
+builder/build
+builder/*.deb
