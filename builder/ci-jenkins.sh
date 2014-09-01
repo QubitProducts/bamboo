@@ -24,7 +24,7 @@ cd $BAMBOO_PROJECT_DIR
 
 godep restore
 go build
-go test -v bamboo/... | go2xunit > $WORKSPACE/test_output/tests.xml
+go test -v github.com/QubitProducts/bamboo/... | go2xunit > $WORKSPACE/test_output/tests.xml
 
 # Requires fpm to build package
 # Install fpm if missing
