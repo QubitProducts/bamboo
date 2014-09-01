@@ -1,5 +1,5 @@
 {
-	"ImportPath": "bamboo",
+	"ImportPath": "github.com/QubitProducts/bamboo",
 	"GoVersion": "go1.3",
 	"Deps": [
 		{

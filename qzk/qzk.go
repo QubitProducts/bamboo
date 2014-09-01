@@ -8,7 +8,7 @@ import (
 
 	"github.com/samuel/go-zookeeper/zk"
 
-	c "bamboo/configuration"
+	c "github.com/QubitProducts/bamboo/configuration"
 )
 
 var logger = log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lshortfile)

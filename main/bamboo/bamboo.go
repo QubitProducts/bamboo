@@ -12,10 +12,10 @@ import (
 	"github.com/samuel/go-zookeeper/zk"
 	"github.com/zenazn/goji"
 
-	"bamboo/api"
-	"bamboo/configuration"
-	"bamboo/qzk"
-	"bamboo/services/haproxy"
+	"github.com/QubitProducts/bamboo/api"
+	"github.com/QubitProducts/bamboo/configuration"
+	"github.com/QubitProducts/bamboo/qzk"
+	"github.com/QubitProducts/bamboo/services/haproxy"
 )
 
 

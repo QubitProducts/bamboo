@@ -3,10 +3,10 @@ package haproxy
 import (
 	"github.com/samuel/go-zookeeper/zk"
 
-	conf "bamboo/configuration"
-	"bamboo/services/marathon"
-	"bamboo/services/domain"
-	"bamboo/writer"
+	conf "github.com/QubitProducts/bamboo/configuration"
+	"github.com/QubitProducts/bamboo/services/marathon"
+	"github.com/QubitProducts/bamboo/services/domain"
+	"github.com/QubitProducts/bamboo/writer"
 )
 
 type templateData struct {

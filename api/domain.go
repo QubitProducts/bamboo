@@ -9,8 +9,8 @@ import (
 	"github.com/samuel/go-zookeeper/zk"
 	"github.com/zenazn/goji/web"
 
-	conf "bamboo/configuration"
-	service "bamboo/services/domain"
+	conf "github.com/QubitProducts/bamboo/configuration"
+	service "github.com/QubitProducts/bamboo/services/domain"
 )
 
 type Domain struct {

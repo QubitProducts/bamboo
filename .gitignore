@@ -1,7 +1,6 @@
 .DS_Store
 .idea
 .vendor
-*.gitignore
 config/private.json
 Godeps/_workspace
 Godeps/Readme
@@ -11,3 +10,4 @@ node_modules
 .sass-cache
 builder/build
 builder/*.deb
+*.sublime-project
