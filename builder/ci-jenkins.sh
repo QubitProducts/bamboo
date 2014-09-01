@@ -1,15 +1,24 @@
+#!/bin/bash
+
+# Jenkins Setting
+# - Repository URL: git@github.com:QubitProducts/bamboo.git
+# - Checkout to a sub-directory: go/src/github.com/QubitProducts/bamboo
+# - Post build action / Archive the artifacts: *.deb
+# - Test output: test_output/tests.xml
+
+export BAMBOO_PROJECT_DIR=$WORKSPACE/go/src/github.com/QubitProducts/bamboo
 export GOPATH=$WORKSPACE/go
 export PATH=$GOPATH/bin:/usr/local/go/bin/:$PATH
-rm -f $WORKSPACE/*.deb
 
+# Cleanups
+rm -f $WORKSPACE/*.deb
 mkdir -p $WORKSPACE/test_output
 
-go get github.com/QubitProducts/bamboo
+# Install build and test dependencies
 go get github.com/tools/godep
 go get bitbucket.org/tebeka/go2xunit
 go get -t github.com/smartystreets/goconvey
 
-export BAMBOO_PROJECT_DIR=$WORKSPACE/go/src/github.com/QubitProducts/bamboo
 
 cd $BAMBOO_PROJECT_DIR
 
