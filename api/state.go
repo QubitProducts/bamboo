@@ -7,8 +7,8 @@ import (
 
 	"github.com/samuel/go-zookeeper/zk"
 
-	"bamboo/configuration"
-	"bamboo/services/haproxy"
+	"github.com/QubitProducts/bamboo/configuration"
+	"github.com/QubitProducts/bamboo/services/haproxy"
 )
 
 type State struct {

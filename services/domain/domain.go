@@ -1,8 +1,8 @@
 package domain
 
 import (
-	conf "bamboo/configuration"
 	"github.com/samuel/go-zookeeper/zk"
+	conf "github.com/QubitProducts/bamboo/configuration"
 )
 
 func All(conn *zk.Conn, zkConf conf.Zookeeper) (map[string]string, error) {

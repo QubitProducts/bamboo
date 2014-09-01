@@ -8,8 +8,8 @@ import (
 
 	"github.com/samuel/go-zookeeper/zk"
 
-	conf "bamboo/configuration"
-	"bamboo/qzk"
+	conf "github.com/QubitProducts/bamboo/configuration"
+	"github.com/QubitProducts/bamboo/qzk"
 )
 
 func showEvents(evts chan zk.Event) {
