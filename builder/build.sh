@@ -8,7 +8,7 @@ url="https://github.com/QuBitProducts/bamboo"
 arch="all"
 section="misc"
 license="Apache Software License 2.0"
-package_version=${_BAMBOO_PKGVERSION:-"-1"}
+package_version=${_BAMBOO_PKGVERSION:-"_1"}
 origdir="$(pwd)"
 workspace="builder"
 pkgtype=${_PKGTYPE:-"deb"}
@@ -51,7 +51,7 @@ function build() {
 
 function mkdeb() {
   # rubygem: fpm
-  fpm -t deb \
+  fpm -t ${pkgtype} \
     -n ${name} \
     -v ${version}${package_version} \
     --description "${description}" \
@@ -68,7 +68,7 @@ function mkdeb() {
     --prefix=/ \
     -s dir \
     -- .
-  mv ${name}*.deb ${origdir}/${workspace}/
+  mv ${name}*.${pkgtype} ${origdir}/${workspace}/
   popd
 }
 
