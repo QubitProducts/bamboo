@@ -61,6 +61,21 @@ func debounce(ch chan zk.Event, delay time.Duration) chan zk.Event {
 	return debounced
 }
 
+func delay(ch chan zk.Event, delay time.Duration) chan zk.Event {
+	delayed := make(chan zk.Event)
+	go func() {
+		var ev zk.Event
+		for {
+			ev = <-ch
+			time.AfterFunc(delay, func() {
+				delayed <- ev
+			})
+		}
+	}()
+
+	return delayed
+}
+
 func sinkSelfEvents(conn *zk.Conn, path string, sink chan<- zk.Event) chan<- bool {
 	control := make(chan bool)
 	go func() {
@@ -108,6 +123,7 @@ func sinkChildEvents(conn *zk.Conn, path string, sink chan<- zk.Event) chan<- bo
 
 	return control
 }
+
 func ListenToZooKeeper(config c.Zookeeper, deb bool) (chan zk.Event, chan bool) {
 	c, _, err := zk.Connect(config.ConnectionString(), time.Second)
 
@@ -115,10 +131,10 @@ func ListenToZooKeeper(config c.Zookeeper, deb bool) (chan zk.Event, chan bool) 
 		panic(err)
 	}
 
-	return ListenToConn(c, config.Path, deb)
+	return ListenToConn(c, config.Path, deb, config.Delay())
 }
 
-func ListenToConn(c *zk.Conn, path string, deb bool) (chan zk.Event, chan bool) {
+func ListenToConn(c *zk.Conn, path string, deb bool, repDelay time.Duration) (chan zk.Event, chan bool) {
 
 	quit := make(chan bool)
 	evts := make(chan zk.Event)
@@ -127,6 +143,9 @@ func ListenToConn(c *zk.Conn, path string, deb bool) (chan zk.Event, chan bool) 
 
 	if deb {
 		evts = debounce(evts, 100*time.Millisecond)
+	}
+	if repDelay > 0 {
+		evts = delay(evts, repDelay)
 	}
 	return evts, quit
 }

@@ -1,13 +1,13 @@
 package main
 
 import (
-	"os"
-	"io"
 	"flag"
-	"time"
+	"io"
 	"log"
-	"os/exec"
 	"net/http"
+	"os"
+	"os/exec"
+	"time"
 
 	"github.com/samuel/go-zookeeper/zk"
 	"github.com/zenazn/goji"
@@ -18,26 +18,25 @@ import (
 	"github.com/QubitProducts/bamboo/services/haproxy"
 )
 
-
-
-
 /*
 	Commandline arguments
- */
+*/
 var configFilePath string
 var logPath string
+
 func init() {
 	flag.StringVar(&configFilePath, "config", "config/development.json", "Full path of the configuration JSON file")
 	flag.StringVar(&logPath, "log", "", "Log path to a file. Default logs to stdout")
 }
-
 
 func main() {
 	flag.Parse()
 	configureLog()
 
 	conf, err := configuration.FromFile(configFilePath)
-	if err != nil { log.Fatal(err) }
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	conf.StatsD.CreateClient()
 
@@ -69,10 +68,9 @@ func initServer(conf configuration.Configuration, conns Conns) {
 }
 
 type Conns struct {
-	Marathon       *zk.Conn
-	DomainMapping  *zk.Conn
+	Marathon      *zk.Conn
+	DomainMapping *zk.Conn
 }
-
 
 func listenToZookeeper(conf configuration.Configuration) Conns {
 	marathonCh, marathonConn := createAndListen(conf.Marathon.Zookeeper)
@@ -98,7 +96,7 @@ func listenToZookeeper(conf configuration.Configuration) Conns {
 	return Conns{marathonConn, domainConn}
 }
 
-func handleHAPUpdate(conf configuration.Configuration, conn * zk.Conn) {
+func handleHAPUpdate(conf configuration.Configuration, conn *zk.Conn) {
 	err := haproxy.WriteHAProxyConfig(conf.HAProxy, haproxy.GetTemplateData(conf, conn))
 	if err != nil {
 		log.Panic(err)
@@ -116,7 +114,7 @@ func execCommand(cmd string) {
 
 func configureLog() {
 	if len(logPath) > 0 {
-		file, err := os.OpenFile(logPath, os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+		file, err := os.OpenFile(logPath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 		if err != nil {
 			log.Fatalf("error opening file: %v", err)
 		}
@@ -125,11 +123,13 @@ func configureLog() {
 }
 
 func createAndListen(conf configuration.Zookeeper) (chan zk.Event, *zk.Conn) {
-	conn, _, err := zk.Connect(conf.ConnectionString(), time.Second * 10)
+	conn, _, err := zk.Connect(conf.ConnectionString(), time.Second*10)
 
-	if err != nil { log.Panic(err) }
+	if err != nil {
+		log.Panic(err)
+	}
 
-	ch, _ := qzk.ListenToConn(conn, conf.Path, true)
+	ch, _ := qzk.ListenToConn(conn, conf.Path, true, conf.Delay())
 
 	return ch, conn
 }
