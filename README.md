@@ -43,7 +43,9 @@ This section tries to explain usage in code comment style:
       "Host": "zk01.example.com:2812,zk02.example.com:2812",
       // Marathon Zookeeper state  
       // Marathon default set to /marathon/state
-      "Path": "/marathon/state"
+      "Path": "/marathon/state",
+      // Number of seconds to delay the reload event
+      "ReportingDelay": 5
     }
   },
    
@@ -53,7 +55,8 @@ This section tries to explain usage in code comment style:
     "Zookeeper": {
       // Use the same ZK setting if you run on the same ZK cluster
       "Host": "zk01.example.com:2812,zk02.example.com:2812",
-      "Path": "/marathon-haproxy/state"
+      "Path": "/marathon-haproxy/state",
+      "ReportingDelay": 5
     }
   },
   
