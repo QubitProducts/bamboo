@@ -3,6 +3,11 @@
 	"GoVersion": "go1.3",
 	"Deps": [
 		{
+			"ImportPath": "github.com/natefinch/lumberjack",
+			"Comment": "v1.0-12-gd28785c",
+			"Rev": "d28785c2f27cd682d872df46ccd8232843629f54"
+		},
+		{
 			"ImportPath": "github.com/peterbourgon/g2s",
 			"Rev": "44d08dabf4b5a94ed9c24e47e7f4badcf0d3b034"
 		},
