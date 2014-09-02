@@ -11,6 +11,7 @@ import (
 
 	"github.com/samuel/go-zookeeper/zk"
 	"github.com/zenazn/goji"
+	lumberjack "github.com/natefinch/lumberjack"
 
 	"github.com/QubitProducts/bamboo/api"
 	"github.com/QubitProducts/bamboo/configuration"
@@ -114,11 +115,14 @@ func execCommand(cmd string) {
 
 func configureLog() {
 	if len(logPath) > 0 {
-		file, err := os.OpenFile(logPath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-		if err != nil {
-			log.Fatalf("error opening file: %v", err)
-		}
-		log.SetOutput(io.MultiWriter(file, os.Stdout))
+		log.SetOutput(io.MultiWriter(&lumberjack.Logger{
+			Filename:   logPath,
+			// megabytes
+			MaxSize:    1,
+			MaxBackups: 3,
+			//days
+			MaxAge:     28,
+		}, os.Stdout))
 	}
 }
 
