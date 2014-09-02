@@ -30,7 +30,8 @@ module.exports = function (grunt) {
         dest: "<%= distDir %>/main-libs.js",
         options: {
           alias: libAlias,
-          shim: commonShims
+          shim: commonShims,
+          transform: ["uglifyify"]
         }
       },
 
@@ -40,9 +41,9 @@ module.exports = function (grunt) {
         options: {
           alias: libAlias,
           external: libSource,
-          transform: ["partialify"],
+          transform: ["partialify", "uglifyify"],
           bundleOptions: {
-            debug: true
+            debug: false
           }
         }
       },
