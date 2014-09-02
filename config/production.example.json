@@ -3,14 +3,16 @@
     "Endpoint": "http://localhost:8080",
     "Zookeeper": {
       "Host": "localhost",
-      "Path": "/marathon/state"
+      "Path": "/marathon/state",
+      "ReportingDelay": 5
     }
   },
 
   "DomainMapping": {
     "Zookeeper": {
       "Host": "localhost",
-      "Path": "/marathon-haproxy/state"
+      "Path": "/marathon-haproxy/state",
+      "ReportingDelay": 5
     }
   },
 
