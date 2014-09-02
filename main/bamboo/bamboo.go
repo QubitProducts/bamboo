@@ -118,7 +118,7 @@ func configureLog() {
 		log.SetOutput(io.MultiWriter(&lumberjack.Logger{
 			Filename:   logPath,
 			// megabytes
-			MaxSize:    1,
+			MaxSize:    100,
 			MaxBackups: 3,
 			//days
 			MaxAge:     28,
