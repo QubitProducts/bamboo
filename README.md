@@ -24,6 +24,10 @@ You can find out if DNS is assigned or missing from the interface. Of course, yo
 
 ![user-interface](https://cloud.githubusercontent.com/assets/37033/4109769/318f2ad2-31e9-11e4-8f5f-b6a3368412b9.png)
 
+## StatsD Monitoring
+
+![bamboo-graphite](https://cloud.githubusercontent.com/assets/37033/4117219/cef5cea2-328e-11e4-8346-ecc4e4e6046b.png)
+
 ## Configuration and Template
 
 Bamboo binary accepts `-config` option to specify application configuration JSON file location. Type `-help` to get current available options.
