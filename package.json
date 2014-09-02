@@ -10,6 +10,7 @@
   },
   "devDependencies": {
     "browserify": "~3.38.0",
+    "expect.js": "^0.3.1",
     "grunt": "~0.4.4",
     "grunt-browserify": "~2.0.8",
     "grunt-contrib-copy": "~0.5.0",
@@ -22,8 +23,8 @@
     "mocha": "~1.18.2",
     "napa": "~0.4.1",
     "partialify": "*",
-    "watchify": "^0.8.2",
-    "expect.js": "^0.3.1"
+    "uglifyify": "^2.5.0",
+    "watchify": "^0.8.2"
   },
   "script": {
     "install": "napa"

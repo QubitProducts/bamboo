@@ -1,4 +1,4 @@
-module.exports = function ($stateProvider, $urlRouterProvider) {
+module.exports = ["$stateProvider", "$urlRouterProvider", function ($stateProvider, $urlRouterProvider) {
 
   $stateProvider
     .state("main", {
@@ -7,4 +7,4 @@ module.exports = function ($stateProvider, $urlRouterProvider) {
     });
 
   $urlRouterProvider.otherwise("/main");
-}
+}];
