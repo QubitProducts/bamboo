@@ -136,6 +136,15 @@ func ListenToZooKeeper(config c.Zookeeper, deb bool) (chan zk.Event, chan bool) 
 
 func ListenToConn(c *zk.Conn, path string, deb bool, repDelay time.Duration) (chan zk.Event, chan bool) {
 
+	exists, _, err := c.Exists(path)
+
+	if err != nil {
+		logger.Fatalf("Couldn't determine whether node %v exists in Zookeeper", path)
+	}
+	if !exists {
+		logger.Fatalf("Couldn't find node %v in Zookeeper", path)
+	}
+
 	quit := make(chan bool)
 	evts := make(chan zk.Event)
 
@@ -148,4 +157,9 @@ func ListenToConn(c *zk.Conn, path string, deb bool, repDelay time.Duration) (ch
 		evts = delay(evts, repDelay)
 	}
 	return evts, quit
+}
+
+func nodeExists(c *zk.Conn, path string) bool {
+
+	return false
 }
