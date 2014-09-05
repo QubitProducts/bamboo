@@ -1,14 +1,13 @@
 package api
 
 import (
-	"errors"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
-	"github.com/zenazn/goji/web"
 	"github.com/samuel/go-zookeeper/zk"
-
+	"github.com/zenazn/goji/web"
 
 	conf "github.com/QubitProducts/bamboo/configuration"
 	service "github.com/QubitProducts/bamboo/services/domain"
@@ -19,9 +18,8 @@ type Domain struct {
 	Zookeeper *zk.Conn
 }
 
-
 type DomainModel struct {
-	Id string `param:"id"`
+	Id    string `param:"id"`
 	Value string `param:"value"`
 }
 
@@ -39,7 +37,6 @@ func (d *Domain) All(w http.ResponseWriter, r *http.Request) {
 
 func (d *Domain) Create(w http.ResponseWriter, r *http.Request) {
 	domainModel, err := extractDomainModel(r)
-
 	if err != nil {
 		responseError(w, err.Error())
 		return
@@ -71,7 +68,6 @@ func (d *Domain) Put(c web.C, w http.ResponseWriter, r *http.Request) {
 	responseJSON(w, domainModel)
 }
 
-
 func (d *Domain) Delete(c web.C, w http.ResponseWriter, r *http.Request) {
 	identifier := c.URLParams["id"]
 	err := service.Delete(d.Zookeeper, d.Config.DomainMapping.Zookeeper, identifier)
@@ -82,7 +78,6 @@ func (d *Domain) Delete(c web.C, w http.ResponseWriter, r *http.Request) {
 
 	responseJSON(w, new(map[string]string))
 }
-
 
 func extractDomainModel(r *http.Request) (DomainModel, error) {
 	var domainModel DomainModel
@@ -98,12 +93,11 @@ func extractDomainModel(r *http.Request) (DomainModel, error) {
 	return domainModel, nil
 }
 
-
 func responseError(w http.ResponseWriter, message string) {
 	http.Error(w, message, http.StatusBadRequest)
 }
 
-func responseJSON(w http.ResponseWriter, data interface {}) {
+func responseJSON(w http.ResponseWriter, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	bites, _ := json.Marshal(data)
 	w.Write(bites)
