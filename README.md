@@ -84,6 +84,21 @@ This section tries to explain usage in code comment style:
 }
 ```
 
+### Environment Variables
+
+Configuration in the `production.json` file can be overridden with environment variables below. If they are not specified then the values from the configuration file will be used.
+
+Environment Variable | Corresponds To
+---------------------|---------------
+`MARATHON_ZK_HOST` | Marathon.Zookeeper.Host
+`MARATHON_ZK_PATH` | Marathon.Zookeeper.Path
+`MARATHON_ENDPOINT` | Marathon.Endpoint
+`DOMAIN_ZK_HOST` | DomainMapping.Zookeeper.Host
+`DOMAIN_ZK_PATH` | DomainMapping.Zookeeper.Path
+`HAPROXY_TEMPLATE_PATH` | HAProxy.TemplatePath
+`HAPROXY_OUTPUT_PATH` | HAProxy.OutputPath
+`HAPROXY_RELOAD_CMD` | HAProxy.ReloadCommand
+
 
 ## REST APIs
 
