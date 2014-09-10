@@ -86,7 +86,7 @@ This section tries to explain usage in code comment style:
 
 ### Environment Variables
 
-Configuration in the `production.json` file can be overridden with environment variables below. If they are not specified then the values from the configuration file will be used.
+Configuration in the `production.json` file can be overridden with environment variables below. This is generally useful when you are building a Docker image for Bamboo and HAProxy. If they are not specified then the values from the configuration file will be used.
 
 Environment Variable | Corresponds To
 ---------------------|---------------
