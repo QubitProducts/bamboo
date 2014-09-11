@@ -130,10 +130,10 @@ curl -i -X DELETE http://localhost:8000/api/state/domains/app-1
 
 ## Deployment
 
-We recommend installing binary with Debian deb or rpm package. 
+We recommend installing binary with deb or rpm package. 
 The repository includes examples of [a Jenkins build script](https://github.com/QubitProducts/bamboo/blob/master/builder/ci-jenkins.sh)
 and [a deb packages build script](https://github.com/QubitProducts/bamboo/blob/master/builder/build.sh).
-Read comment in the script to customize your build distribution workflow.
+Read comments in the script to customize your build distribution workflow.
 
 In short, [install fpm](https://github.com/jordansissel/fpm) and run the following command:
 
@@ -142,7 +142,7 @@ go build bamboo.go
 ./builder/build.sh
 ```
 
-A deb package will be generated in `./builder` directory. You can copy to server or publish to your own apt repository.
+A deb package will be generated in `./builder` directory. You can copy to a server or publish to your own apt repository.
 
 The example deb package deploys:
 
