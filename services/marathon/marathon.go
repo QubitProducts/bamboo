@@ -64,13 +64,14 @@ func fetchAppConfiguration(endpoint string) (map[string]AppConfiguration, error)
 }
 
 func fetchTasks(endpoint string) (string, error) {
-
-	response, err := http.Get(endpoint + "/v2/tasks")
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", endpoint + "/v2/tasks", nil)
+	req.Header.Add("Accept", "text/plain")
+	response, err := client.Do(req)
 
 	if err != nil {
 		return "", err
 	} else {
-
 		defer response.Body.Close()
 		contents, err := ioutil.ReadAll(response.Body)
 		if err != nil {
