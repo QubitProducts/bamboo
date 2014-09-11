@@ -128,6 +128,15 @@ Deletes mapping of an existing Marathon ID DNS mapping
 curl -i -X DELETE http://localhost:8000/api/state/domains/app-1
 ```
 
+GET /status
+
+Bamboo webapp's healthcheck point
+
+```
+curl -i http://localhost:8000/status
+```
+
+
 ## Deployment
 
 We recommend installing binary with deb or rpm package. 
