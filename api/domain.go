@@ -15,7 +15,7 @@ import (
 )
 
 type Domain struct {
-	Config    conf.Configuration
+	Config    *conf.Configuration
 	Zookeeper *zk.Conn
 }
 
@@ -90,8 +90,8 @@ func extractDomainModel(r *http.Request) (DomainModel, error) {
 	r.Body.Read(payload)
 	defer r.Body.Close()
 
-	err1 := json.Unmarshal(payload, &domainModel)
-	if err1 != nil {
+	err := json.Unmarshal(payload, &domainModel)
+	if err != nil {
 		return domainModel, errors.New("Unable to decode JSON request")
 	}
 

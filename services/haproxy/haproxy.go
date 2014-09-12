@@ -18,7 +18,7 @@ func WriteHAProxyConfig(haproxyConf conf.HAProxy, data interface{}) error {
 	return writer.WriteTemplate(haproxyConf.TemplatePath, haproxyConf.OutputPath, data)
 }
 
-func GetTemplateData(config conf.Configuration, conn *zk.Conn) interface{} {
+func GetTemplateData(config *conf.Configuration, conn *zk.Conn) interface{} {
 
 	apps, _ := marathon.FetchApps(config.Marathon.Endpoint)
 	services, _ := domain.All(conn, config.DomainMapping.Zookeeper)

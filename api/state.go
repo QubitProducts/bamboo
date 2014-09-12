@@ -12,11 +12,11 @@ import (
 )
 
 type State struct {
-	Config    configuration.Configuration
+	Config    *configuration.Configuration
 	Zookeeper *zk.Conn
 }
 
-func (state State) Get(w http.ResponseWriter, r *http.Request) {
+func (state *State) Get(w http.ResponseWriter, r *http.Request) {
 	payload, _ := json.Marshal(haproxy.GetTemplateData(state.Config, state.Zookeeper))
 	io.WriteString(w, string(payload))
 }

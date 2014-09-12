@@ -1,0 +1,30 @@
+{
+  "Marathon": {
+    "Endpoint": "http://aws.fe-marathon.qutics.com:8080",
+    "Zookeeper": {
+      "Host": "n1.zookeeper.production.qutics.com:2181,n2.zookeeper.production.qutics.com:2181,n3.zookeeper.production.qutics.com:2181",
+      "Path": "/fe-marathon/state",
+      "ReportingDelay": 5
+    }
+  },
+
+  "DomainMapping": {
+    "Zookeeper": {
+      "Host": "n1.zookeeper.production.qutics.com:2181,n2.zookeeper.production.qutics.com:2181,n3.zookeeper.production.qutics.com:2181",
+      "Path": "/fe-marathon-haproxy/state",
+      "ReportingDelay": 5
+    }
+  },
+
+  "HAProxy": {
+    "TemplatePath": "config/haproxy_template.cfg",
+    "OutputPath": "haproxy.cfg",
+    "ReloadCommand": "haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -sf $(cat /var/run/haproxy.pid)"
+  },
+
+  "StatsD": {
+    "Enabled": true,
+    "Host": "graphite.qutics.com:8125",
+    "Prefix": "bamboo-server.development."
+  }
+}

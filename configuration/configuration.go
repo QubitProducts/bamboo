@@ -16,7 +16,10 @@ type Configuration struct {
 	// Marathon configuration
 	Marathon Marathon
 
-	// Services mapping configuration
+	// Bamboo specific configuration
+	Bamboo Bamboo
+
+	// DomainMapping storage
 	DomainMapping DomainMapping
 
 	// HAProxy output configuration
