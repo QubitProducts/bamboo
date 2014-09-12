@@ -166,6 +166,32 @@ The example deb package deploys:
 * Configuration and logs is under `/var/bamboo/`
 * Log file is rotated automatically
 
+### As a Docker container
+
+There is a `Dockerfile` that will allow Bamboo to be built and run from within a Docker container.
+
+#### Building the image
+
+The Docker image can be built and added to your local repository with the following command from within the project root directory:
+
+````
+docker build -t bamboo .
+````
+
+#### Running Bamboo as a Docker container
+
+Once the image has been built, running as a container is straightforward - you do however still need to provide the configuration to the image as environment variables. Docker allows two options for this - using the `-e` option  or by putting them in a file and using the `--env-file` option. For this example we will use the former and we will map through ports 8000 and 80 to the docker host (obviously the hosts configured here will need to be reachable from this container):
+
+````
+docker run -t -i --rm -p 8000:8000 -p 80:80 \
+    -e MARATHON_ZK_HOST=zk:2181 \
+    -e MARATHON_ZK_PATH=/marathon \
+    -e MARATHON_ENDPOINT=http://marathon:8080 \
+    -e DOMAIN_ZK_HOST=zk:2181 \
+    -e DOMAIN_ZK_PATH=/bamboo \
+    bamboo -bind=":8000"
+````
+
 ## Development and Contribution
 
 We use [godep](https://github.com/tools/godep) managing Go package dependencies; Goconvey for unit testing; CommonJS and SASS for frontend development and build distribution.
