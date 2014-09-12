@@ -6,6 +6,8 @@ import (
 	"github.com/QubitProducts/bamboo/configuration"
 	"github.com/QubitProducts/bamboo/services/haproxy"
 	"os/exec"
+	"github.com/QubitProducts/bamboo/writer"
+	"io/ioutil"
 )
 
 type MarathonEvent struct {
@@ -32,23 +34,37 @@ type Handlers struct {
 func (h *Handlers) MarathonEventHandler(event MarathonEvent) {
 	log.Printf("%s => %s\n", event.EventType, event.Timestamp)
 	handleHAPUpdate(h.Conf, h.Zookeeper)
-	execCommand(h.Conf.HAProxy.ReloadCommand)
 	h.Conf.StatsD.Increment(1.0, "reload.marathon", 1)
 }
 
 func (h *Handlers) DomainEventHandler(event DomainEvent) {
 	log.Println("Domain mapping: Stated changed")
 	handleHAPUpdate(h.Conf, h.Zookeeper)
-	execCommand(h.Conf.HAProxy.ReloadCommand)
 	h.Conf.StatsD.Increment(1.0, "reload.domain", 1)
 }
 
-func handleHAPUpdate(conf *configuration.Configuration, conn *zk.Conn) {
-	err := haproxy.WriteHAProxyConfig(conf.HAProxy, haproxy.GetTemplateData(conf, conn))
-	if err != nil {
-		log.Panic(err)
+func handleHAPUpdate(conf *configuration.Configuration, conn *zk.Conn) bool {
+	currentContent, err := ioutil.ReadFile(conf.HAProxy.OutputPath)
+	if err != nil { log.Panicf("Cannot read HAProxy cfg under OutputPath: %s", err) }
+
+	templateContent, err := ioutil.ReadFile(conf.HAProxy.TemplatePath)
+	if err != nil { log.Panicf("Cannot read template file: %s", err) }
+
+	templateData := haproxy.GetTemplateData(conf, conn)
+
+	newContent, err := writer.RenderTemplate(conf.HAProxy.TemplatePath, string(templateContent), templateData)
+
+	if (string(currentContent) != newContent) {
+		err := ioutil.WriteFile(conf.HAProxy.OutputPath, []byte(newContent), 0666)
+		if err != nil { log.Fatalf("Failed to write template on path: %s", err) }
+
+		execCommand(conf.HAProxy.ReloadCommand)
+		log.Println("HAProxy: Configuration updated")
+		return true
+	} else {
+		log.Println("HAProxy: Same content, no need to reload")
+		return false
 	}
-	log.Println("HAProxy: Configuration updated")
 }
 
 func execCommand(cmd string) {

@@ -2,28 +2,8 @@ package writer
 
 import (
 	"bytes"
-	"io/ioutil"
 	"text/template"
 )
-
-/*
-	Writes template a given output file path
-*/
-func WriteTemplate(templatePath string, outputFilePath string, data interface{}) error {
-
-	templateContent, err := ioutil.ReadFile(templatePath)
-	if err != nil {
-		return err
-	}
-
-	content, errRender := RenderTemplate(templatePath, string(templateContent), data)
-	if errRender != nil {
-		return errRender
-	}
-
-	return ioutil.WriteFile(outputFilePath, []byte(content), 0666)
-}
-
 
 func hasKey(data map[string]string, appId string) bool {
 	_, exists := data[appId]
