@@ -108,7 +108,7 @@ func listenToZookeeper(conf configuration.Configuration, eventBus *event_bus.Eve
 		for {
 			select {
 			case _ = <-domainCh:
-				eventBus.Publish(&event_bus.DomainEvent{ EventType: "change" })
+				eventBus.Publish(event_bus.DomainEvent{ EventType: "change" })
 			}
 		}
 	}()
