@@ -20,9 +20,11 @@ func (sub *EventSubscriptions) Callback(w http.ResponseWriter, r *http.Request) 
 	payload := make([]byte, r.ContentLength)
 	r.Body.Read(payload)
 	defer r.Body.Close()
+
 	err := json.Unmarshal(payload, &event)
+
 	if err != nil {
-		log.Fatal("Unable to decode JSON Marathon Event request")
+		log.Printf("Unable to decode JSON Marathon Event request: %s \n", string(payload))
 	}
 
 	sub.EventBus.Publish(event)

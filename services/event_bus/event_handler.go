@@ -13,8 +13,8 @@ import (
 type MarathonEvent struct {
 	// EventType can be
 	// api_post_event, status_update_event, subscribe_event
-	EventType string `param:"id"`
-	Timestamp string `param:"timestamp"`
+	EventType string
+	Timestamp string
 }
 
 type ZookeeperEvent struct {
