@@ -16,9 +16,11 @@ It features:
 * Optionally integrates with StatsD to monitor configuration reload event  
 
 
-Compatibility:
+### Compatibility and next release:
 
-We tested on Marathon 0.6.1 and Mesos 0.19 on production. There will be a release soon to support Marathon 0.7 with a lot of feature and performance improvements.
+We tested on Marathon 0.6.1 and Mesos 0.19 on production. 
+
+There will be a release soon to support Marathon 0.7 with a lot of feature and performance improvements, including support mixed non-DNS, DNS and custom HAProxy frontend acl rules. Be prepared! 
 
 
 ![user-interface](https://cloud.githubusercontent.com/assets/37033/4110199/a6226b8e-31ee-11e4-9734-68e0da00767c.png)
