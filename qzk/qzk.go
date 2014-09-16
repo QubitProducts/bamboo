@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"time"
+	"strings"
 
 	"github.com/samuel/go-zookeeper/zk"
 
@@ -134,15 +135,46 @@ func ListenToZooKeeper(config c.Zookeeper, deb bool) (chan zk.Event, chan bool) 
 	return ListenToConn(c, config.Path, deb, config.Delay())
 }
 
-func ListenToConn(c *zk.Conn, path string, deb bool, repDelay time.Duration) (chan zk.Event, chan bool) {
+func zkNodeCreateByPath(path string, c *zk.Conn) error {
+	return zkCreateNodes("", strings.Split(path, "/"), c)
+}
 
+func zkCreateNodes(path string, nodes []string, c *zk.Conn) error {
+	if len(nodes) > 0 {
+		// strings.Split will return empty-strings for leading split chars, lets skip over these.
+		if len(nodes[0]) == 0 {
+			return zkCreateNodes(path, nodes[1:], c)
+		}
+		fqPath := path + "/" + nodes[0]
+		log.Printf("Creating path: %v", fqPath)
+		exists, _, err := c.Exists(fqPath)
+		if err != nil {
+			return err
+		}
+		if !exists {
+			_, err := c.Create(fqPath, []byte{}, 0, zk.WorldACL(zk.PermAll))
+			if err != nil {
+				return err
+			}
+		}
+		return zkCreateNodes(fqPath, nodes[1:], c)
+	}
+	return nil
+}
+
+func ListenToConn(c *zk.Conn, path string, deb bool, repDelay time.Duration) (chan zk.Event, chan bool) {
 	exists, _, err := c.Exists(path)
 
 	if err != nil {
 		logger.Fatalf("Couldn't determine whether node %v exists in Zookeeper", path)
 	}
 	if !exists {
-		logger.Fatalf("Couldn't find node %v in Zookeeper", path)
+		logger.Printf("Node '%v' does not exist in Zookeeper, creating...", path)
+		err := zkNodeCreateByPath(path, c)
+		if err != nil {
+			logger.Fatalf("Unable to create path '%v': %v", path, err)
+		}
+
 	}
 
 	quit := make(chan bool)
@@ -160,6 +192,5 @@ func ListenToConn(c *zk.Conn, path string, deb bool, repDelay time.Duration) (ch
 }
 
 func nodeExists(c *zk.Conn, path string) bool {
-
 	return false
 }
