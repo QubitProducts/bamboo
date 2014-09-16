@@ -60,7 +60,7 @@ This section tries to explain usage in code comment style:
   },
    
   // DNS mapping information is stored in Zookeeper
-  // Make sure the Path is pre-created; Bamboo does not create the missing Path.
+  // Bamboo will create this path if it does not already exist
   "DomainMapping": {
     "Zookeeper": {
       // Use the same ZK setting if you run on the same ZK cluster
