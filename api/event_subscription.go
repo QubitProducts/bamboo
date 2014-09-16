@@ -10,12 +10,12 @@ import (
 	"encoding/json"
 )
 
-type EventSubscriptions struct {
+type EventSubscriptionAPI struct {
 	Conf *configuration.Configuration
 	EventBus *eb.EventBus
 }
 
-func (sub *EventSubscriptions) Callback(w http.ResponseWriter, r *http.Request) {
+func (sub *EventSubscriptionAPI) Callback(w http.ResponseWriter, r *http.Request) {
 	var event eb.MarathonEvent
 	payload := make([]byte, r.ContentLength)
 	r.Body.Read(payload)

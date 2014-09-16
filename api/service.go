@@ -11,22 +11,16 @@ import (
 
 
 	conf "github.com/QubitProducts/bamboo/configuration"
-	service "github.com/QubitProducts/bamboo/services/domain"
+	service "github.com/QubitProducts/bamboo/services/service"
 )
 
-type Domain struct {
+type ServiceAPI struct {
 	Config    *conf.Configuration
 	Zookeeper *zk.Conn
 }
 
-
-type DomainModel struct {
-	Id string `param:"id"`
-	Value string `param:"value"`
-}
-
-func (d *Domain) All(w http.ResponseWriter, r *http.Request) {
-	domains, err := service.All(d.Zookeeper, d.Config.DomainMapping.Zookeeper)
+func (d *ServiceAPI) All(w http.ResponseWriter, r *http.Request) {
+	services, err := service.All(d.Zookeeper, d.Config.DomainMapping.Zookeeper)
 
 	if err != nil {
 		fmt.Println(err)
@@ -34,45 +28,45 @@ func (d *Domain) All(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	responseJSON(w, domains)
+	responseJSON(w, services)
 }
 
-func (d *Domain) Create(w http.ResponseWriter, r *http.Request) {
-	domainModel, err := extractDomainModel(r)
+func (d *ServiceAPI) Create(w http.ResponseWriter, r *http.Request) {
+	serviceModel, err := extractServiceModel(r)
 
 	if err != nil {
 		responseError(w, err.Error())
 		return
 	}
 
-	_, err2 := service.Create(d.Zookeeper, d.Config.DomainMapping.Zookeeper, domainModel.Id, domainModel.Value)
+	_, err2 := service.Create(d.Zookeeper, d.Config.DomainMapping.Zookeeper, serviceModel.Id, serviceModel.Acl)
 	if err2 != nil {
-		responseError(w, "Service id might already exist")
+		responseError(w, "Marathon ID might already exist")
 		return
 	}
 
-	responseJSON(w, domainModel)
+	responseJSON(w, serviceModel)
 }
 
-func (d *Domain) Put(c web.C, w http.ResponseWriter, r *http.Request) {
+func (d *ServiceAPI) Put(c web.C, w http.ResponseWriter, r *http.Request) {
 	identifier := c.URLParams["id"]
-	domainModel, err := extractDomainModel(r)
+	serviceModel, err := extractServiceModel(r)
 	if err != nil {
 		responseError(w, err.Error())
 		return
 	}
 
-	_, err1 := service.Put(d.Zookeeper, d.Config.DomainMapping.Zookeeper, identifier, domainModel.Value)
+	_, err1 := service.Put(d.Zookeeper, d.Config.DomainMapping.Zookeeper, identifier, serviceModel.Acl)
 	if err1 != nil {
 		responseError(w, err1.Error())
 		return
 	}
 
-	responseJSON(w, domainModel)
+	responseJSON(w, serviceModel)
 }
 
 
-func (d *Domain) Delete(c web.C, w http.ResponseWriter, r *http.Request) {
+func (d *ServiceAPI) Delete(c web.C, w http.ResponseWriter, r *http.Request) {
 	identifier := c.URLParams["id"]
 	err := service.Delete(d.Zookeeper, d.Config.DomainMapping.Zookeeper, identifier)
 	if err != nil {
@@ -84,18 +78,18 @@ func (d *Domain) Delete(c web.C, w http.ResponseWriter, r *http.Request) {
 }
 
 
-func extractDomainModel(r *http.Request) (DomainModel, error) {
-	var domainModel DomainModel
+func extractServiceModel(r *http.Request) (service.Service, error) {
+	var serviceModel service.Service
 	payload := make([]byte, r.ContentLength)
 	r.Body.Read(payload)
 	defer r.Body.Close()
 
-	err := json.Unmarshal(payload, &domainModel)
+	err := json.Unmarshal(payload, &serviceModel)
 	if err != nil {
-		return domainModel, errors.New("Unable to decode JSON request")
+		return serviceModel, errors.New("Unable to decode JSON request")
 	}
 
-	return domainModel, nil
+	return serviceModel, nil
 }
 
 

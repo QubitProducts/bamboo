@@ -22,7 +22,7 @@ type ZookeeperEvent struct {
 	EventType string
 }
 
-type DomainEvent struct {
+type ServiceEvent struct {
 	EventType string
 }
 
@@ -37,15 +37,14 @@ func (h *Handlers) MarathonEventHandler(event MarathonEvent) {
 	h.Conf.StatsD.Increment(1.0, "reload.marathon", 1)
 }
 
-func (h *Handlers) DomainEventHandler(event DomainEvent) {
+func (h *Handlers) ServiceEventHandler(event ServiceEvent) {
 	log.Println("Domain mapping: Stated changed")
 	handleHAPUpdate(h.Conf, h.Zookeeper)
 	h.Conf.StatsD.Increment(1.0, "reload.domain", 1)
 }
 
 func handleHAPUpdate(conf *configuration.Configuration, conn *zk.Conn) bool {
-	currentContent, err := ioutil.ReadFile(conf.HAProxy.OutputPath)
-	if err != nil { log.Panicf("Cannot read HAProxy cfg under OutputPath: %s", err) }
+	currentContent, _ := ioutil.ReadFile(conf.HAProxy.OutputPath)
 
 	templateContent, err := ioutil.ReadFile(conf.HAProxy.TemplatePath)
 	if err != nil { log.Panicf("Cannot read template file: %s", err) }
@@ -54,7 +53,9 @@ func handleHAPUpdate(conf *configuration.Configuration, conn *zk.Conn) bool {
 
 	newContent, err := writer.RenderTemplate(conf.HAProxy.TemplatePath, string(templateContent), templateData)
 
-	if (string(currentContent) != newContent) {
+	if err != nil { log.Fatalf("Template syntax error: \n %s", err ) }
+
+	if (currentContent == nil || string(currentContent) != newContent) {
 		err := ioutil.WriteFile(conf.HAProxy.OutputPath, []byte(newContent), 0666)
 		if err != nil { log.Fatalf("Failed to write template on path: %s", err) }
 

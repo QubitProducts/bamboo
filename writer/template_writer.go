@@ -3,23 +3,24 @@ package writer
 import (
 	"bytes"
 	"text/template"
+	"github.com/QubitProducts/bamboo/services/service"
 )
 
-func hasKey(data map[string]string, appId string) bool {
+func hasKey(data map[string]service.Service, appId string) bool {
 	_, exists := data[appId]
 	return exists
 }
 
-func getValue(data map[string]string, appId string) string {
-	value, _ := data[appId]
-	return value
+func getService(data map[string]service.Service, appId string) service.Service {
+	serviceModel, _ := data[appId]
+	return serviceModel
 }
 
 /*
 	Returns string content of a rendered template
 */
 func RenderTemplate(templateName string, templateContent string, data interface{}) (string, error) {
-	funcMap := template.FuncMap{ "hasKey": hasKey, "getValue": getValue }
+	funcMap := template.FuncMap{ "hasKey": hasKey,  "getService": getService }
 
 	tpl := template.Must(template.New(templateName).Funcs(funcMap).Parse(templateContent))
 

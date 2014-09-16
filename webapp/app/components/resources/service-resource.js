@@ -1,10 +1,10 @@
 module.exports = ["$resource", function ($resource) {
-  var index = $resource("/api/state/domains", {},
+  var index = $resource("/api/services", {},
     {
       get: { method: "GET" },
       create: { method: "POST" }
     });
-  var entity = $resource("/api/state/domains/:id", { id: "@id" }, {
+  var entity = $resource("/api/services/:id", { id: "@id" }, {
     update: { method: "PUT", params: { id: "@id" } },
     destroy: { method: "DELETE", params: { id: "@id"} }
   });

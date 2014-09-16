@@ -3,23 +3,18 @@ module.exports = function () {
     restrict: "AE",
     replace: true,
     scope: {
-      domainId: "=",
-      domainValue: "=",
-      domainApp: "=",
-      domainActionType: "=?"
+      serviceModel: "="
     },
     controller: ["$scope", function ($scope) {
 
       $scope.instancesCount = function () {
-        if ($scope.domainApp) {
-          return $scope.domainApp.Tasks.length;
+        if ($scope.serviceModel.app) {
+          return $scope.serviceModel.app.Tasks.length;
         }
 
         return "-";
       };
-
-
     }],
-    template: require("./domain-item.html")
+    template: require("./service-item.html")
   };
 };

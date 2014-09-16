@@ -1,20 +1,23 @@
-package domain
+package service
 
 import (
 	"github.com/samuel/go-zookeeper/zk"
 	conf "github.com/QubitProducts/bamboo/configuration"
 )
 
-func All(conn *zk.Conn, zkConf conf.Zookeeper) (map[string]string, error) {
+type Service struct {
+	Id string `param:"id"`
+	Acl string `param:"acl"`
+}
 
-	// TODO: ensure nested state is created
-	// check path exists
+func All(conn *zk.Conn, zkConf conf.Zookeeper) (map[string]Service, error) {
+
 	err := ensurePathExists(conn, zkConf.Path)
 	if err != nil {
 		return nil, err
 	}
 
-	domains := map[string]string{}
+	services := map[string]Service{}
 	keys, _, err2 := conn.Children(zkConf.Path)
 
 	if err2 != nil {
@@ -27,9 +30,9 @@ func All(conn *zk.Conn, zkConf conf.Zookeeper) (map[string]string, error) {
 			return nil, e
 			break
 		}
-		domains[childPath] = string(bite)
+		services[childPath] = Service{Id: childPath, Acl: string(bite)}
 	}
-	return domains, nil
+	return services, nil
 }
 
 /*

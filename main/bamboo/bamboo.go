@@ -50,29 +50,29 @@ func main() {
 	// Register handlers
 	handlers := event_bus.Handlers{ Conf: &conf, Zookeeper: zkConn }
 	eventBus.Register(handlers.MarathonEventHandler)
-	eventBus.Register(handlers.DomainEventHandler)
+	eventBus.Register(handlers.ServiceEventHandler)
 
 	// Start server
 	initServer(&conf, zkConn, eventBus)
 }
 
 func initServer(conf *configuration.Configuration, conn *zk.Conn, eventBus *event_bus.EventBus) {
-	stateAPI := api.State{Config: conf, Zookeeper: conn}
-	domainAPI := api.Domain{Config: conf, Zookeeper: conn}
-	eventSubAPI := api.EventSubscriptions{Conf: conf, EventBus: eventBus}
+	stateAPI := api.StateAPI{Config: conf, Zookeeper: conn}
+	serviceAPI := api.ServiceAPI{Config: conf, Zookeeper: conn}
+	eventSubAPI := api.EventSubscriptionAPI{Conf: conf, EventBus: eventBus}
 
 	conf.StatsD.Increment(1.0, "restart", 1)
 	// Status live information
 	goji.Get("/status", api.HandleStatus)
 
 	// State API
-	goji.Get("/api/state", stateAPI.Get)
+    goji.Get("/api/state", stateAPI.Get)
 
-	// Domains API
-	goji.Get("/api/state/domains", domainAPI.All)
-	goji.Post("/api/state/domains", domainAPI.Create)
-	goji.Delete("/api/state/domains/:id", domainAPI.Delete)
-	goji.Put("/api/state/domains/:id", domainAPI.Put)
+	// Service API
+	goji.Get("/api/services", serviceAPI.All)
+	goji.Post("/api/services", serviceAPI.Create)
+	goji.Delete("/api/services/:id", serviceAPI.Delete)
+	goji.Put("/api/services/:id", serviceAPI.Put)
 
 	goji.Post("/api/marathon/event_callback", eventSubAPI.Callback)
 
@@ -102,17 +102,17 @@ func createAndListen(conf configuration.Zookeeper) (chan zk.Event, *zk.Conn) {
 }
 
 func listenToZookeeper(conf configuration.Configuration, eventBus *event_bus.EventBus) *zk.Conn {
-	domainCh, domainConn := createAndListen(conf.DomainMapping.Zookeeper)
+	serviceCh, serviceConn := createAndListen(conf.DomainMapping.Zookeeper)
 
 	go func() {
 		for {
 			select {
-			case _ = <-domainCh:
-				eventBus.Publish(event_bus.DomainEvent{ EventType: "change" })
+			case _ = <-serviceCh:
+				eventBus.Publish(event_bus.ServiceEvent{ EventType: "change" })
 			}
 		}
 	}()
-	return domainConn
+	return serviceConn
 }
 
 
