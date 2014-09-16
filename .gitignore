@@ -2,6 +2,7 @@
 .idea
 .vendor
 config/private.json
+config/local.json
 Godeps/_workspace
 Godeps/Readme
 *.iml
