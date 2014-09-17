@@ -120,9 +120,15 @@ func createApps(tasksById map[string][]MarathonTask, marathonApps map[string]Mar
 				simpleTasks = append(simpleTasks, Task{ Host: task.Host, Port: task.Ports[0] })
 			}
 
+			// Try to handle old app id format without slashes
+			appPath := appId
+			if (!strings.HasPrefix(appId, "/")) {
+				appPath = "/" + appId
+			}
+
 			app := App {
 				// Since Marathon 0.7, apps are namespaced with path
-				Id: appId,
+				Id: appPath,
 				// Used for template
 				EscapedId: strings.Replace(appId, "/", "::", -1),
 				Tasks: simpleTasks,
