@@ -12,6 +12,7 @@ import (
 
 	conf "github.com/QubitProducts/bamboo/configuration"
 	service "github.com/QubitProducts/bamboo/services/service"
+	"io/ioutil"
 )
 
 type ServiceAPI struct {
@@ -80,9 +81,7 @@ func (d *ServiceAPI) Delete(c web.C, w http.ResponseWriter, r *http.Request) {
 
 func extractServiceModel(r *http.Request) (service.Service, error) {
 	var serviceModel service.Service
-	payload := make([]byte, r.ContentLength)
-	r.Body.Read(payload)
-	defer r.Body.Close()
+	payload, _ := ioutil.ReadAll(r.Body)
 
 	err := json.Unmarshal(payload, &serviceModel)
 	if err != nil {

@@ -6,7 +6,7 @@ import (
 	"github.com/QubitProducts/bamboo/configuration"
 	"github.com/QubitProducts/bamboo/services/haproxy"
 	"os/exec"
-	"github.com/QubitProducts/bamboo/writer"
+	"github.com/QubitProducts/bamboo/services/template"
 	"io/ioutil"
 )
 
@@ -51,7 +51,7 @@ func handleHAPUpdate(conf *configuration.Configuration, conn *zk.Conn) bool {
 
 	templateData := haproxy.GetTemplateData(conf, conn)
 
-	newContent, err := writer.RenderTemplate(conf.HAProxy.TemplatePath, string(templateContent), templateData)
+	newContent, err := template.RenderTemplate(conf.HAProxy.TemplatePath, string(templateContent), templateData)
 
 	if err != nil { log.Fatalf("Template syntax error: \n %s", err ) }
 

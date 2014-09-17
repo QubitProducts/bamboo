@@ -24,7 +24,7 @@
       color: rgba(0,0,0,0.5);
     }
 
-    &.service-action-type-domain {
+    &.service-action-type-service {
         color: rgba(0,0,0,0.5);
     }
 
@@ -46,7 +46,7 @@
     }
 
     .btn {
-      &.btn-danger, &.btn-create-domain {
+      &.btn-danger, &.btn-create-service {
         margin-left: 10px;
       }
     }

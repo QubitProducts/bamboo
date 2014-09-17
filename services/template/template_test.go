@@ -1,8 +1,7 @@
-package writer
+package template
 
 import (
 	"testing"
-
 	. "github.com/smartystreets/goconvey/convey"
 )
 

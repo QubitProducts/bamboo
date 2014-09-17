@@ -33,8 +33,8 @@ module.exports = ["Service", function (Service) {
         scope.showModal(modalOptions);
       };
 
-      scope.makeRequest = function (domainModel) {
-        return Service.update(domainModel);
+      scope.makeRequest = function (model) {
+        return Service.update(model);
       };
     }
   };

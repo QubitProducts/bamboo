@@ -6,7 +6,7 @@ module.exports = ["Service", function (Service) {
 
     template: function (element, attrs) {
       var cta = attrs.hasOwnProperty('text') ? attrs['text'] : '<i class="icon ion-plus"></i> New';
-      return '<button class="btn btn-primary btn-create-domain" ng-click="new()">' +
+      return '<button class="btn btn-primary btn-create-service" ng-click="new()">' +
         cta + '</button>';
     },
 

@@ -1,9 +1,9 @@
-var DomainListModule = require("./components/service-list/service-list.js");
-var DomainFormModule = require("./components/service-form/service-form.js");
+var ServiceListModule = require("./components/service-list/service-list.js");
+var ServiceFormModule = require("./components/service-form/service-form.js");
 
 var bambooApp = angular.module("bamboo", [
-    DomainListModule.name,
-    DomainFormModule.name
+    ServiceListModule.name,
+    ServiceFormModule.name
   ])
   .factory("State", require("./components/resources/state-resource"))
   .factory("Service", require("./components/resources/service-resource"))

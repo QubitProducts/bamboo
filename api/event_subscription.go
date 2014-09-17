@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"encoding/json"
+	"io/ioutil"
 )
 
 type EventSubscriptionAPI struct {
@@ -17,10 +18,8 @@ type EventSubscriptionAPI struct {
 
 func (sub *EventSubscriptionAPI) Callback(w http.ResponseWriter, r *http.Request) {
 	var event eb.MarathonEvent
-	payload := make([]byte, r.ContentLength)
-	r.Body.Read(payload)
-	defer r.Body.Close()
 
+	payload, _ := ioutil.ReadAll(r.Body)
 	err := json.Unmarshal(payload, &event)
 
 	if err != nil {

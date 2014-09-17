@@ -5,7 +5,7 @@ module.exports = function () {
     scope: {
       serviceId: "="
     },
-    controller: ["$scope", "Service", "$modal", "$rootScope", function ($scope, Domain, $modal, $rootScope) {
+    controller: ["$scope", "Service", "$modal", "$rootScope", function ($scope, Service, $modal, $rootScope) {
       $scope.actionName = "Delete It!";
 
       console.log($scope.serviceId);
@@ -21,7 +21,7 @@ module.exports = function () {
       };
 
       $scope.doAction = function () {
-        Domain.destroy({
+        Service.destroy({
             id: $scope.serviceId
           })
           .then(function () {
