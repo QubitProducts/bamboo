@@ -8,8 +8,6 @@ module.exports = function () {
     controller: ["$scope", "Service", "$modal", "$rootScope", function ($scope, Service, $modal, $rootScope) {
       $scope.actionName = "Delete It!";
 
-      console.log($scope.serviceId);
-
       $scope.showModal = function () {
         $scope.modal = $modal({
           title: "Are you sure?",

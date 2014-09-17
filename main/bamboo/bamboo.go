@@ -71,8 +71,8 @@ func initServer(conf *configuration.Configuration, conn *zk.Conn, eventBus *even
 	// Service API
 	goji.Get("/api/services", serviceAPI.All)
 	goji.Post("/api/services", serviceAPI.Create)
-	goji.Delete("/api/services/:id", serviceAPI.Delete)
 	goji.Put("/api/services/:id", serviceAPI.Put)
+	goji.Delete("/api/services/:id", serviceAPI.Delete)
 
 	goji.Post("/api/marathon/event_callback", eventSubAPI.Callback)
 

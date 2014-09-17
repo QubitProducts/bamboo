@@ -3,16 +3,15 @@ package api
 import (
 	"errors"
 	"encoding/json"
-	"fmt"
+	"net/url"
 	"net/http"
+	"io/ioutil"
 
 	"github.com/zenazn/goji/web"
 	"github.com/samuel/go-zookeeper/zk"
 
-
 	conf "github.com/QubitProducts/bamboo/configuration"
 	service "github.com/QubitProducts/bamboo/services/service"
-	"io/ioutil"
 )
 
 type ServiceAPI struct {
@@ -24,7 +23,6 @@ func (d *ServiceAPI) All(w http.ResponseWriter, r *http.Request) {
 	services, err := service.All(d.Zookeeper, d.Config.DomainMapping.Zookeeper)
 
 	if err != nil {
-		fmt.Println(err)
 		responseError(w, err.Error())
 		return
 	}
@@ -50,7 +48,7 @@ func (d *ServiceAPI) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (d *ServiceAPI) Put(c web.C, w http.ResponseWriter, r *http.Request) {
-	identifier := c.URLParams["id"]
+	identifier, _ := url.QueryUnescape(c.URLParams["id"])
 	serviceModel, err := extractServiceModel(r)
 	if err != nil {
 		responseError(w, err.Error())
@@ -68,7 +66,7 @@ func (d *ServiceAPI) Put(c web.C, w http.ResponseWriter, r *http.Request) {
 
 
 func (d *ServiceAPI) Delete(c web.C, w http.ResponseWriter, r *http.Request) {
-	identifier := c.URLParams["id"]
+	identifier, _ := url.QueryUnescape(c.URLParams["id"])
 	err := service.Delete(d.Zookeeper, d.Config.DomainMapping.Zookeeper, identifier)
 	if err != nil {
 		responseError(w, err.Error())

@@ -1,6 +1,9 @@
 package service
 
 import (
+	"log"
+	"net/url"
+
 	"github.com/samuel/go-zookeeper/zk"
 	conf "github.com/QubitProducts/bamboo/configuration"
 )
@@ -25,12 +28,14 @@ func All(conn *zk.Conn, zkConf conf.Zookeeper) (map[string]Service, error) {
 	}
 
 	for _, childPath := range keys {
-		bite, _, e := conn.Get(concatPath(zkConf.Path, childPath))
+		bite, _, e := conn.Get(zkConf.Path + "/" + childPath)
 		if e != nil {
 			return nil, e
 			break
 		}
-		services[childPath] = Service{Id: childPath, Acl: string(bite)}
+		appId, _ := unescapeSlashes(childPath)
+		log.Println(appId)
+		services[appId] = Service{Id: appId, Acl: string(bite)}
 	}
 	return services, nil
 }
@@ -69,7 +74,7 @@ func Delete(conn *zk.Conn, zkConf conf.Zookeeper, appId string) error {
 }
 
 func concatPath(parentPath string, appId string) string {
-	return parentPath + "/" + appId
+	return parentPath + "/" + escapeSlashes(appId)
 }
 
 func ensurePathExists(conn *zk.Conn, path string) error {
@@ -89,3 +94,13 @@ func ensurePathExists(conn *zk.Conn, path string) error {
 func defaultACL() []zk.ACL {
 	return []zk.ACL{zk.ACL{Perms: zk.PermAll, Scheme: "world", ID: "anyone"}}
 }
+
+func escapeSlashes(id string) string {
+	return url.QueryEscape(id)
+}
+
+func unescapeSlashes(id string) (string, error) {
+	return url.QueryUnescape(id)
+}
+
+

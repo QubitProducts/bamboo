@@ -3,29 +3,44 @@ package marathon
 import(
 	"net/http"
 	"io/ioutil"
-	"strings"
 	"encoding/json"
+	"strings"
 )
 
 // Describes an app process running
 type Task struct {
 	Host string
-	Port string
+	Port int
 }
 
 // An app may have multiple processes
 type App struct {
 	Id string
-	Port string
+	EscapedId string
 	HealthCheckPath string
 	Tasks []Task
 }
 
-type AppConfigResponse struct {
-	Apps []AppConfiguration `json:apps`
+
+type MarathonTasks struct {
+	Tasks []MarathonTask `json:tasks`
 }
 
-type AppConfiguration struct {
+type MarathonTask struct {
+	AppId string
+	Id    string
+	Host  string
+	Ports []int
+	startedAt string
+	stagedAt  string
+	version   string
+}
+
+type MarathonApps struct {
+	Apps []MarathonApp `json:apps`
+}
+
+type MarathonApp struct {
 	Id string `json:id`
 	HealthChecks []HealthChecks `json:healthChecks`
 }
@@ -34,16 +49,16 @@ type HealthChecks struct {
 	Path string `json:path`
 }
 
-func fetchAppConfiguration(endpoint string) (map[string]AppConfiguration, error) {
+func fetchMarathonApps(endpoint string) (map[string]MarathonApp, error) {
 	response, err := http.Get(endpoint + "/v2/apps")
 
 	if err != nil {
 		return nil, err
 	} else {
 		defer response.Body.Close()
-		var appResponse AppConfigResponse
+		var appResponse MarathonApps
 
-		contents, err := ioutil.ReadAll((response.Body))
+		contents, err := ioutil.ReadAll(response.Body)
 		if (err != nil) {
 			return nil, err
 		}
@@ -53,7 +68,7 @@ func fetchAppConfiguration(endpoint string) (map[string]AppConfiguration, error)
 			return nil, err
 		}
 
-		dataById := map[string]AppConfiguration{}
+		dataById := map[string]MarathonApp{}
 
 		for _, appConfig := range appResponse.Apps {
 			dataById[appConfig.Id] = appConfig
@@ -63,40 +78,57 @@ func fetchAppConfiguration(endpoint string) (map[string]AppConfiguration, error)
 	}
 }
 
-func fetchTasks(endpoint string) (string, error) {
+func fetchTasks(endpoint string) (map[string][]MarathonTask, error) {
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", endpoint + "/v2/tasks", nil)
-	req.Header.Add("Accept", "text/plain")
+	req.Header.Add("Accept", "application/json")
 	response, err := client.Do(req)
 
+	var tasks MarathonTasks
+
 	if err != nil {
-		return "", err
+		return nil, err
 	} else {
-		defer response.Body.Close()
 		contents, err := ioutil.ReadAll(response.Body)
-		if err != nil {
-			return "", err
+		defer response.Body.Close()
+		if err != nil { return nil, err }
+
+		err = json.Unmarshal(contents, &tasks)
+		if err != nil { return nil, err }
+
+		tasksById := map[string][]MarathonTask{}
+
+		for _, task := range tasks.Tasks {
+			if tasksById[task.AppId] == nil {
+				tasksById[task.AppId] = []MarathonTask{}
+			}
+			tasksById[task.AppId] = append(tasksById[task.AppId], task)
 		}
 
-		return string(contents), nil
+		return tasksById, nil
 	}
 }
 
-func parseApps(contents string, appConfiguration map[string]AppConfiguration) []App {
-	lines := strings.Split(contents, "\n")
+func createApps(tasksById map[string][]MarathonTask, marathonApps map[string]MarathonApp) []App {
+
 	apps := []App{}
-	for _, line := range lines {
-		if len(line) > 0 {
-			appId, appPort, tasks := parseTasks(line)
+
+	for appId, tasks  := range tasksById {
+			simpleTasks := []Task{}
+
+			for _, task := range tasks {
+				simpleTasks = append(simpleTasks, Task{ Host: task.Host, Port: task.Ports[0] })
+			}
 
 			app := App {
+				// Since Marathon 0.7, apps are namespaced with path
 				Id: appId,
-				Port: appPort,
-				Tasks: tasks,
-				HealthCheckPath: parseHealthCheckPath(appConfiguration[appId].HealthChecks),
+				// Used for template
+				EscapedId: strings.Replace(appId, "/", "::", -1),
+				Tasks: simpleTasks,
+				HealthCheckPath: parseHealthCheckPath(marathonApps[appId].HealthChecks),
 			}
 			apps = append(apps, app)
-		}
 	}
 	return apps
 }
@@ -108,22 +140,6 @@ func parseHealthCheckPath(checks []HealthChecks) string {
 	return ""
 }
 
-func parseTasks(line string) (appId string, appPort string, tasks []Task)  {
-	columns := strings.Split(line, "\t")
-	appId = columns[0]
-	appPort = columns[1]
-	tasks = []Task{}
-
-	for _, process := range columns[2:] {
-		if len(process) > 0 {
-			values := strings.Split(process, ":")
-			tasks = append(tasks, Task { Host: values[0], Port: values[1] })
-		}
-	}
-
-	return appId, appPort, tasks
-}
-
 /*
 	Apps returns a struct that describes Marathon current app and their
 	sub tasks information.
@@ -132,12 +148,12 @@ func parseTasks(line string) (appId string, appPort string, tasks []Task)  {
 		endpoint: Marathon HTTP endpoint, e.g. http://localhost:8080
 */
 func FetchApps(endpoint string) ([]App, error) {
-	taskContents, err := fetchTasks(endpoint)
+	tasks, err := fetchTasks(endpoint)
 	if err != nil { return nil, err }
 
-	appConfiguration, err := fetchAppConfiguration(endpoint)
+	marathonApps, err := fetchMarathonApps(endpoint)
 	if err != nil { return nil, err }
 
-	apps := parseApps(taskContents, appConfiguration)
+	apps := createApps(tasks, marathonApps)
 	return apps, nil
 }

@@ -2,12 +2,19 @@ module.exports = ["$resource", function ($resource) {
   var index = $resource("/api/services", {},
     {
       get: { method: "GET" },
-      create: { method: "POST" }
+      create: { method: "POST" },
+
     });
+
   var entity = $resource("/api/services/:id", { id: "@id" }, {
-    update: { method: "PUT", params: { id: "@id" } },
+    update: { method: "PUT", params: { id: "@id"} },
     destroy: { method: "DELETE", params: { id: "@id"} }
   });
+
+  var encodeId = function (params) {
+    params.id = encodeURIComponent(params.id);
+    return params;
+  };
 
   return {
     all: function () {
@@ -19,11 +26,11 @@ module.exports = ["$resource", function ($resource) {
     },
 
     update: function (params) {
-      return entity.update(params).$promise;
+      return entity.update(encodeId(params)).$promise;
     },
 
     destroy: function (params) {
-      return entity.destroy(params).$promise;
+      return entity.destroy(encodeId(params)).$promise;
     }
   }
 }];
