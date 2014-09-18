@@ -9,9 +9,10 @@ import (
 )
 
 type templateData struct {
-	Apps    []marathon.App
+	Apps    marathon.AppList
 	Services map[string]service.Service
 }
+
 
 func GetTemplateData(config *conf.Configuration, conn *zk.Conn) interface{} {
 

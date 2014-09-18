@@ -5,6 +5,7 @@ import(
 	"io/ioutil"
 	"encoding/json"
 	"strings"
+	"sort"
 )
 
 // Describes an app process running
@@ -21,9 +22,25 @@ type App struct {
 	Tasks []Task
 }
 
+type AppList []App
+
+func (slice AppList) Len() int {
+	return len(slice)
+}
+
+func (slice AppList) Less(i, j int) bool {
+	return slice[i].Id < slice[j].Id
+}
+
+func (slice AppList) Swap(i, j int) {
+	slice[i], slice[j] = slice[j], slice[i]
+}
+
+
+type MarathonTaskList []MarathonTask
 
 type MarathonTasks struct {
-	Tasks []MarathonTask `json:tasks`
+	Tasks MarathonTaskList `json:tasks`
 }
 
 type MarathonTask struct {
@@ -31,9 +48,21 @@ type MarathonTask struct {
 	Id    string
 	Host  string
 	Ports []int
-	startedAt string
-	stagedAt  string
-	version   string
+	StartedAt string
+	StagedAt  string
+	Version   string
+}
+
+func (slice MarathonTaskList) Len() int {
+	return len(slice)
+}
+
+func (slice MarathonTaskList) Less(i, j int) bool {
+	return slice[i].StagedAt < slice[j].StagedAt
+}
+
+func (slice MarathonTaskList) Swap(i, j int) {
+	slice[i], slice[j] = slice[j], slice[i]
 }
 
 type MarathonApps struct {
@@ -96,9 +125,11 @@ func fetchTasks(endpoint string) (map[string][]MarathonTask, error) {
 		err = json.Unmarshal(contents, &tasks)
 		if err != nil { return nil, err }
 
-		tasksById := map[string][]MarathonTask{}
+		taskList := tasks.Tasks
+		sort.Sort(taskList)
 
-		for _, task := range tasks.Tasks {
+		tasksById := map[string][]MarathonTask{}
+		for _, task := range taskList {
 			if tasksById[task.AppId] == nil {
 				tasksById[task.AppId] = []MarathonTask{}
 			}
@@ -109,9 +140,9 @@ func fetchTasks(endpoint string) (map[string][]MarathonTask, error) {
 	}
 }
 
-func createApps(tasksById map[string][]MarathonTask, marathonApps map[string]MarathonApp) []App {
+func createApps(tasksById map[string][]MarathonTask, marathonApps map[string]MarathonApp) AppList {
 
-	apps := []App{}
+	apps := AppList{}
 
 	for appId, tasks  := range tasksById {
 			simpleTasks := []Task{}
@@ -153,7 +184,7 @@ func parseHealthCheckPath(checks []HealthChecks) string {
 	Parameters:
 		endpoint: Marathon HTTP endpoint, e.g. http://localhost:8080
 */
-func FetchApps(endpoint string) ([]App, error) {
+func FetchApps(endpoint string) (AppList, error) {
 	tasks, err := fetchTasks(endpoint)
 	if err != nil { return nil, err }
 
@@ -161,5 +192,6 @@ func FetchApps(endpoint string) ([]App, error) {
 	if err != nil { return nil, err }
 
 	apps := createApps(tasks, marathonApps)
+	sort.Sort(apps)
 	return apps, nil
 }
