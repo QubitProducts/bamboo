@@ -2,7 +2,7 @@ package configuration
 
 type Bamboo struct {
 	// Service host
-	Host string
+	Endpoint string
 
 	// Routing configuration storage
 	Zookeeper Zookeeper
