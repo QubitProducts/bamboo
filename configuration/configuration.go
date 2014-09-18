@@ -3,8 +3,8 @@ package configuration
 import (
 	"encoding/json"
 	"io/ioutil"
-	"os"
 	"log"
+	"os"
 )
 
 var logger = log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lshortfile)
@@ -49,7 +49,7 @@ func FromFile(filePath string) (Configuration, error) {
 
 	setValueFromEnv(&conf.Bamboo.Host, "BAMBOO_HOST")
 	setValueFromEnv(&conf.Bamboo.Zookeeper.Host, "BAMBOO_ZK_HOST")
-	setValueFromEnv(&conf.Bamboo.Zookeeper.Path, "DOMAIN_ZK_PATH")
+	setValueFromEnv(&conf.Bamboo.Zookeeper.Path, "BAMBOO_ZK_PATH")
 
 	setValueFromEnv(&conf.HAProxy.TemplatePath, "HAPROXY_TEMPLATE_PATH")
 	setValueFromEnv(&conf.HAProxy.OutputPath, "HAPROXY_OUTPUT_PATH")
