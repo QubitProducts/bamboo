@@ -7,30 +7,35 @@ HAProxy for web services deployed on [Apache Mesos](http://mesos.apache.org) and
 
 It features:
 
-* User interface for configuring DNS mapping to Marathon ID
-* Rest API for configuring DNS mapping; when application deployment in Marathon is automated and work with other DNS managing services, API is handy
-* Auto configure HAProxy configuration file based your template; you can provision your own template in production to enable ssl and HAProxy stats interface, or configuring different load balance strategy
+* User interface for configuring HAProxy ACL rules for each Marathon application
+* Rest API for configuring proxy ACL rules
+* Auto configure HAProxy configuration file based your template; you can provision your own template in production to enable SSL and HAProxy stats interface, or configuring different load balance strategy
 * Optionally hanldes health check endpoint if Marathon app is configured with [Healthchecks](https://mesosphere.github.io/marathon/docs/health-checks.html)
 * Daemon itself is stateless; enables horizontal replication and scalability
 * Developed in Golang, deployment on HAProxy instance has no additional dependency
-* Optionally integrates with StatsD to monitor configuration reload event  
+* Optionally integrates with StatsD to monitor configuration reload event
 
 
-### Compatibility and next release:
+### Compatibility
 
-We tested on Marathon 0.6.1 and Mesos 0.19 on production. 
+Bamboo v0.1.1 supports Marathon 0.6 and Mesos 0.19.x
 
-There will be a release soon to support Marathon 0.7 with a lot of feature and performance improvements, including support mixed non-DNS, DNS and custom HAProxy frontend acl rules. Be prepared! 
+Bamboo v0.2.0 supports Marathon 0.7 (with [http_callback enabled](https://mesosphere.github.io/marathon/docs/rest-api.html#event-subscriptions)) and Mesos 0.20.x. Since v0.2.0, Bamboo supports both DNS and non-DNS proxy ACL rules.
 
 
-![user-interface](https://cloud.githubusercontent.com/assets/37033/4110199/a6226b8e-31ee-11e4-9734-68e0da00767c.png)
+## Deployment Guide
+
+You can deploy Bamboo with HAProxy on each Mesos slave. Each web service being allocated on Mesos Slave can discover services via localhost or domain you assigned by ACL rules. Alternatively, you can deploy Bamboo and HAProxy on separate instances, which means you need to loadbalance HAProxy cluster.
+
+![bamboo-setup-guide](https://cloud.githubusercontent.com/assets/37033/4110199/a6226b8e-31ee-11e4-9734-68e0da00767c.png)
 
 ## User Interface
 
-If you have very small scale web services to manage, UI is useful to manage and visualize current state of DNS mapping.
-You can find out if DNS is assigned or missing from the interface. Of course, you can configure HAProxy template to load balance Bamboo. 
+UI is useful to manage and visualize current state of proxy rules. Of course, you can configure HAProxy template to load balance Bamboo.
 
-![user-interface](https://cloud.githubusercontent.com/assets/37033/4109769/318f2ad2-31e9-11e4-8f5f-b6a3368412b9.png)
+![user-interface-list](https://cloud.githubusercontent.com/assets/37033/4320901/527988dc-3f3b-11e4-8672-666605eb1ddf.png)
+
+![user interface](https://cloud.githubusercontent.com/assets/37033/4320873/2ac65c48-3f3b-11e4-969e-52381dd33aae.png)
 
 ## StatsD Monitoring
 
@@ -60,17 +65,23 @@ This section tries to explain usage in code comment style:
       "ReportingDelay": 5
     }
   },
-   
-  // DNS mapping information is stored in Zookeeper
-  // Bamboo will create this path if it does not already exist
-  "DomainMapping": {
+
+  "Bamboo": {
+
+    // Bamboo's HTTP address can be accessed by Marathon
+    // This is used for Marathon HTTP callback
+    "Host": "http://localhost:8000",
+
+    // Proxy setting information is stored in Zookeeper
+    // Bamboo will create this path if it does not already exist
     "Zookeeper": {
       // Use the same ZK setting if you run on the same ZK cluster
       "Host": "zk01.example.com:2812,zk02.example.com:2812",
       "Path": "/marathon-haproxy/state",
       "ReportingDelay": 5
     }
-  },
+  }
+  
   
   // Make sure using absolute path on production
   "HAProxy": {
@@ -101,8 +112,9 @@ Environment Variable | Corresponds To
 `MARATHON_ZK_HOST` | Marathon.Zookeeper.Host
 `MARATHON_ZK_PATH` | Marathon.Zookeeper.Path
 `MARATHON_ENDPOINT` | Marathon.Endpoint
-`DOMAIN_ZK_HOST` | DomainMapping.Zookeeper.Host
-`DOMAIN_ZK_PATH` | DomainMapping.Zookeeper.Path
+`BAMBOO_HOST` | Bamboo.Host
+`BAMBOO_ZK_HOST` | Bamboo.Zookeeper.Host
+`BAMBOO_ZK_PATH` | Bamboo.Zookeeper.Path
 `HAPROXY_TEMPLATE_PATH` | HAProxy.TemplatePath
 `HAPROXY_OUTPUT_PATH` | HAProxy.OutputPath
 `HAPROXY_RELOAD_CMD` | HAProxy.ReloadCommand
@@ -110,33 +122,41 @@ Environment Variable | Corresponds To
 
 ## REST APIs
 
-POST /api/state/domains
 
-Creates mapping from Marathon application ID to a DNS
+#### GET /api/state
+
+Shows the data structure used for rendering template
 
 ```bash
-curl -i -X POST -d '{"id":"app-1","value":"app1.example.com"}' http://localhost:8000/api/state/domains
+curl -i http://localhost:8000/api/state
+```
+
+#### POST /api/services
+
+Creates a service configuration for a Marathon application ID
+
+```bash
+curl -i -X POST -d '{"id":"/app-1","acl":"hdr(host) -i app-1.example.com"}' http://localhost:8000/api/services
+```
+
+#### PUT /api/services/:id
+
+Updates an existing service configuraiton for a Marathon application. `:id` is  URI encoded Marathon application ID
+
+```bash
+curl -i -X PUT -d '{"id":"/app-1", "acl":"path_beg -i /group/app-1"}' http://localhost:8000/api/services/%2Fapp-1
 ```
 
 
-PUT /api/state/domains/:id
+#### DELETE /api/services/:id
 
-Updates mapping of an existing Marathon application ID to a new DNS
-
-```bash
-curl -i -X PUT -d '{"id":"app-1","value":"app1-beta.example.com"}' http://localhost:8000/api/state/domains/app-1
-```
-
-
-DELETE /api/state/domains/:id
-
-Deletes mapping of an existing Marathon ID DNS mapping
+Deletes an existing service configuration. `:id` is  URI encoded Marathon application ID
 
 ```bash
-curl -i -X DELETE http://localhost:8000/api/state/domains/app-1
+curl -i -X DELETE http://localhost:8000/api/services/%2Fapp-1
 ```
 
-GET /status
+#### GET /status
 
 Bamboo webapp's healthcheck point
 
@@ -189,8 +209,9 @@ docker run -t -i --rm -p 8000:8000 -p 80:80 \
     -e MARATHON_ZK_HOST=zk:2181 \
     -e MARATHON_ZK_PATH=/marathon \
     -e MARATHON_ENDPOINT=http://marathon:8080 \
-    -e DOMAIN_ZK_HOST=zk:2181 \
-    -e DOMAIN_ZK_PATH=/bamboo \
+    -e BAMBOO_HOST=http://bamboo:8000 \
+    -e BAMBOO_ZK_HOST=zk:2181 \
+    -e BAMBOO_ZK_PATH=/bamboo \
     bamboo -bind=":8000"
 ````
 

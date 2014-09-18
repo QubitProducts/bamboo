@@ -3,32 +3,29 @@ module.exports = function () {
     restrict: "AE",
     template:  '<button class="btn btn-danger" ng-click="showModal()" title="Delete"><i class="icon ion-android-trash"></i></button>',
     scope: {
-      domainId: "=",
-      domainValue: "="
+      serviceId: "="
     },
-    controller: ["$scope", "Domain", "$modal", "$rootScope", function ($scope, Domain, $modal, $rootScope) {
+    controller: ["$scope", "Service", "$modal", "$rootScope", function ($scope, Service, $modal, $rootScope) {
       $scope.actionName = "Delete It!";
 
       $scope.showModal = function () {
         $scope.modal = $modal({
           title: "Are you sure?",
           template: "bamboo/modal-confirm",
-          content: "Delete Marathon ID " +
-            $scope.domainId + " mapping to " + $scope.domainValue,
+          content: "Delete Marathon ID " + $scope.serviceId,
           scope: $scope,
           show: true
         });
       };
 
       $scope.doAction = function () {
-        Domain.destroy({
-            id: $scope.domainId,
-            value: $scope.domainValue
+        Service.destroy({
+            id: $scope.serviceId
           })
           .then(function () {
             $scope.modal.hide();
             $scope.modal = null;
-            $rootScope.$broadcast("domains.reset");
+            $rootScope.$broadcast("services.reset");
           });
       };
     }]

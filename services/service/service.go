@@ -1,20 +1,25 @@
-package domain
+package service
 
 import (
+	"net/url"
+
 	"github.com/samuel/go-zookeeper/zk"
 	conf "github.com/QubitProducts/bamboo/configuration"
 )
 
-func All(conn *zk.Conn, zkConf conf.Zookeeper) (map[string]string, error) {
+type Service struct {
+	Id string `param:"id"`
+	Acl string `param:"acl"`
+}
 
-	// TODO: ensure nested state is created
-	// check path exists
+func All(conn *zk.Conn, zkConf conf.Zookeeper) (map[string]Service, error) {
+
 	err := ensurePathExists(conn, zkConf.Path)
 	if err != nil {
 		return nil, err
 	}
 
-	domains := map[string]string{}
+	services := map[string]Service{}
 	keys, _, err2 := conn.Children(zkConf.Path)
 
 	if err2 != nil {
@@ -22,14 +27,15 @@ func All(conn *zk.Conn, zkConf conf.Zookeeper) (map[string]string, error) {
 	}
 
 	for _, childPath := range keys {
-		bite, _, e := conn.Get(concatPath(zkConf.Path, childPath))
+		bite, _, e := conn.Get(zkConf.Path + "/" + childPath)
 		if e != nil {
 			return nil, e
 			break
 		}
-		domains[childPath] = string(bite)
+		appId, _ := unescapeSlashes(childPath)
+		services[appId] = Service{Id: appId, Acl: string(bite)}
 	}
-	return domains, nil
+	return services, nil
 }
 
 /*
@@ -66,7 +72,7 @@ func Delete(conn *zk.Conn, zkConf conf.Zookeeper, appId string) error {
 }
 
 func concatPath(parentPath string, appId string) string {
-	return parentPath + "/" + appId
+	return parentPath + "/" + escapeSlashes(appId)
 }
 
 func ensurePathExists(conn *zk.Conn, path string) error {
@@ -86,3 +92,13 @@ func ensurePathExists(conn *zk.Conn, path string) error {
 func defaultACL() []zk.ACL {
 	return []zk.ACL{zk.ACL{Perms: zk.PermAll, Scheme: "world", ID: "anyone"}}
 }
+
+func escapeSlashes(id string) string {
+	return url.QueryEscape(id)
+}
+
+func unescapeSlashes(id string) (string, error) {
+	return url.QueryUnescape(id)
+}
+
+

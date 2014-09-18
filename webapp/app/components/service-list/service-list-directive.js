@@ -10,32 +10,32 @@ module.exports = ["State", "$rootScope", function (State, $rootScope) {
           var appIds  = _.keys(appsMap);
           var servicesKeys = _.keys(payload.Services);
 
-          var domains = _.map(_.union(appIds, servicesKeys), function (id) {
+          var services = _.map(_.union(appIds, servicesKeys), function (id) {
             var actionType;
             var app = appsMap[id];
-            var domainValue = payload.Services[id];
+            var serviceModel = payload.Services[id];
 
-
-            if (app && domainValue !== undefined) {
+            // Add required action
+            if (app && serviceModel !== undefined) {
               actionType = "default";
             } else {
               if (!app) {
                 actionType = "marathon";
-              } else if (!domainValue) {
-                actionType = "domain";
+              } else if (!serviceModel) {
+                actionType = "service";
               }
             }
 
             return {
               id: id,
-              value: domainValue,
+              service: serviceModel,
               app: app,
               actionType: actionType
             };
           });
 
-          scope.domains = _.sortBy(domains, function (d) {
-            if (d.actionType === "domain") {
+          scope.services = _.sortBy(services, function (d) {
+            if (d.actionType === "service") {
               return 0;
             } else if (d.actionType === "marathon") {
               return -1;
@@ -47,9 +47,9 @@ module.exports = ["State", "$rootScope", function (State, $rootScope) {
 
       fetch();
 
-      $rootScope.$on("domains.reset", fetch);
+      $rootScope.$on("services.reset", fetch);
     },
 
-    template: require("./domain-list.html")
+    template: require("./service-list.html")
   };
 }];

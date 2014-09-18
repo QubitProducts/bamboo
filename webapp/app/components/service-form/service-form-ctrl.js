@@ -17,7 +17,7 @@ module.exports = ["$scope", "$modal", "$rootScope", function ($scope, $modal, $r
     $scope.loading = false;
     $scope.modal.hide();
     $scope.modal = null;
-    $rootScope.$broadcast("domains.reset");
+    $rootScope.$broadcast("services.reset");
   };
 
   var handleError = function (payload) {
@@ -29,8 +29,8 @@ module.exports = ["$scope", "$modal", "$rootScope", function ($scope, $modal, $r
     resetError();
     $scope.loading = true;
     $scope.makeRequest({
-        id: $scope.domain.id,
-        value: $scope.domain.value
+        id: $scope.service.id,
+        acl: $scope.service.acl
       })
      .then(handleSuccess, handleError);
   };

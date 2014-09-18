@@ -1,0 +1,23 @@
+<div class="row service-item service-action-type-{{serviceModel.actionType}}">
+    <span ng-bind="serviceModel.id" class="col-xs-4"></span>
+    <span ng-bind="serviceModel.service.Acl" class="col-xs-4"></span>
+
+    <span ng-bind="instancesCount()" class="col-xs-1 col-instances-count"></span>
+
+    <span class="col-xs-3 item-actions" ng-switch="serviceModel.actionType">
+        <span ng-switch-when="default" class="item-actions-group">
+            <service-edit-btn service-model="serviceModel"></service-edit-btn>
+            <service-delete-btn service-id="serviceModel.service.Id"></service-delete-btn>
+        </span>
+
+        <span ng-switch-when="marathon" class="item-actions-group">
+            <i class="message"> Missing app in Marathon </i>
+            <service-delete-btn service-id="serviceModel.service.Id"></service-delete-btn>
+        </span>
+
+        <span ng-switch-when="service" class="item-actions-group">
+            <i class="message"> Using default proxy rule</i>
+            <service-new-btn service-model="serviceModel" title="Create a new service mapping to Marathon ID" text="<i class='icon ion-plus-round'><i>" ></service-new-btn>
+        </span>
+    </span>
+</div>

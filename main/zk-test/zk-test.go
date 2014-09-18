@@ -39,7 +39,7 @@ func main() {
 		panic(err)
 	}
 
-	evts, quit := qzk.ListenToZooKeeper(config.DomainMapping.Zookeeper, true)
+	evts, quit := qzk.ListenToZooKeeper(config.Bamboo.Zookeeper, true)
 	go showEvents(evts)
 	reader := bufio.NewReader(os.Stdin)
 	_, _ = reader.ReadString('\n')

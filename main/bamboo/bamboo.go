@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/exec"
 	"time"
 
 	"github.com/samuel/go-zookeeper/zk"
@@ -16,7 +15,7 @@ import (
 	"github.com/QubitProducts/bamboo/api"
 	"github.com/QubitProducts/bamboo/configuration"
 	"github.com/QubitProducts/bamboo/qzk"
-	"github.com/QubitProducts/bamboo/services/haproxy"
+	"github.com/QubitProducts/bamboo/services/event_bus"
 )
 
 /*
@@ -34,84 +33,88 @@ func main() {
 	flag.Parse()
 	configureLog()
 
+	// Load configuration
 	conf, err := configuration.FromFile(configFilePath)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	eventBus := event_bus.New()
+
+	// Create StatsD client
 	conf.StatsD.CreateClient()
 
-	conns := listenToZookeeper(conf)
+	// Create Zookeeper connection
+	zkConn := listenToZookeeper(conf, eventBus)
 
-	initServer(conf, conns)
+	// Register handlers
+	handlers := event_bus.Handlers{ Conf: &conf, Zookeeper: zkConn }
+	eventBus.Register(handlers.MarathonEventHandler)
+	eventBus.Register(handlers.ServiceEventHandler)
+
+	// Start server
+	initServer(&conf, zkConn, eventBus)
 }
 
-func initServer(conf configuration.Configuration, conns Conns) {
-	stateAPI := api.State{Config: conf, Zookeeper: conns.DomainMapping}
-	domainAPI := api.Domain{Config: conf, Zookeeper: conns.DomainMapping}
+func initServer(conf *configuration.Configuration, conn *zk.Conn, eventBus *event_bus.EventBus) {
+	stateAPI := api.StateAPI{Config: conf, Zookeeper: conn}
+	serviceAPI := api.ServiceAPI{Config: conf, Zookeeper: conn}
+	eventSubAPI := api.EventSubscriptionAPI{Conf: conf, EventBus: eventBus}
+
 	conf.StatsD.Increment(1.0, "restart", 1)
 	// Status live information
 	goji.Get("/status", api.HandleStatus)
 
 	// State API
-	goji.Get("/api/state", stateAPI.Get)
+    goji.Get("/api/state", stateAPI.Get)
 
-	// Domains API
-	goji.Get("/api/state/domains", domainAPI.All)
-	goji.Post("/api/state/domains", domainAPI.Create)
-	goji.Delete("/api/state/domains/:id", domainAPI.Delete)
-	goji.Put("/api/state/domains/:id", domainAPI.Put)
+	// Service API
+	goji.Get("/api/services", serviceAPI.All)
+	goji.Post("/api/services", serviceAPI.Create)
+	goji.Put("/api/services/:id", serviceAPI.Put)
+	goji.Delete("/api/services/:id", serviceAPI.Delete)
+
+	goji.Post("/api/marathon/event_callback", eventSubAPI.Callback)
 
 	// Static pages
 	goji.Get("/*", http.FileServer(http.Dir("./webapp")))
 
+	registerMarathonEvent(conf)
+
 	goji.Serve()
 }
 
-type Conns struct {
-	Marathon      *zk.Conn
-	DomainMapping *zk.Conn
+func registerMarathonEvent(conf *configuration.Configuration) {
+	url := conf.Marathon.Endpoint + "/v2/eventSubscriptions?callbackUrl=" + conf.Bamboo.Host + "/api/marathon/event_callback"
+	client := &http.Client{}
+	req, _ := http.NewRequest("POST", url, nil)
+	req.Header.Add("Content-Type", "application/json")
+	client.Do(req)
 }
 
-func listenToZookeeper(conf configuration.Configuration) Conns {
-	marathonCh, marathonConn := createAndListen(conf.Marathon.Zookeeper)
-	domainCh, domainConn := createAndListen(conf.DomainMapping.Zookeeper)
+func createAndListen(conf configuration.Zookeeper) (chan zk.Event, *zk.Conn) {
+	conn, _, err := zk.Connect(conf.ConnectionString(), time.Second*10)
+
+	if err != nil { log.Panic(err) }
+
+	ch, _ := qzk.ListenToConn(conn, conf.Path, true, conf.Delay())
+	return ch, conn
+}
+
+func listenToZookeeper(conf configuration.Configuration, eventBus *event_bus.EventBus) *zk.Conn {
+	serviceCh, serviceConn := createAndListen(conf.Bamboo.Zookeeper)
 
 	go func() {
 		for {
 			select {
-			case _ = <-marathonCh:
-				log.Println("Marathon: State changed")
-				handleHAPUpdate(conf, marathonConn)
-				execCommand(conf.HAProxy.ReloadCommand)
-				conf.StatsD.Increment(1.0, "reload.marathon", 1)
-			case _ = <-domainCh:
-				log.Println("Domain mapping: Stated changed")
-				handleHAPUpdate(conf, domainConn)
-				execCommand(conf.HAProxy.ReloadCommand)
-				conf.StatsD.Increment(1.0, "reload.domain", 1)
+			case _ = <-serviceCh:
+				eventBus.Publish(event_bus.ServiceEvent{ EventType: "change" })
 			}
 		}
 	}()
-
-	return Conns{marathonConn, domainConn}
+	return serviceConn
 }
 
-func handleHAPUpdate(conf configuration.Configuration, conn *zk.Conn) {
-	err := haproxy.WriteHAProxyConfig(conf.HAProxy, haproxy.GetTemplateData(conf, conn))
-	if err != nil {
-		log.Panic(err)
-	}
-	log.Println("HAProxy: Configuration updated")
-}
-
-func execCommand(cmd string) {
-	_, err := exec.Command("sh", "-c", cmd).Output()
-	if err != nil {
-		log.Println(err.Error())
-	}
-	log.Printf("Exec cmd: %s \n", cmd)
-}
 
 func configureLog() {
 	if len(logPath) > 0 {
@@ -124,16 +127,4 @@ func configureLog() {
 			MaxAge:     28,
 		}, os.Stdout))
 	}
-}
-
-func createAndListen(conf configuration.Zookeeper) (chan zk.Event, *zk.Conn) {
-	conn, _, err := zk.Connect(conf.ConnectionString(), time.Second*10)
-
-	if err != nil {
-		log.Panic(err)
-	}
-
-	ch, _ := qzk.ListenToConn(conn, conf.Path, true, conf.Delay())
-
-	return ch, conn
 }

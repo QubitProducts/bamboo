@@ -1,31 +1,31 @@
-module.exports = ["Domain", function (Domain) {
+module.exports = ["Service", function (Service) {
   return {
     restrict: "AE",
-    controller: require("./domain-form-ctrl"),
+    controller: require("./service-form-ctrl.js"),
 
 
     template: function (element, attrs) {
       var cta = attrs.hasOwnProperty('text') ? attrs['text'] : '<i class="icon ion-plus"></i> New';
-      return '<button class="btn btn-primary btn-create-domain" ng-click="new()">' +
+      return '<button class="btn btn-primary btn-create-service" ng-click="new()">' +
         cta + '</button>';
     },
 
     scope: {
-      domainId: "=?"
+      serviceModel: "=?"
     },
 
     link: function (scope) {
 
       scope.actionName = "Create";
-      scope.domain = {
-        id: scope.domainId || "",
-        value: ""
+      scope.service = {
+        id: scope.serviceModel ? (scope.serviceModel.id || "") : "",
+        acl: ""
       };
 
       var modalOptions = {
-        title: "Create new mapping",
+        title: "Create new service configuration",
         template: "bamboo/modal-confirm",
-        contentTemplate: "bamboo/domain-form",
+        contentTemplate: "bamboo/service-form",
         scope: scope,
         animation: "am-fade-and-scale",
         show: false,
@@ -36,8 +36,8 @@ module.exports = ["Domain", function (Domain) {
         scope.showModal(modalOptions);
       };
 
-      scope.makeRequest = function (domainModel) {
-        return Domain.create(domainModel);
+      scope.makeRequest = function (serviceModel) {
+        return Service.create(serviceModel);
       };
     }
   };

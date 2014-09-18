@@ -1,8 +1,8 @@
 
-.domain-list {
+.service-list {
   background: white;
 
-  .domain-list-title {
+  .service-list-title {
     padding: 5px 0px;
     font-weight: bold;
     vertical-align: text-bottom;
@@ -15,20 +15,20 @@
     }
   }
 
-  .domain-item {
+  .service-item {
     vertical-align: text-bottom;
     border-bottom: 1px solid #CCC;
     padding: 5px 0px;
 
-    &.domain-action-type-marathon {
+    &.service-action-type-marathon {
       color: rgba(0,0,0,0.5);
     }
 
-    &.domain-action-type-domain {
+    &.service-action-type-service {
         color: rgba(0,0,0,0.5);
     }
 
-    &.domain-action-type-default {
+    &.service-action-type-default {
       background: rgba(103, 164, 111, 0.3);
     }
 
@@ -46,7 +46,7 @@
     }
 
     .btn {
-      &.btn-danger, &.btn-create-domain {
+      &.btn-danger, &.btn-create-service {
         margin-left: 10px;
       }
     }
