@@ -20,7 +20,7 @@ type ServiceAPI struct {
 }
 
 func (d *ServiceAPI) All(w http.ResponseWriter, r *http.Request) {
-	services, err := service.All(d.Zookeeper, d.Config.DomainMapping.Zookeeper)
+	services, err := service.All(d.Zookeeper, d.Config.Bamboo.Zookeeper)
 
 	if err != nil {
 		responseError(w, err.Error())
@@ -38,7 +38,7 @@ func (d *ServiceAPI) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err2 := service.Create(d.Zookeeper, d.Config.DomainMapping.Zookeeper, serviceModel.Id, serviceModel.Acl)
+	_, err2 := service.Create(d.Zookeeper, d.Config.Bamboo.Zookeeper, serviceModel.Id, serviceModel.Acl)
 	if err2 != nil {
 		responseError(w, "Marathon ID might already exist")
 		return
@@ -55,7 +55,7 @@ func (d *ServiceAPI) Put(c web.C, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err1 := service.Put(d.Zookeeper, d.Config.DomainMapping.Zookeeper, identifier, serviceModel.Acl)
+	_, err1 := service.Put(d.Zookeeper, d.Config.Bamboo.Zookeeper, identifier, serviceModel.Acl)
 	if err1 != nil {
 		responseError(w, err1.Error())
 		return
@@ -67,7 +67,7 @@ func (d *ServiceAPI) Put(c web.C, w http.ResponseWriter, r *http.Request) {
 
 func (d *ServiceAPI) Delete(c web.C, w http.ResponseWriter, r *http.Request) {
 	identifier, _ := url.QueryUnescape(c.URLParams["id"])
-	err := service.Delete(d.Zookeeper, d.Config.DomainMapping.Zookeeper, identifier)
+	err := service.Delete(d.Zookeeper, d.Config.Bamboo.Zookeeper, identifier)
 	if err != nil {
 		responseError(w, err.Error())
 		return

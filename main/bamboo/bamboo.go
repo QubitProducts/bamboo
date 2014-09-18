@@ -102,7 +102,7 @@ func createAndListen(conf configuration.Zookeeper) (chan zk.Event, *zk.Conn) {
 }
 
 func listenToZookeeper(conf configuration.Configuration, eventBus *event_bus.EventBus) *zk.Conn {
-	serviceCh, serviceConn := createAndListen(conf.DomainMapping.Zookeeper)
+	serviceCh, serviceConn := createAndListen(conf.Bamboo.Zookeeper)
 
 	go func() {
 		for {

@@ -9,10 +9,7 @@
   },
 
   "Bamboo": {
-    "Host": "http://10.0.2.2:8000"
-  },
-
-  "DomainMapping": {
+    "Host": "http://10.0.2.2:8000",
     "Zookeeper": {
       "Host": "localhost",
       "Path": "/foo",

@@ -9,10 +9,7 @@
   },
 
   "Bamboo": {
-    "Host": "http://haproxy-ip-address:8000"
-  },
-
-  "DomainMapping": {
+    "Host": "http://haproxy-ip-address:8000",
     "Zookeeper": {
       "Host": "localhost",
       "Path": "/marathon-haproxy/state",

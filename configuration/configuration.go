@@ -19,9 +19,6 @@ type Configuration struct {
 	// Bamboo specific configuration
 	Bamboo Bamboo
 
-	// DomainMapping storage
-	DomainMapping DomainMapping
-
 	// HAProxy output configuration
 	HAProxy HAProxy
 
@@ -49,8 +46,11 @@ func FromFile(filePath string) (Configuration, error) {
 	setValueFromEnv(&conf.Marathon.Zookeeper.Host, "MARATHON_ZK_HOST")
 	setValueFromEnv(&conf.Marathon.Zookeeper.Path, "MARATHON_ZK_PATH")
 	setValueFromEnv(&conf.Marathon.Endpoint, "MARATHON_ENDPOINT")
-	setValueFromEnv(&conf.DomainMapping.Zookeeper.Host, "DOMAIN_ZK_HOST")
-	setValueFromEnv(&conf.DomainMapping.Zookeeper.Path, "DOMAIN_ZK_PATH")
+
+	setValueFromEnv(&conf.Bamboo.Host, "BAMBOO_HOST")
+	setValueFromEnv(&conf.Bamboo.Zookeeper.Host, "BAMBOO_ZK_HOST")
+	setValueFromEnv(&conf.Bamboo.Zookeeper.Path, "DOMAIN_ZK_PATH")
+
 	setValueFromEnv(&conf.HAProxy.TemplatePath, "HAPROXY_TEMPLATE_PATH")
 	setValueFromEnv(&conf.HAProxy.OutputPath, "HAPROXY_OUTPUT_PATH")
 	setValueFromEnv(&conf.HAProxy.ReloadCommand, "HAPROXY_RELOAD_CMD")

@@ -1,7 +1,6 @@
 package service
 
 import (
-	"log"
 	"net/url"
 
 	"github.com/samuel/go-zookeeper/zk"
@@ -34,7 +33,6 @@ func All(conn *zk.Conn, zkConf conf.Zookeeper) (map[string]Service, error) {
 			break
 		}
 		appId, _ := unescapeSlashes(childPath)
-		log.Println(appId)
 		services[appId] = Service{Id: appId, Acl: string(bite)}
 	}
 	return services, nil

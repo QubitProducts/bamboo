@@ -17,7 +17,7 @@ type templateData struct {
 func GetTemplateData(config *conf.Configuration, conn *zk.Conn) interface{} {
 
 	apps, _ := marathon.FetchApps(config.Marathon.Endpoint)
-	services, _ := service.All(conn, config.DomainMapping.Zookeeper)
+	services, _ := service.All(conn, config.Bamboo.Zookeeper)
 
 	return templateData{ apps, services }
 }
