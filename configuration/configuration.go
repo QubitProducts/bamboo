@@ -43,11 +43,9 @@ func (config *Configuration) FromFile(filePath string) error {
 func FromFile(filePath string) (Configuration, error) {
 	conf := &Configuration{}
 	err := conf.FromFile(filePath)
-	setValueFromEnv(&conf.Marathon.Zookeeper.Host, "MARATHON_ZK_HOST")
-	setValueFromEnv(&conf.Marathon.Zookeeper.Path, "MARATHON_ZK_PATH")
 	setValueFromEnv(&conf.Marathon.Endpoint, "MARATHON_ENDPOINT")
 
-	setValueFromEnv(&conf.Bamboo.Host, "BAMBOO_HOST")
+	setValueFromEnv(&conf.Bamboo.Endpoint, "BAMBOO_ENDPOINT")
 	setValueFromEnv(&conf.Bamboo.Zookeeper.Host, "BAMBOO_ZK_HOST")
 	setValueFromEnv(&conf.Bamboo.Zookeeper.Path, "BAMBOO_ZK_PATH")
 

@@ -1,15 +1,10 @@
 {
   "Marathon": {
-    "Endpoint": "http://localhost:8080",
-    "Zookeeper": {
-      "Host": "localhost",
-      "Path": "/marathon/state",
-      "ReportingDelay": 5
-    }
+    "Endpoint": "http://localhost:8080"
   },
 
   "Bamboo": {
-    "Host": "http://10.0.2.2:8000",
+    "Endpoint": "http://10.0.2.2:8000",
     "Zookeeper": {
       "Host": "localhost",
       "Path": "/foo",

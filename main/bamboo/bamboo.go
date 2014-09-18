@@ -8,9 +8,9 @@ import (
 	"os"
 	"time"
 
+	lumberjack "github.com/natefinch/lumberjack"
 	"github.com/samuel/go-zookeeper/zk"
 	"github.com/zenazn/goji"
-	lumberjack "github.com/natefinch/lumberjack"
 
 	"github.com/QubitProducts/bamboo/api"
 	"github.com/QubitProducts/bamboo/configuration"
@@ -48,7 +48,7 @@ func main() {
 	zkConn := listenToZookeeper(conf, eventBus)
 
 	// Register handlers
-	handlers := event_bus.Handlers{ Conf: &conf, Zookeeper: zkConn }
+	handlers := event_bus.Handlers{Conf: &conf, Zookeeper: zkConn}
 	eventBus.Register(handlers.MarathonEventHandler)
 	eventBus.Register(handlers.ServiceEventHandler)
 
@@ -66,7 +66,7 @@ func initServer(conf *configuration.Configuration, conn *zk.Conn, eventBus *even
 	goji.Get("/status", api.HandleStatus)
 
 	// State API
-    goji.Get("/api/state", stateAPI.Get)
+	goji.Get("/api/state", stateAPI.Get)
 
 	// Service API
 	goji.Get("/api/services", serviceAPI.All)
@@ -85,7 +85,7 @@ func initServer(conf *configuration.Configuration, conn *zk.Conn, eventBus *even
 }
 
 func registerMarathonEvent(conf *configuration.Configuration) {
-	url := conf.Marathon.Endpoint + "/v2/eventSubscriptions?callbackUrl=" + conf.Bamboo.Host + "/api/marathon/event_callback"
+	url := conf.Marathon.Endpoint + "/v2/eventSubscriptions?callbackUrl=" + conf.Bamboo.Endpoint + "/api/marathon/event_callback"
 	client := &http.Client{}
 	req, _ := http.NewRequest("POST", url, nil)
 	req.Header.Add("Content-Type", "application/json")
@@ -95,7 +95,9 @@ func registerMarathonEvent(conf *configuration.Configuration) {
 func createAndListen(conf configuration.Zookeeper) (chan zk.Event, *zk.Conn) {
 	conn, _, err := zk.Connect(conf.ConnectionString(), time.Second*10)
 
-	if err != nil { log.Panic(err) }
+	if err != nil {
+		log.Panic(err)
+	}
 
 	ch, _ := qzk.ListenToConn(conn, conf.Path, true, conf.Delay())
 	return ch, conn
@@ -108,23 +110,22 @@ func listenToZookeeper(conf configuration.Configuration, eventBus *event_bus.Eve
 		for {
 			select {
 			case _ = <-serviceCh:
-				eventBus.Publish(event_bus.ServiceEvent{ EventType: "change" })
+				eventBus.Publish(event_bus.ServiceEvent{EventType: "change"})
 			}
 		}
 	}()
 	return serviceConn
 }
 
-
 func configureLog() {
 	if len(logPath) > 0 {
 		log.SetOutput(io.MultiWriter(&lumberjack.Logger{
-			Filename:   logPath,
+			Filename: logPath,
 			// megabytes
 			MaxSize:    100,
 			MaxBackups: 3,
 			//days
-			MaxAge:     28,
+			MaxAge: 28,
 		}, os.Stdout))
 	}
 }

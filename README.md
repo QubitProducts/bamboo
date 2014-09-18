@@ -109,10 +109,8 @@ Configuration in the `production.json` file can be overridden with environment v
 
 Environment Variable | Corresponds To
 ---------------------|---------------
-`MARATHON_ZK_HOST` | Marathon.Zookeeper.Host
-`MARATHON_ZK_PATH` | Marathon.Zookeeper.Path
 `MARATHON_ENDPOINT` | Marathon.Endpoint
-`BAMBOO_HOST` | Bamboo.Host
+`BAMBOO_ENDPOINT` | Bamboo.Endpoint
 `BAMBOO_ZK_HOST` | Bamboo.Zookeeper.Host
 `BAMBOO_ZK_PATH` | Bamboo.Zookeeper.Path
 `HAPROXY_TEMPLATE_PATH` | HAProxy.TemplatePath
@@ -205,11 +203,9 @@ docker build -t bamboo .
 Once the image has been built, running as a container is straightforward - you do however still need to provide the configuration to the image as environment variables. Docker allows two options for this - using the `-e` option  or by putting them in a file and using the `--env-file` option. For this example we will use the former and we will map through ports 8000 and 80 to the docker host (obviously the hosts configured here will need to be reachable from this container):
 
 ````
-docker run -t -i --rm -p 8000:8000 -p 80:80 \
-    -e MARATHON_ZK_HOST=zk:2181 \
-    -e MARATHON_ZK_PATH=/marathon \
+docker run -t -i --rm -p 8000:8000 -p 80:80 \    
     -e MARATHON_ENDPOINT=http://marathon:8080 \
-    -e BAMBOO_HOST=http://bamboo:8000 \
+    -e BAMBOO_ENDPOINT=http://bamboo:8000 \
     -e BAMBOO_ZK_HOST=zk:2181 \
     -e BAMBOO_ZK_PATH=/bamboo \
     bamboo -bind=":8000"
