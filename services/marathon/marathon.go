@@ -148,7 +148,9 @@ func createApps(tasksById map[string][]MarathonTask, marathonApps map[string]Mar
 			simpleTasks := []Task{}
 
 			for _, task := range tasks {
-				simpleTasks = append(simpleTasks, Task{ Host: task.Host, Port: task.Ports[0] })
+				if len(task.Ports) > 0 {
+					simpleTasks = append(simpleTasks, Task{ Host: task.Host, Port: task.Ports[0] })
+				}
 			}
 
 			// Try to handle old app id format without slashes
