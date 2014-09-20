@@ -20,7 +20,7 @@ It features:
 
 Bamboo v0.1.1 supports Marathon 0.6 and Mesos 0.19.x
 
-Bamboo v0.2.0 supports Marathon 0.7 (with [http_callback enabled](https://mesosphere.github.io/marathon/docs/rest-api.html#event-subscriptions)) and Mesos 0.20.x. Since v0.2.0, Bamboo supports both DNS and non-DNS proxy ACL rules.
+Bamboo v0.2.2 supports Marathon 0.7 (with [http_callback enabled](https://mesosphere.github.io/marathon/docs/rest-api.html#event-subscriptions)) and Mesos 0.20.x. Since v0.2.2, Bamboo supports both DNS and non-DNS proxy ACL rules.
 
 
 ## Deployment Guide
