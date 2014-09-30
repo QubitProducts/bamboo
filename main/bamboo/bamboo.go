@@ -47,10 +47,10 @@ func main() {
 	signalChannel := make(chan os.Signal, 2)
 	signal.Notify(signalChannel, os.Interrupt, syscall.SIGCHLD)
 	go func() {
-		sig := <-signalChannel
-		if sig == syscall.SIGCHLD {
-			r := syscall.Rusage {}
-			for {
+		for {
+			sig := <-signalChannel
+			if sig == syscall.SIGCHLD {
+				r := syscall.Rusage {}
 				syscall.Wait4( -1,  nil, 0, &r)
 			}
 		}
