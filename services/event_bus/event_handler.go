@@ -43,6 +43,8 @@ func (h *Handlers) ServiceEventHandler(event ServiceEvent) {
 	h.Conf.StatsD.Increment(1.0, "reload.domain", 1)
 }
 
+var execSem = make(chan int, 1)
+
 func handleHAPUpdate(conf *configuration.Configuration, conn *zk.Conn) bool {
 	currentContent, _ := ioutil.ReadFile(conf.HAProxy.OutputPath)
 
@@ -59,7 +61,10 @@ func handleHAPUpdate(conf *configuration.Configuration, conn *zk.Conn) bool {
 		err := ioutil.WriteFile(conf.HAProxy.OutputPath, []byte(newContent), 0666)
 		if err != nil { log.Fatalf("Failed to write template on path: %s", err) }
 
+		execSem <- 1
 		execCommand(conf.HAProxy.ReloadCommand)
+		<-execSem
+
 		log.Println("HAProxy: Configuration updated")
 		return true
 	} else {
