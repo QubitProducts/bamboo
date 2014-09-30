@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	lumberjack "github.com/natefinch/lumberjack"
@@ -40,6 +42,19 @@ func main() {
 	}
 
 	eventBus := event_bus.New()
+
+	// Wait for died children to avoid zombies
+	signalChannel := make(chan os.Signal, 2)
+	signal.Notify(signalChannel, os.Interrupt, syscall.SIGCHLD)
+	go func() {
+		sig := <-signalChannel
+		if sig == syscall.SIGCHLD {
+			r := syscall.Rusage {}
+			for {
+				syscall.Wait4( -1,  nil, 0, &r)
+			}
+		}
+	}()
 
 	// Create StatsD client
 	conf.StatsD.CreateClient()
