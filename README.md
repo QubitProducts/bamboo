@@ -24,7 +24,7 @@ Bamboo v0.2.2 supports Marathon 0.7 (with [http_callback enabled](https://mesosp
 
 ### Releases and changelog
 
-Since Marathon API and behaviour may change over time, espeically in this early days. You should expect we aim to catch up those changes, improve design and adding new features. We aim to maintain backwards compatibility when possible. Releases and changelog is maintained in the [releases page](https://github.com/QubitProducts/bamboo/releases). Please read them when upgrading.
+Since Marathon API and behaviour may change over time, espeically in this early days. You should expect we aim to catch up those changes, improve design and adding new features. We aim to maintain backwards compatibility when possible. Releases and changelog are maintained in the [releases page](https://github.com/QubitProducts/bamboo/releases). Please read them when upgrading.
 
 ## Deployment Guide
 
