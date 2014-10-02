@@ -22,6 +22,9 @@ Bamboo v0.1.1 supports Marathon 0.6 and Mesos 0.19.x
 
 Bamboo v0.2.2 supports Marathon 0.7 (with [http_callback enabled](https://mesosphere.github.io/marathon/docs/rest-api.html#event-subscriptions)) and Mesos 0.20.x. Since v0.2.2, Bamboo supports both DNS and non-DNS proxy ACL rules.
 
+### Releases and changelog
+
+Since Marathon API and behaviour may change over time, espeically in this early days. You should expect we aim to catch up those changes, improve design and adding new features. We aim to maintain backwards compatibility when possible. Releases and changelog is maintained in the [releases page](https://github.com/QubitProducts/bamboo/releases). Please read them when upgrading.
 
 ## Deployment Guide
 
