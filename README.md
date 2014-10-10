@@ -58,13 +58,12 @@ This section tries to explain usage in code comment style:
   "Marathon": {
     // Marathon service HTTP endpoint
     "Endpoint": "http://localhost:8080"
-    }
   },
 
   "Bamboo": {
 
     // Bamboo's HTTP address can be accessed by Marathon
-    // This is used for Marathon HTTP callback
+    // This is used for Marathon HTTP callback; must be reachable by Marathon
     "Host": "http://localhost:8000",
 
     // Proxy setting information is stored in Zookeeper
