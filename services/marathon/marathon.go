@@ -1,11 +1,11 @@
 package marathon
 
-import(
-	"net/http"
-	"io/ioutil"
+import (
 	"encoding/json"
-	"strings"
+	"io/ioutil"
+	"net/http"
 	"sort"
+	"strings"
 )
 
 // Describes an app process running
@@ -16,10 +16,11 @@ type Task struct {
 
 // An app may have multiple processes
 type App struct {
-	Id string
-	EscapedId string
+	Id              string
+	EscapedId       string
 	HealthCheckPath string
-	Tasks []Task
+	Tasks           []Task
+	ServicePort     int
 }
 
 type AppList []App
@@ -36,7 +37,6 @@ func (slice AppList) Swap(i, j int) {
 	slice[i], slice[j] = slice[j], slice[i]
 }
 
-
 type MarathonTaskList []MarathonTask
 
 type MarathonTasks struct {
@@ -44,13 +44,14 @@ type MarathonTasks struct {
 }
 
 type MarathonTask struct {
-	AppId string
-	Id    string
-	Host  string
-	Ports []int
-	StartedAt string
-	StagedAt  string
-	Version   string
+	AppId        string
+	Id           string
+	Host         string
+	Ports        []int
+	ServicePorts []int
+	StartedAt    string
+	StagedAt     string
+	Version      string
 }
 
 func (slice MarathonTaskList) Len() int {
@@ -70,8 +71,9 @@ type MarathonApps struct {
 }
 
 type MarathonApp struct {
-	Id string `json:id`
+	Id           string         `json:id`
 	HealthChecks []HealthChecks `json:healthChecks`
+	Ports        []int          `json:ports`
 }
 
 type HealthChecks struct {
@@ -88,7 +90,7 @@ func fetchMarathonApps(endpoint string) (map[string]MarathonApp, error) {
 		var appResponse MarathonApps
 
 		contents, err := ioutil.ReadAll(response.Body)
-		if (err != nil) {
+		if err != nil {
 			return nil, err
 		}
 
@@ -109,7 +111,7 @@ func fetchMarathonApps(endpoint string) (map[string]MarathonApp, error) {
 
 func fetchTasks(endpoint string) (map[string][]MarathonTask, error) {
 	client := &http.Client{}
-	req, err := http.NewRequest("GET", endpoint + "/v2/tasks", nil)
+	req, err := http.NewRequest("GET", endpoint+"/v2/tasks", nil)
 	req.Header.Add("Accept", "application/json")
 	response, err := client.Do(req)
 
@@ -120,10 +122,14 @@ func fetchTasks(endpoint string) (map[string][]MarathonTask, error) {
 	} else {
 		contents, err := ioutil.ReadAll(response.Body)
 		defer response.Body.Close()
-		if err != nil { return nil, err }
+		if err != nil {
+			return nil, err
+		}
 
 		err = json.Unmarshal(contents, &tasks)
-		if err != nil { return nil, err }
+		if err != nil {
+			return nil, err
+		}
 
 		taskList := tasks.Tasks
 		sort.Sort(taskList)
@@ -144,36 +150,41 @@ func createApps(tasksById map[string][]MarathonTask, marathonApps map[string]Mar
 
 	apps := AppList{}
 
-	for appId, tasks  := range tasksById {
-			simpleTasks := []Task{}
+	for appId, tasks := range tasksById {
+		simpleTasks := []Task{}
 
-			for _, task := range tasks {
-				if len(task.Ports) > 0 {
-					simpleTasks = append(simpleTasks, Task{ Host: task.Host, Port: task.Ports[0] })
-				}
+		for _, task := range tasks {
+			if len(task.Ports) > 0 {
+				simpleTasks = append(simpleTasks, Task{Host: task.Host, Port: task.Ports[0]})
 			}
+		}
 
-			// Try to handle old app id format without slashes
-			appPath := appId
-			if (!strings.HasPrefix(appId, "/")) {
-				appPath = "/" + appId
-			}
+		// Try to handle old app id format without slashes
+		appPath := appId
+		if !strings.HasPrefix(appId, "/") {
+			appPath = "/" + appId
+		}
 
-			app := App {
-				// Since Marathon 0.7, apps are namespaced with path
-				Id: appPath,
-				// Used for template
-				EscapedId: strings.Replace(appId, "/", "::", -1),
-				Tasks: simpleTasks,
-				HealthCheckPath: parseHealthCheckPath(marathonApps[appId].HealthChecks),
-			}
-			apps = append(apps, app)
+		app := App{
+			// Since Marathon 0.7, apps are namespaced with path
+			Id: appPath,
+			// Used for template
+			EscapedId:       strings.Replace(appId, "/", "::", -1),
+			Tasks:           simpleTasks,
+			HealthCheckPath: parseHealthCheckPath(marathonApps[appId].HealthChecks),
+		}
+
+		if len(marathonApps[appId].Ports) > 0 {
+			app.ServicePort = marathonApps[appId].Ports[0]
+		}
+
+		apps = append(apps, app)
 	}
 	return apps
 }
 
 func parseHealthCheckPath(checks []HealthChecks) string {
-	if (len(checks) > 0) {
+	if len(checks) > 0 {
 		return checks[0].Path
 	}
 	return ""
@@ -188,10 +199,14 @@ func parseHealthCheckPath(checks []HealthChecks) string {
 */
 func FetchApps(endpoint string) (AppList, error) {
 	tasks, err := fetchTasks(endpoint)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	marathonApps, err := fetchMarathonApps(endpoint)
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	apps := createApps(tasks, marathonApps)
 	sort.Sort(apps)

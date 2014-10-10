@@ -50,8 +50,8 @@ func main() {
 		for {
 			sig := <-signalChannel
 			if sig == syscall.SIGCHLD {
-				r := syscall.Rusage {}
-				syscall.Wait4( -1,  nil, 0, &r)
+				r := syscall.Rusage{}
+				syscall.Wait4(-1, nil, 0, &r)
 			}
 		}
 	}()
