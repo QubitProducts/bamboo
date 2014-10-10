@@ -57,15 +57,7 @@ This section tries to explain usage in code comment style:
   // Marathon instance configuration
   "Marathon": {
     // Marathon service HTTP endpoint
-    "Endpoint": "http://localhost:8080",
-    // Same configuration as Marathon Zookeeper
-    "Zookeeper": {
-      "Host": "zk01.example.com:2812,zk02.example.com:2812",
-      // Marathon Zookeeper state  
-      // Marathon default set to /marathon/state
-      "Path": "/marathon/state",
-      // Number of seconds to delay the reload event
-      "ReportingDelay": 5
+    "Endpoint": "http://localhost:8080"
     }
   },
 
