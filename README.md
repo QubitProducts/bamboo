@@ -10,7 +10,7 @@ It features:
 * User interface for configuring HAProxy ACL rules for each Marathon application
 * Rest API for configuring proxy ACL rules
 * Auto configure HAProxy configuration file based your template; you can provision your own template in production to enable SSL and HAProxy stats interface, or configuring different load balance strategy
-* Optionally hanldes health check endpoint if Marathon app is configured with [Healthchecks](https://mesosphere.github.io/marathon/docs/health-checks.html)
+* Optionally handles health check endpoint if Marathon app is configured with [Healthchecks](https://mesosphere.github.io/marathon/docs/health-checks.html)
 * Daemon itself is stateless; enables horizontal replication and scalability
 * Developed in Golang, deployment on HAProxy instance has no additional dependency
 * Optionally integrates with StatsD to monitor configuration reload event
