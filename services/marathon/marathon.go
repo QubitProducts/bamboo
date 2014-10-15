@@ -2,6 +2,7 @@ package marathon
 
 import (
 	"encoding/json"
+	"github.com/QubitProducts/bamboo/configuration"
 	"io/ioutil"
 	"net/http"
 	"sort"
@@ -197,13 +198,29 @@ func parseHealthCheckPath(checks []HealthChecks) string {
 	Parameters:
 		endpoint: Marathon HTTP endpoint, e.g. http://localhost:8080
 */
-func FetchApps(endpoint string) (AppList, error) {
-	tasks, err := fetchTasks(endpoint)
+func FetchApps(maraconf configuration.Marathon) (AppList, error) {
+
+	var applist AppList
+	var err error
+
+	// try all configured endpoints until one succeeds
+	for _, url := range maraconf.Endpoints() {
+		applist, err = _fetchApps(url)
+		if err == nil {
+			return applist, err
+		}
+	}
+	// return last error
+	return nil, err
+}
+
+func _fetchApps(url string) (AppList, error) {
+	tasks, err := fetchTasks(url)
 	if err != nil {
 		return nil, err
 	}
 
-	marathonApps, err := fetchMarathonApps(endpoint)
+	marathonApps, err := fetchMarathonApps(url)
 	if err != nil {
 		return nil, err
 	}

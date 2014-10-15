@@ -100,11 +100,15 @@ func initServer(conf *configuration.Configuration, conn *zk.Conn, eventBus *even
 }
 
 func registerMarathonEvent(conf *configuration.Configuration) {
-	url := conf.Marathon.Endpoint + "/v2/eventSubscriptions?callbackUrl=" + conf.Bamboo.Endpoint + "/api/marathon/event_callback"
+
 	client := &http.Client{}
-	req, _ := http.NewRequest("POST", url, nil)
-	req.Header.Add("Content-Type", "application/json")
-	client.Do(req)
+	// it's safe to register with multiple marathon nodes
+	for _, marathon := range conf.Marathon.Endpoints() {
+		url := marathon + "/v2/eventSubscriptions?callbackUrl=" + conf.Bamboo.Endpoint + "/api/marathon/event_callback"
+		req, _ := http.NewRequest("POST", url, nil)
+		req.Header.Add("Content-Type", "application/json")
+		client.Do(req)
+	}
 }
 
 func createAndListen(conf configuration.Zookeeper) (chan zk.Event, *zk.Conn) {
