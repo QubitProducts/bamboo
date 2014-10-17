@@ -9,15 +9,14 @@ import (
 )
 
 type templateData struct {
-	Apps    marathon.AppList
+	Apps     marathon.AppList
 	Services map[string]service.Service
 }
 
-
 func GetTemplateData(config *conf.Configuration, conn *zk.Conn) interface{} {
 
-	apps, _ := marathon.FetchApps(config.Marathon.Endpoint)
+	apps, _ := marathon.FetchApps(config.Marathon)
 	services, _ := service.All(conn, config.Bamboo.Zookeeper)
 
-	return templateData{ apps, services }
+	return templateData{apps, services}
 }
