@@ -33,17 +33,43 @@ type Handlers struct {
 
 func (h *Handlers) MarathonEventHandler(event MarathonEvent) {
 	log.Printf("%s => %s\n", event.EventType, event.Timestamp)
-	handleHAPUpdate(h.Conf, h.Zookeeper)
+	queueUpdate(h)
 	h.Conf.StatsD.Increment(1.0, "reload.marathon", 1)
 }
 
 func (h *Handlers) ServiceEventHandler(event ServiceEvent) {
 	log.Println("Domain mapping: Stated changed")
-	handleHAPUpdate(h.Conf, h.Zookeeper)
+	queueUpdate(h)
 	h.Conf.StatsD.Increment(1.0, "reload.domain", 1)
 }
 
-var execSem = make(chan int, 1)
+var updateChan = make(chan *Handlers, 1)
+
+func init() {
+	go func () {
+		log.Println("Starting update loop")
+		for {
+			h := <-updateChan
+			handleHAPUpdate(h.Conf, h.Zookeeper)
+		}
+	} ()
+}
+
+var queueUpdateSem = make(chan int, 1)
+
+func queueUpdate(h *Handlers) {
+	queueUpdateSem <- 1
+	
+	select {
+		case _ = <-updateChan:
+			log.Println("Found pending update request. Don't start another one.")
+		default:
+			log.Println("Queuing an haproxy update.")
+	}
+	updateChan <- h
+	
+	<-queueUpdateSem
+}
 
 func handleHAPUpdate(conf *configuration.Configuration, conn *zk.Conn) bool {
 	currentContent, _ := ioutil.ReadFile(conf.HAProxy.OutputPath)
@@ -61,9 +87,7 @@ func handleHAPUpdate(conf *configuration.Configuration, conn *zk.Conn) bool {
 		err := ioutil.WriteFile(conf.HAProxy.OutputPath, []byte(newContent), 0666)
 		if err != nil { log.Fatalf("Failed to write template on path: %s", err) }
 
-		execSem <- 1
 		execCommand(conf.HAProxy.ReloadCommand)
-		<-execSem
 
 		log.Println("HAProxy: Configuration updated")
 		return true
