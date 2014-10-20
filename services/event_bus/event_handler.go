@@ -87,9 +87,12 @@ func handleHAPUpdate(conf *configuration.Configuration, conn *zk.Conn) bool {
 		err := ioutil.WriteFile(conf.HAProxy.OutputPath, []byte(newContent), 0666)
 		if err != nil { log.Fatalf("Failed to write template on path: %s", err) }
 
-		execCommand(conf.HAProxy.ReloadCommand)
-
-		log.Println("HAProxy: Configuration updated")
+		err = execCommand(conf.HAProxy.ReloadCommand)
+		if err != nil {
+			log.Fatalf("HAProxy: update failed\n")
+		} else {
+			log.Println("HAProxy: Configuration updated")
+		}
 		return true
 	} else {
 		log.Println("HAProxy: Same content, no need to reload")
@@ -97,10 +100,12 @@ func handleHAPUpdate(conf *configuration.Configuration, conn *zk.Conn) bool {
 	}
 }
 
-func execCommand(cmd string) {
-	_, err := exec.Command("sh", "-c", cmd).Output()
+func execCommand(cmd string) error {
+	log.Printf("Exec cmd: %s \n", cmd)
+	output, err := exec.Command("sh", "-c", cmd).CombinedOutput()
 	if err != nil {
 		log.Println(err.Error())
+		log.Println("Output:\n" + string(output[:]))
 	}
-	log.Printf("Exec cmd: %s \n", cmd)
+	return err
 }
