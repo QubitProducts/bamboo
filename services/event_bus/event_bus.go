@@ -70,7 +70,7 @@ func (ebus *EventBus) Publish(event interface {}) error {
 
 func (ebus *EventBus) addHandler(fnType reflect.Type, fn reflect.Value) {
 	ebus.lock.Lock()
-	ebus.lock.Unlock()
+	defer ebus.lock.Unlock()
 	handlers, ok := ebus.handlers[fnType]
 	if !ok {
 		handlers = make([]reflect.Value, 0)
