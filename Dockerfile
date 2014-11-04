@@ -1,13 +1,8 @@
 FROM ubuntu:14.04
 
-RUN apt-get update -y
-RUN apt-get install -y software-properties-common
+RUN apt-get update -y && apt-get install -y software-properties-common
 RUN add-apt-repository ppa:vbernat/haproxy-1.5
-RUN apt-get update -y
-RUN apt-get install -y haproxy
-RUN apt-get install -y golang
-RUN apt-get install -y git
-RUN apt-get install -y mercurial
+RUN apt-get update -y && apt-get install -y haproxy golang git mercurial supervisor && rm -rf /var/lib/apt/lists/*
 
 ENV GOPATH /opt/go
 
@@ -22,8 +17,13 @@ RUN ln -s /opt/go/src/github.com/QubitProducts/bamboo /var/bamboo
 
 RUN mkdir -p /run/haproxy
 
+ADD builder/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+ADD builder/run.sh /run.sh
+RUN chmod +x /run.sh
+
+RUN mkdir -p /var/log/supervisor
+
 EXPOSE 8000
 EXPOSE 80
 
-CMD ["--help"]
-ENTRYPOINT ["/var/bamboo/bamboo"]
+CMD /run.sh
