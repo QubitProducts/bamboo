@@ -9,10 +9,8 @@ RUN apt-get install -y golang
 RUN apt-get install -y git
 RUN apt-get install -y mercurial && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && apt-get install -y openssh-server supervisor
-RUN mkdir -p /var/run/sshd /var/log/supervisor /root/.ssh && chmod 600 /root/.ssh
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-ADD authorized_keys /root/.ssh/authorized_keys
+RUN apt-get update && apt-get install -y supervisor
+COPY builder/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 ENV GOPATH /opt/go
 
