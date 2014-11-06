@@ -22,7 +22,7 @@ ADD builder/start-haproxy.sh /start-haproxy.sh
 RUN chmod +x /start-haproxy.sh
 
 RUN mkdir -p /var/run/sshd /var/log/supervisor /root/.ssh && chmod 600 /root/.ssh
-ADD authorized_keys /root/.ssh/authorized_keys
+ADD builder/authorized_keys /root/.ssh/authorized_keys
 
 EXPOSE 8000
 EXPOSE 80
