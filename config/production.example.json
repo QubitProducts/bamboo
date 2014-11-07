@@ -13,9 +13,9 @@
   },
 
   "HAProxy": {
-    "TemplatePath": "/var/bamboo/config/haproxy_template.cfg",
+    "TemplatePath": "config/haproxy_template.cfg",
     "OutputPath": "/etc/haproxy/haproxy.cfg",
-    "ReloadCommand": "read PIDS < /var/run/haproxy.pid; haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -sf $PIDS && while ps -p $PIDS; do sleep 0.2; done"
+    "ReloadCommand": "PIDS=`pidof haproxy`; haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -sf $PIDS && while ps -p $PIDS; do sleep 0.2; done"
   },
 
   "StatsD": {

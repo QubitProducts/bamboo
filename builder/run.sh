@@ -1,4 +1,5 @@
 #!/bin/bash
+
 if [ -z "$HAPROXY_USERNAME" ]; then
     export HAPROXY_USERNAME="admin"
 fi
@@ -14,5 +15,6 @@ then
   echo "  stats uri $HAPROXY_URI" >> /etc/haproxy/haproxy.cfg
 fi
 
-#exec service haproxy start
-haproxy -db -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid
+haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid
+
+/usr/bin/supervisord
