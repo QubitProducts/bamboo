@@ -22,8 +22,8 @@ ADD builder/run.sh /run.sh
 RUN chmod +x /run.sh
 
 RUN mkdir -p /var/log/supervisor
+VOLUME /var/log/supervisor
 
-EXPOSE 8000
-EXPOSE 80
+EXPOSE 80 8000
 
 CMD /run.sh
