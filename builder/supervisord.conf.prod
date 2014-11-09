@@ -1,0 +1,6 @@
+[supervisord]
+nodaemon=true
+
+[program:bamboo]
+command=/bin/bash -c "MARATHON_ENDPOINT=${MARATHON_ENDPOINT}; BAMBOO_ENDPOINT=${BAMBOO_ENDPOINT}; BAMBOO_ZK_HOST=${BAMBOO_ZK_HOST}; BAMBOO_ZK_PATH=${BAMBOO_ZK_PATH}; /var/bamboo/bamboo -bind="${BIND-:8000}" -config=${CONFIG_PATH-:config/production.example.json}"
+
