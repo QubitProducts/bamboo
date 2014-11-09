@@ -207,6 +207,8 @@ docker run -t -i --rm -p 8000:8000 -p 80:80 \
     bamboo
 ````
 
+Bamboo is started by supervisord in this Docker image. The [default Supervisord configuration](https://github.com/QubitProducts/bamboo/blob/master/builder/supervisord.conf) redirects stderr/stdout logs to the terminal. If you wish to turn the debug information off in production, you can use an [alternative configuration](https://github.com/QubitProducts/bamboo/blob/master/builder/supervisord.conf.prod).
+
 ## Development and Contribution
 
 We use [godep](https://github.com/tools/godep) managing Go package dependencies; Goconvey for unit testing; CommonJS and SASS for frontend development and build distribution.
