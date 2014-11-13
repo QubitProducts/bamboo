@@ -170,7 +170,7 @@ func createApps(tasksById map[string][]MarathonTask, marathonApps map[string]Mar
 			// Since Marathon 0.7, apps are namespaced with path
 			Id: appPath,
 			// Used for template
-			EscapedId:       strings.Replace(appId, "/", "::", -1),
+			EscapedId:       strings.Replace(appId, "/", "", -1),
 			Tasks:           simpleTasks,
 			HealthCheckPath: parseHealthCheckPath(marathonApps[appId].HealthChecks),
 		}
