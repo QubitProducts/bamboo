@@ -136,7 +136,7 @@ curl -i -X POST -d '{"id":"/app-1","acl":"hdr(host) -i app-1.example.com"}' http
 Updates an existing service configuraiton for a Marathon application. `:id` is  URI encoded Marathon application ID
 
 ```bash
-curl -i -X PUT -d '{"id":"/app-1", "acl":"path_beg -i /group/app-1"}' http://localhost:8000/api/services/%2Fapp-1
+curl -i -X PUT -d '{"id":"/app-1", "acl":"path_beg -i /group/app-1"}' http://localhost:8000/api/services/%252Fapp-1
 ```
 
 
@@ -145,7 +145,7 @@ curl -i -X PUT -d '{"id":"/app-1", "acl":"path_beg -i /group/app-1"}' http://loc
 Deletes an existing service configuration. `:id` is  URI encoded Marathon application ID
 
 ```bash
-curl -i -X DELETE http://localhost:8000/api/services/%2Fapp-1
+curl -i -X DELETE http://localhost:8000/api/services/%252Fapp-1
 ```
 
 #### GET /status
