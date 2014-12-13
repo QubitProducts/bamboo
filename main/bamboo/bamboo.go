@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+	"path/filepath"
 
 	lumberjack "github.com/natefinch/lumberjack"
 	"github.com/samuel/go-zookeeper/zk"
@@ -92,7 +93,11 @@ func initServer(conf *configuration.Configuration, conn *zk.Conn, eventBus *even
 	goji.Post("/api/marathon/event_callback", eventSubAPI.Callback)
 
 	// Static pages
-	goji.Get("/*", http.FileServer(http.Dir("./webapp")))
+	execPath, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		log.Fatal(err)
+	}
+        goji.Get("/*", http.FileServer(http.Dir(execPath + "/webapp")))
 
 	registerMarathonEvent(conf)
 
