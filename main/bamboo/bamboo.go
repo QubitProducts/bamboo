@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+	"path/filepath"
 
 	lumberjack "github.com/natefinch/lumberjack"
 	"github.com/samuel/go-zookeeper/zk"
