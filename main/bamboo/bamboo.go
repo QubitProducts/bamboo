@@ -93,9 +93,9 @@ func initServer(conf *configuration.Configuration, conn *zk.Conn, eventBus *even
 
 	// Static pages
 	execPath, err := filepath.Abs(filepath.Dir(os.Args[0]))
-        if err != nil {
-        	log.Fatal(err)
-        }
+	if err != nil {
+		log.Fatal(err)
+	}
         goji.Get("/*", http.FileServer(http.Dir(execPath + "/webapp")))
 
 	registerMarathonEvent(conf)
