@@ -9,6 +9,8 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+	"path"
+	"runtime"
 
 	lumberjack "github.com/natefinch/lumberjack"
 	"github.com/samuel/go-zookeeper/zk"
@@ -88,15 +90,20 @@ func initServer(conf *configuration.Configuration, conn *zk.Conn, eventBus *even
 	goji.Post("/api/services", serviceAPI.Create)
 	goji.Put("/api/services/:id", serviceAPI.Put)
 	goji.Delete("/api/services/:id", serviceAPI.Delete)
-
 	goji.Post("/api/marathon/event_callback", eventSubAPI.Callback)
 
 	// Static pages
-	goji.Get("/*", http.FileServer(http.Dir("./webapp")))
+	goji.Get("/*", http.FileServer(http.Dir(path.Join(executableFolder(), "webapp"))))
 
 	registerMarathonEvent(conf)
 
 	goji.Serve()
+}
+
+// Get current executable folder path
+func executableFolder() string {
+	_, filename, _, _ := runtime.Caller(1)
+	return path.Dir(filename)
 }
 
 func registerMarathonEvent(conf *configuration.Configuration) {
