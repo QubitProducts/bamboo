@@ -1,12 +1,12 @@
 #!/bin/sh
 ### BEGIN INIT INFO
-# Provides:          bamboo-service
+# Provides:          bamboo-server
 # Required-Start:    $network $zookeeper $marathon $mesos
 # Required-Stop:
 # Default-Start:     2 3 4 5
 # Default-Stop:      1 2 3 4 5
-# Short-Description:  bamboo service
-# Description:       bamboo service
+# Short-Description:  bamboo server
+# Description:       bamboo server
 ### END INIT INFO
 
 SERVICE_NAME=bamboo-service
