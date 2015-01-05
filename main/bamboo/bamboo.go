@@ -7,11 +7,11 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path"
 	"syscall"
 	"time"
-	"path"
-	"runtime"
 
+	"bitbucket.org/kardianos/osext"
 	lumberjack "github.com/natefinch/lumberjack"
 	"github.com/samuel/go-zookeeper/zk"
 	"github.com/zenazn/goji"
@@ -102,8 +102,11 @@ func initServer(conf *configuration.Configuration, conn *zk.Conn, eventBus *even
 
 // Get current executable folder path
 func executableFolder() string {
-	_, filename, _, _ := runtime.Caller(1)
-	return path.Dir(filename)
+	folderPath, err := osext.ExecutableFolder()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return folderPath
 }
 
 func registerMarathonEvent(conf *configuration.Configuration) {
