@@ -97,6 +97,28 @@ This section tries to explain usage in code comment style:
 }
 ```
 
+### Customize HAProxy Template with Marathon App Environment Variables
+
+Marathon app env variables are available to be called in the template.
+The default template shipped with Bamboo is aware of `BAMBOO_TCP_PORT`. When this variable is specified in Marathon app creation, the application will be configured with TCP mode. For example:
+
+```JavaScript
+{
+  "id": "FileServer",
+  "cmd": "python -m SimpleHTTPServer $PORT0",
+  "cpus": 0.1,
+  "mem": 90,
+  "ports": [0],
+  "instances": 2,
+  "env": {
+    "BAMBOO_TCP_PORT": "1080",
+    "MY_CUSTOM_ENV": "hello"
+  }
+}
+```
+
+In this example, both `BAMBOO_TCP_PORT` and `MY_CUSTOM_ENV` can be accessed in HAProxy template. This enables flexible template customization depending on your preferences.
+
 ### Environment Variables
 
 Configuration in the `production.json` file can be overridden with environment variables below. This is generally useful when you are building a Docker image for Bamboo and HAProxy. If they are not specified then the values from the configuration file will be used.
