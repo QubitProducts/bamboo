@@ -180,6 +180,16 @@ The example deb package deploys:
 * Configuration and logs is under `/var/bamboo/`
 * Log file is rotated automatically
 
+In case you're not using upstart, a template init.d service is provided in [`init.d-bamboo-server`](https://github.com/QubitProducts/bamboo/blob/master/builder/init.d-bamboo-server). Install it with
+```
+sudo cp builder/init.d-bamboo-server /etc/init.d/bamboo-server
+sudo chown root:root /etc/init.d/bamboo-server
+sudo chmod 755 /etc/init.d/bamboo-server
+sudo update-rc.d "bamboo-server" defaults
+```
+
+You can then start the server with ```sudo service bamboo-server start```. Other commands: status, restart, stop
+
 ### As a Docker container
 
 There is a `Dockerfile` that will allow Bamboo to be built and run from within a Docker container.
