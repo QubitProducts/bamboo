@@ -22,6 +22,7 @@ type App struct {
 	HealthCheckPath string
 	Tasks           []Task
 	ServicePort     int
+	Env             map[string]string
 }
 
 type AppList []App
@@ -72,9 +73,10 @@ type MarathonApps struct {
 }
 
 type MarathonApp struct {
-	Id           string         `json:id`
-	HealthChecks []HealthChecks `json:healthChecks`
-	Ports        []int          `json:ports`
+	Id           string            `json:id`
+	HealthChecks []HealthChecks    `json:healthChecks`
+	Ports        []int             `json:ports`
+	Env          map[string]string `json:env`
 }
 
 type HealthChecks struct {
@@ -173,6 +175,7 @@ func createApps(tasksById map[string][]MarathonTask, marathonApps map[string]Mar
 			EscapedId:       strings.Replace(appId, "/", "::", -1),
 			Tasks:           simpleTasks,
 			HealthCheckPath: parseHealthCheckPath(marathonApps[appId].HealthChecks),
+			Env:             marathonApps[appId].Env,
 		}
 
 		if len(marathonApps[appId].Ports) > 0 {
