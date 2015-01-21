@@ -21,6 +21,7 @@ go get -t github.com/smartystreets/goconvey
 
 
 cd $BAMBOO_PROJECT_DIR
+export _BAMBOO_PKGVERSION=`(cat VERSION)`
 
 godep restore
 go build
