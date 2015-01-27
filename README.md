@@ -132,6 +132,7 @@ Environment Variable | Corresponds To
 `HAPROXY_TEMPLATE_PATH` | HAProxy.TemplatePath
 `HAPROXY_OUTPUT_PATH` | HAProxy.OutputPath
 `HAPROXY_RELOAD_CMD` | HAProxy.ReloadCommand
+`BAMBOO_DOCKER_AUTO_HOST` | Sets `BAMBOO_ENDPOINT=$HOST` when Bamboo container starts. Can be any value.
 
 
 ## REST APIs
@@ -236,6 +237,7 @@ docker run -t -i --rm -p 8000:8000 -p 80:80 \
     -e BAMBOO_ZK_PATH=/bamboo \
     -e BIND=":8000"
     -e CONFIG_PATH="config/production.example.json"
+    -e BAMBOO_DOCKER_AUTO_HOST=true
     bamboo
 ````
 
