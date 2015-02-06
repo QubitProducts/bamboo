@@ -133,6 +133,9 @@ Environment Variable | Corresponds To
 `HAPROXY_OUTPUT_PATH` | HAProxy.OutputPath
 `HAPROXY_RELOAD_CMD` | HAProxy.ReloadCommand
 `BAMBOO_DOCKER_AUTO_HOST` | Sets `BAMBOO_ENDPOINT=$HOST` when Bamboo container starts. Can be any value.
+`STATSD_ENABLED` | StatsD.Enabled
+`STATSD_PREFIX` | StatsD.Prefix
+`STATSD_HOST` | StatsD.Host
 
 
 ## REST APIs
