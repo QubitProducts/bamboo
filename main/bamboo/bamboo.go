@@ -11,7 +11,7 @@ import (
 	"syscall"
 	"time"
 
-	"bitbucket.org/kardianos/osext"
+	"github.com/kardianos/osext"
 	lumberjack "github.com/natefinch/lumberjack"
 	"github.com/samuel/go-zookeeper/zk"
 	"github.com/zenazn/goji"
