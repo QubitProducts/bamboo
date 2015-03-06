@@ -176,9 +176,8 @@ func createApps(tasksById map[string][]MarathonTask, marathonApps map[string]Mar
 			Tasks:           simpleTasks,
 			HealthCheckPath: parseHealthCheckPath(marathonApps[appId].HealthChecks),
 			Env:             marathonApps[appId].Env,
+			ServicePorts:    marathonApps[appId].Ports,
 		}
-
-		app.ServicePorts = marathonApps[appId].Ports
 
 		apps = append(apps, app)
 	}
