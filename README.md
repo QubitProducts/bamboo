@@ -260,7 +260,7 @@ Golang:
 go get github.com/tools/godep
 go get -t github.com/smartystreets/goconvey
 
-cd $GOPATH/github.com/QubitProducts/bamboo
+cd $GOPATH/src/github.com/QubitProducts/bamboo
 godep restore
 
 # Build your binary
