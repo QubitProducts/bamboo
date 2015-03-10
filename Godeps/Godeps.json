@@ -3,9 +3,9 @@
 	"GoVersion": "go1.3.3",
 	"Deps": [
 		{
-			"ImportPath": "bitbucket.org/kardianos/osext",
-			"Comment": "null-15",
-			"Rev": "44140c5fc69ecf1102c5ef451d73cd98ef59b178"
+			"ImportPath": "github.com/kardianos/osext",
+			"Comment": "null-18",
+			"Rev": "ccfcd0245381f0c94c68f50626665eed3c6b726a"
 		},
 		{
 			"ImportPath": "github.com/natefinch/lumberjack",
