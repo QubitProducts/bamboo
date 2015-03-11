@@ -1,28 +1,36 @@
 FROM ubuntu:14.04
 
-RUN apt-get update -y && apt-get install -y software-properties-common
-RUN add-apt-repository ppa:vbernat/haproxy-1.5
-RUN apt-get update -y && apt-get install -y haproxy golang git mercurial supervisor && rm -rf /var/lib/apt/lists/*
-
+ENV DEBIAN_FRONTEND noninteractive
 ENV GOPATH /opt/go
 
-RUN go get github.com/tools/godep
-RUN go get -t github.com/smartystreets/goconvey
+RUN apt-get install -yqq software-properties-common && \
+    add-apt-repository -y ppa:vbernat/haproxy-1.5 && \
+    apt-get update -yqq && \
+    apt-get install -yqq haproxy golang git mercurial supervisor && \
+    rm -rf /var/lib/apt/lists/*
 
 ADD . /opt/go/src/github.com/QubitProducts/bamboo
-WORKDIR /opt/go/src/github.com/QubitProducts/bamboo
-RUN /opt/go/bin/godep restore
-RUN go build
-RUN ln -s /opt/go/src/github.com/QubitProducts/bamboo /var/bamboo
-
-RUN mkdir -p /run/haproxy
-
 ADD builder/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 ADD builder/run.sh /run.sh
-RUN chmod +x /run.sh
 
-RUN mkdir -p /var/log/supervisor
+WORKDIR /opt/go/src/github.com/QubitProducts/bamboo
+
+RUN go get github.com/tools/godep && \
+    go get -t github.com/smartystreets/goconvey && \
+    /opt/go/bin/godep restore && \
+    go build && \
+    ln -s /opt/go/src/github.com/QubitProducts/bamboo /var/bamboo && \
+    mkdir -p /run/haproxy && \
+    mkdir -p /var/log/supervisor
+
 VOLUME /var/log/supervisor
+
+RUN apt-get clean && \
+    rm -rf /build && \
+    rm -rf /tmp/* /var/tmp/* && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -f /etc/dpkg/dpkg.cfg.d/02apt-speedup && \
+    rm -f /etc/ssh/ssh_host_*
 
 EXPOSE 80 8000
 
