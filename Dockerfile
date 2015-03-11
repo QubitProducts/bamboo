@@ -2,12 +2,9 @@ FROM ubuntu:14.04
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update -yqq && \
-    apt-get install -yqq software-properties-common && \
-    add-apt-repository -y ppa:vbernat/haproxy-1.5 && \
+RUN add-apt-repository -y ppa:vbernat/haproxy-1.5 && \
     apt-get update -yqq && \
-    apt-get install -yqq \
-    haproxy golang git mercurial supervisor && \
+    apt-get install -yqq software-properties-common haproxy golang git mercurial supervisor && \
     rm -rf /var/lib/apt/lists/*
 
 ENV GOPATH /opt/go
