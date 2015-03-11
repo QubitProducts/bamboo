@@ -2,22 +2,25 @@ FROM ubuntu:14.04
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update -yqq && apt-get install -yqq software-properties-common
-RUN add-apt-repository -y ppa:vbernat/haproxy-1.5
-RUN apt-get update -yqq && apt-get install -yqq haproxy golang git mercurial supervisor && rm -rf /var/lib/apt/lists/*
+RUN apt-get update -yqq && \
+    apt-get install -yqq software-properties-common && \
+    add-apt-repository -y ppa:vbernat/haproxy-1.5 && \
+    apt-get update -yqq && \
+    apt-get install -yqq \
+    haproxy golang git mercurial supervisor && \
+    rm -rf /var/lib/apt/lists/*
 
 ENV GOPATH /opt/go
 
-RUN go get github.com/tools/godep
-RUN go get -t github.com/smartystreets/goconvey
+RUN go get github.com/tools/godep && \
+    go get -t github.com/smartystreets/goconvey
 
 ADD . /opt/go/src/github.com/QubitProducts/bamboo
 WORKDIR /opt/go/src/github.com/QubitProducts/bamboo
-RUN /opt/go/bin/godep restore
-RUN go build
-RUN ln -s /opt/go/src/github.com/QubitProducts/bamboo /var/bamboo
-
-RUN mkdir -p /run/haproxy
+RUN /opt/go/bin/godep restore && \
+    go build && \
+    ln -s /opt/go/src/github.com/QubitProducts/bamboo /var/bamboo && \
+    mkdir -p /run/haproxy
 
 ADD builder/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 ADD builder/run.sh /run.sh
