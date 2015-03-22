@@ -83,8 +83,14 @@ type HealthChecks struct {
 	Path string `json:path`
 }
 
-func fetchMarathonApps(endpoint string) (map[string]MarathonApp, error) {
-	response, err := http.Get(endpoint + "/v2/apps")
+func fetchMarathonApps(maraconf configuration.Marathon, endpoint string) (map[string]MarathonApp, error) {
+	client := &http.Client{}
+	req, _ := http.NewRequest("GET", endpoint + "/v2/apps", nil)
+	if (len(maraconf.AuthUsername) > 0) {
+		req.SetBasicAuth(maraconf.AuthUsername, maraconf.AuthPassword)
+	}
+	req.Header.Add("Accept", "application/json")
+	response, err := client.Do(req)
 
 	if err != nil {
 		return nil, err
@@ -112,9 +118,12 @@ func fetchMarathonApps(endpoint string) (map[string]MarathonApp, error) {
 	}
 }
 
-func fetchTasks(endpoint string) (map[string][]MarathonTask, error) {
+func fetchTasks(maraconf configuration.Marathon, endpoint string) (map[string][]MarathonTask, error) {
 	client := &http.Client{}
-	req, err := http.NewRequest("GET", endpoint+"/v2/tasks", nil)
+	req, _ := http.NewRequest("GET", endpoint + "/v2/tasks", nil)
+	if (len(maraconf.AuthUsername) > 0) {
+		req.SetBasicAuth(maraconf.AuthUsername, maraconf.AuthPassword)
+	}
 	req.Header.Add("Accept", "application/json")
 	response, err := client.Do(req)
 
@@ -208,7 +217,7 @@ func FetchApps(maraconf configuration.Marathon) (AppList, error) {
 
 	// try all configured endpoints until one succeeds
 	for _, url := range maraconf.Endpoints() {
-		applist, err = _fetchApps(url)
+		applist, err = _fetchApps(maraconf, url)
 		if err == nil {
 			return applist, err
 		}
@@ -217,13 +226,13 @@ func FetchApps(maraconf configuration.Marathon) (AppList, error) {
 	return nil, err
 }
 
-func _fetchApps(url string) (AppList, error) {
-	tasks, err := fetchTasks(url)
+func _fetchApps(maraconf configuration.Marathon, url string) (AppList, error) {
+	tasks, err := fetchTasks(maraconf, url)
 	if err != nil {
 		return nil, err
 	}
 
-	marathonApps, err := fetchMarathonApps(url)
+	marathonApps, err := fetchMarathonApps(maraconf, url)
 	if err != nil {
 		return nil, err
 	}
