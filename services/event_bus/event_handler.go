@@ -34,7 +34,7 @@ type Handlers struct {
 func (h *Handlers) MarathonEventHandler(event MarathonEvent) {
 	log.Printf("%s => %s\n", event.EventType, event.Timestamp)
 	queueUpdate(h)
-	h.Conf.StatsD.Increment(1.0, "reload.marathon", 1)
+	h.Conf.StatsD.Increment(1.0, "callback.marathon", 1)
 }
 
 func (h *Handlers) ServiceEventHandler(event ServiceEvent) {
@@ -91,6 +91,7 @@ func handleHAPUpdate(conf *configuration.Configuration, conn *zk.Conn) bool {
 		if err != nil {
 			log.Fatalf("HAProxy: update failed\n")
 		} else {
+			conf.StatsD.Increment(1.0, "reload.marathon", 1)
 			log.Println("HAProxy: Configuration updated")
 		}
 		return true
