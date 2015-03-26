@@ -11,8 +11,9 @@ import (
 
 // Describes an app process running
 type Task struct {
-	Host string
-	Port int
+	Host  string
+	Port  int
+	Ports []int
 }
 
 // An app may have multiple processes
@@ -22,6 +23,7 @@ type App struct {
 	HealthCheckPath string
 	Tasks           []Task
 	ServicePort     int
+	ServicePorts    []int
 	Env             map[string]string
 }
 
@@ -158,7 +160,7 @@ func createApps(tasksById map[string][]MarathonTask, marathonApps map[string]Mar
 
 		for _, task := range tasks {
 			if len(task.Ports) > 0 {
-				simpleTasks = append(simpleTasks, Task{Host: task.Host, Port: task.Ports[0]})
+				simpleTasks = append(simpleTasks, Task{Host: task.Host, Port: task.Ports[0], Ports: task.Ports})
 			}
 		}
 
@@ -180,6 +182,7 @@ func createApps(tasksById map[string][]MarathonTask, marathonApps map[string]Mar
 
 		if len(marathonApps[appId].Ports) > 0 {
 			app.ServicePort = marathonApps[appId].Ports[0]
+			app.ServicePorts = marathonApps[appId].Ports
 		}
 
 		apps = append(apps, app)
