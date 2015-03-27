@@ -68,6 +68,7 @@ func main() {
 	handlers := event_bus.Handlers{Conf: &conf, Zookeeper: zkConn}
 	eventBus.Register(handlers.MarathonEventHandler)
 	eventBus.Register(handlers.ServiceEventHandler)
+	eventBus.Publish(event_bus.ServiceEvent{EventType: "init"})
 
 	// Start server
 	initServer(&conf, zkConn, eventBus)
