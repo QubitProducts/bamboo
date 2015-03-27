@@ -16,6 +16,7 @@ ADD builder/run.sh /run.sh
 WORKDIR /opt/go/src/github.com/QubitProducts/bamboo
 
 RUN go get github.com/tools/godep && \
+    go get github.com/natefinch/lumberjack && \
     go get -t github.com/smartystreets/goconvey && \
     /opt/go/bin/godep restore && \
     go build && \
@@ -26,7 +27,6 @@ RUN go get github.com/tools/godep && \
 VOLUME /var/log/supervisor
 
 RUN apt-get clean && \
-    rm -rf /build && \
     rm -rf /tmp/* /var/tmp/* && \
     rm -rf /var/lib/apt/lists/* && \
     rm -f /etc/dpkg/dpkg.cfg.d/02apt-speedup && \
