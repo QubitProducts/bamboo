@@ -1,7 +1,7 @@
 package configuration
 
 import (
-	"github.com/peterbourgon/g2s"
+	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/peterbourgon/g2s"
 	"log"
 	"time"
 	"strings"

@@ -7,11 +7,11 @@ import (
 	"net/http"
 	"io/ioutil"
 
-	"github.com/zenazn/goji/web"
-	"github.com/samuel/go-zookeeper/zk"
+	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/zenazn/goji/web"
+	zk "github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/samuel/go-zookeeper/zk"
 
 	conf "github.com/QubitProducts/bamboo/configuration"
-	service "github.com/QubitProducts/bamboo/services/service"
+	"github.com/QubitProducts/bamboo/services/service"
 )
 
 type ServiceAPI struct {
