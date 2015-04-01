@@ -258,10 +258,10 @@ Golang:
 ```bash
 # Pakcage manager
 go get github.com/tools/godep
+# Testing Toolkit
 go get -t github.com/smartystreets/goconvey
 
 cd $GOPATH/src/github.com/QubitProducts/bamboo
-godep restore
 
 # Build your binary
 go build
