@@ -15,13 +15,6 @@ ADD builder/run.sh /run.sh
 
 WORKDIR /opt/go/src/github.com/QubitProducts/bamboo
 
-# Checkout the 'maintain' branch of lumberjack
-RUN mkdir -p /opt/go/src/github.com/natefinch && \
-    cd /opt/go/src/github.com/natefinch && \
-    git clone https://github.com/natefinch/lumberjack.git && \
-    cd lumberjack && \
-    git checkout maintain
-
 RUN go get github.com/tools/godep && \
     go get -t github.com/smartystreets/goconvey && \
     go build && \
