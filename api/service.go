@@ -1,17 +1,16 @@
 package api
 
 import (
-	"errors"
 	"encoding/json"
-	"net/url"
-	"net/http"
+	"errors"
 	"io/ioutil"
+	"net/http"
+	"net/url"
 
-	"github.com/zenazn/goji/web"
-	"github.com/samuel/go-zookeeper/zk"
-
+	zk "github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/samuel/go-zookeeper/zk"
+	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/zenazn/goji/web"
 	conf "github.com/QubitProducts/bamboo/configuration"
-	service "github.com/QubitProducts/bamboo/services/service"
+	"github.com/QubitProducts/bamboo/services/service"
 )
 
 type ServiceAPI struct {
@@ -64,7 +63,6 @@ func (d *ServiceAPI) Put(c web.C, w http.ResponseWriter, r *http.Request) {
 	responseJSON(w, serviceModel)
 }
 
-
 func (d *ServiceAPI) Delete(c web.C, w http.ResponseWriter, r *http.Request) {
 	identifier, _ := url.QueryUnescape(c.URLParams["id"])
 	err := service.Delete(d.Zookeeper, d.Config.Bamboo.Zookeeper, identifier)
@@ -75,7 +73,6 @@ func (d *ServiceAPI) Delete(c web.C, w http.ResponseWriter, r *http.Request) {
 
 	responseJSON(w, new(map[string]string))
 }
-
 
 func extractServiceModel(r *http.Request) (service.Service, error) {
 	var serviceModel service.Service
@@ -89,12 +86,11 @@ func extractServiceModel(r *http.Request) (service.Service, error) {
 	return serviceModel, nil
 }
 
-
 func responseError(w http.ResponseWriter, message string) {
 	http.Error(w, message, http.StatusBadRequest)
 }
 
-func responseJSON(w http.ResponseWriter, data interface {}) {
+func responseJSON(w http.ResponseWriter, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	bites, _ := json.Marshal(data)
 	w.Write(bites)

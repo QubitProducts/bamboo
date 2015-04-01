@@ -1,8 +1,8 @@
 package template
 
 import (
+	. "github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/smartystreets/goconvey/convey"
 	"testing"
-	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestTemplateWriter(t *testing.T) {

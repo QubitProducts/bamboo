@@ -3,12 +3,12 @@ package service
 import (
 	"net/url"
 
-	"github.com/samuel/go-zookeeper/zk"
+	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/samuel/go-zookeeper/zk"
 	conf "github.com/QubitProducts/bamboo/configuration"
 )
 
 type Service struct {
-	Id string `param:"id"`
+	Id  string `param:"id"`
 	Acl string `param:"acl"`
 }
 
@@ -51,7 +51,6 @@ func Create(conn *zk.Conn, zkConf conf.Zookeeper, appId string, domainValue stri
 
 	return resPath, nil
 }
-
 
 func Put(conn *zk.Conn, zkConf conf.Zookeeper, appId string, domainValue string) (*zk.Stat, error) {
 	path := concatPath(zkConf.Path, appId)
@@ -100,5 +99,3 @@ func escapeSlashes(id string) string {
 func unescapeSlashes(id string) (string, error) {
 	return url.QueryUnescape(id)
 }
-
-

@@ -1,23 +1,22 @@
 package configuration
 
 import (
-	"github.com/peterbourgon/g2s"
+	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/peterbourgon/g2s"
 	"log"
-	"time"
 	"strings"
+	"time"
 )
-
 
 type StatsD struct {
 	Enabled bool
 	Host    string
 	Prefix  string
 
-	Client  g2s.Statter
+	Client g2s.Statter
 }
 
 func (s *StatsD) CreateClient() {
-	if (s.Enabled && s.Client == nil) {
+	if s.Enabled && s.Client == nil {
 		log.Println("StatsD is enabled")
 		client, err := g2s.Dial("udp", s.Host)
 		if err != nil {
