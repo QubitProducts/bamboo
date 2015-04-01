@@ -14,9 +14,6 @@ install:
   - go get -t github.com/smartystreets/goconvey
   - go get -v -u github.com/tools/godep
 
-  # Restore project dependencies
-  - godep restore
-
   # Travis auto execute go test
   #  - go test -v ./...
 
