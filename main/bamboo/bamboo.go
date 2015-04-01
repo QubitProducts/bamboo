@@ -3,11 +3,13 @@ package main
 import (
 	"flag"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"path"
+	"strings"
 	"syscall"
 	"time"
 
@@ -117,7 +119,23 @@ func registerMarathonEvent(conf *configuration.Configuration) {
 		url := marathon + "/v2/eventSubscriptions?callbackUrl=" + conf.Bamboo.Endpoint + "/api/marathon/event_callback"
 		req, _ := http.NewRequest("POST", url, nil)
 		req.Header.Add("Content-Type", "application/json")
-		client.Do(req)
+		resp, err := client.Do(req)
+		if err != nil {
+			errorMsg := "An error occurred while accessing Marathon callback system: %s\n"
+			log.Printf(errorMsg, err)
+			return
+		}
+		bodyBytes, err := ioutil.ReadAll(resp.Body)
+		resp.Body.Close()
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
+		body := string(bodyBytes)
+		if strings.HasPrefix(body, "{\"message") {
+			warningMsg := "Access to the callback system of Marathon seems to be failed, response: %s\n"
+			log.Printf(warningMsg, body)
+		}
 	}
 }
 
