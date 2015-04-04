@@ -17,6 +17,8 @@ import (
 	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/natefinch/lumberjack"
 	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/samuel/go-zookeeper/zk"
 	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/zenazn/goji"
+	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/zenazn/goji/bind"
+	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/zenazn/goji/graceful"
 	"github.com/QubitProducts/bamboo/api"
 	"github.com/QubitProducts/bamboo/configuration"
 	"github.com/QubitProducts/bamboo/qzk"
@@ -99,7 +101,7 @@ func initServer(conf *configuration.Configuration, conn *zk.Conn, eventBus *even
 
 	registerMarathonEvent(conf)
 
-	goji.Serve()
+	serve(conf)
 }
 
 // Get current executable folder path
@@ -175,4 +177,20 @@ func configureLog() {
 			MaxAge: 28,
 		}, os.Stdout))
 	}
+}
+
+func serve(conf *configuration.Configuration){
+	goji.DefaultMux.Compile()
+	http.Handle("/", goji.DefaultMux)
+	listener := bind.Socket(conf.Bamboo.Bind)
+	log.Println("Starting Bamboo backend listen on", listener.Addr())
+	graceful.HandleSignals()
+	bind.Ready()
+	graceful.PreHook(func() { log.Printf("Goji received signal, gracefully stopping") })
+	graceful.PostHook(func() { log.Printf("Goji stopped") })
+	err := graceful.Serve(listener, http.DefaultServeMux)
+	if err != nil {
+		log.Fatal(err)
+	}
+	graceful.Wait()
 }

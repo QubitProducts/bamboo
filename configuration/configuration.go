@@ -47,6 +47,8 @@ func FromFile(filePath string) (Configuration, error) {
 	setValueFromEnv(&conf.Marathon.Endpoint, "MARATHON_ENDPOINT")
 
 	setValueFromEnv(&conf.Bamboo.Endpoint, "BAMBOO_ENDPOINT")
+	setValueFromEnv(&conf.Bamboo.Bind, "BAMBOO_BIND")
+	setDefaultValue(&conf.Bamboo.Bind, ":8000")
 	setValueFromEnv(&conf.Bamboo.Zookeeper.Host, "BAMBOO_ZK_HOST")
 	setValueFromEnv(&conf.Bamboo.Zookeeper.Path, "BAMBOO_ZK_PATH")
 
@@ -57,6 +59,12 @@ func FromFile(filePath string) (Configuration, error) {
 	setValueFromEnv(&conf.StatsD.Prefix, "STATSD_PREFIX")
 	setBoolValueFromEnv(&conf.StatsD.Enabled, "STATSD_ENABLED")
 	return *conf, err
+}
+
+func setDefaultValue(field *string, value string) {
+	if field == nil {
+		field = &value
+	}
 }
 
 func setValueFromEnv(field *string, envVar string) {
