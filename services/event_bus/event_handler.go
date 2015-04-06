@@ -95,7 +95,7 @@ func handleHAPUpdate(conf *configuration.Configuration, conn *zk.Conn) bool {
 
 		err = execCommand(conf.HAProxy.ReloadCommand)
 		if err != nil {
-			log.Fatalf("HAProxy: update failed\n")
+			log.Println("HAProxy: update failed\n")
 		} else {
 			conf.StatsD.Increment(1.0, "reload.marathon", 1)
 			log.Println("HAProxy: Configuration updated")

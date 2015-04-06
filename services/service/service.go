@@ -54,11 +54,16 @@ func Create(conn *zk.Conn, zkConf conf.Zookeeper, appId string, domainValue stri
 
 func Put(conn *zk.Conn, zkConf conf.Zookeeper, appId string, domainValue string) (*zk.Stat, error) {
 	path := concatPath(zkConf.Path, appId)
-	stats, err := conn.Set(path, []byte(domainValue), -1)
-
+	err := ensurePathExists(conn, path)
 	if err != nil {
 		return nil, err
 	}
+
+	stats, err := conn.Set(path, []byte(domainValue), -1)
+	if err != nil {
+		return nil, err
+	}
+
 	// Force triger an event on parent
 	conn.Set(zkConf.Path, []byte{}, -1)
 
