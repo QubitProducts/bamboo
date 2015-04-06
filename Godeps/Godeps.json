@@ -6,6 +6,16 @@
 	],
 	"Deps": [
 		{
+			"ImportPath": "github.com/codegangsta/inject",
+			"Comment": "v1.0-rc1-10-g33e0aa1",
+			"Rev": "33e0aa1cb7c019ccc3fbe049a8262a6403d30504"
+		},
+		{
+			"ImportPath": "github.com/go-martini/martini",
+			"Comment": "v1.0-117-g2047b73",
+			"Rev": "2047b7394d319aa3feb49db1452202336fb66fb6"
+		},
+		{
 			"ImportPath": "github.com/jtolds/gls",
 			"Rev": "f1ac7f4f24f50328e6bc838ca4437d1612a0243c"
 		},
@@ -35,10 +45,6 @@
 			"ImportPath": "github.com/smartystreets/goconvey/convey",
 			"Comment": "1.5.0-379-g01b2fc9",
 			"Rev": "01b2fc9c34e7acc187a4f4218ed695dd7f76c361"
-		},
-		{
-			"ImportPath": "github.com/zenazn/goji",
-			"Rev": "17b9035bcd162f59e1a1247d4a755124c37052c5"
 		}
 	]
 }
