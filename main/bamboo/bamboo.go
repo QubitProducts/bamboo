@@ -13,11 +13,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/kardianos/osext"
-	lumberjack "github.com/natefinch/lumberjack"
-	"github.com/samuel/go-zookeeper/zk"
-	"github.com/zenazn/goji"
-
+	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/kardianos/osext"
+	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/natefinch/lumberjack"
+	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/samuel/go-zookeeper/zk"
+	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/zenazn/goji"
 	"github.com/QubitProducts/bamboo/api"
 	"github.com/QubitProducts/bamboo/configuration"
 	"github.com/QubitProducts/bamboo/qzk"
@@ -70,6 +69,7 @@ func main() {
 	handlers := event_bus.Handlers{Conf: &conf, Zookeeper: zkConn}
 	eventBus.Register(handlers.MarathonEventHandler)
 	eventBus.Register(handlers.ServiceEventHandler)
+	eventBus.Publish(event_bus.MarathonEvent { EventType: "bamboo_startup", Timestamp: time.Now().Format(time.RFC3339) })
 
 	// Start server
 	initServer(&conf, zkConn, eventBus)

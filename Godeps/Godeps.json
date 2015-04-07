@@ -1,10 +1,16 @@
 {
 	"ImportPath": "github.com/QubitProducts/bamboo",
-	"GoVersion": "go1.3.3",
+	"GoVersion": "go1.4.2",
+	"Packages": [
+		"./..."
+	],
 	"Deps": [
 		{
+			"ImportPath": "github.com/jtolds/gls",
+			"Rev": "f1ac7f4f24f50328e6bc838ca4437d1612a0243c"
+		},
+		{
 			"ImportPath": "github.com/kardianos/osext",
-			"Comment": "null-15",
 			"Rev": "0af7634e455e7ecd558a196743d8a3f700b945c0"
 		},
 		{
@@ -19,6 +25,16 @@
 		{
 			"ImportPath": "github.com/samuel/go-zookeeper/zk",
 			"Rev": "041700315ab94d5f506317d8798adc9a6674c547"
+		},
+		{
+			"ImportPath": "github.com/smartystreets/assertions",
+			"Comment": "1.5.0-379-g75acd40",
+			"Rev": "75acd402ca38dc205641a826bb58b9de014926dd"
+		},
+		{
+			"ImportPath": "github.com/smartystreets/goconvey/convey",
+			"Comment": "1.5.0-379-g01b2fc9",
+			"Rev": "01b2fc9c34e7acc187a4f4218ed695dd7f76c361"
 		},
 		{
 			"ImportPath": "github.com/zenazn/goji",

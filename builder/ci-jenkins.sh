@@ -23,7 +23,6 @@ go get -t github.com/smartystreets/goconvey
 cd $BAMBOO_PROJECT_DIR
 export _BAMBOO_VERSION=`(cat VERSION)`
 
-godep restore
 go build
 go test -v github.com/QubitProducts/bamboo/... | go2xunit > $WORKSPACE/test_output/tests.xml
 
