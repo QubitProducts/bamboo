@@ -9,6 +9,8 @@ import (
 var eventKeys = make(map[string]bool)
 
 func init() {
+	eventKeys["eventType"] = true
+	eventKeys["timestamp"] = true
 	eventKeys["clientIp"] = true
 	eventKeys["uri"] = true
 	eventKeys["frameworkId"] = true
@@ -85,7 +87,10 @@ func generatePlaintext(m map[string]interface{}) string {
 	for _, key := range keys {
 		buffer.WriteString(fmt.Sprintf("%s: %v, ", key, m[key]))
 	}
-	buffer.Truncate(buffer.Len() - 2)
+	length := buffer.Len()
+	if length >= 2 {
+		buffer.Truncate(length - 2)
+	}
 	buffer.WriteString("}")
 	return buffer.String()
 }
