@@ -1,7 +1,7 @@
 language: go
 
 go:
-  - 1.3
+  - 1.4
 
 install:
   # WORKING DIR
@@ -13,9 +13,6 @@ install:
   - go get github.com/smartystreets/assertions
   - go get -t github.com/smartystreets/goconvey
   - go get -v -u github.com/tools/godep
-
-  # Restore project dependencies
-  - godep restore
 
   # Travis auto execute go test
   #  - go test -v ./...

@@ -16,9 +16,7 @@ ADD builder/run.sh /run.sh
 WORKDIR /opt/go/src/github.com/QubitProducts/bamboo
 
 RUN go get github.com/tools/godep && \
-    go get github.com/natefinch/lumberjack && \
     go get -t github.com/smartystreets/goconvey && \
-    /opt/go/bin/godep restore && \
     go build && \
     ln -s /opt/go/src/github.com/QubitProducts/bamboo /var/bamboo && \
     mkdir -p /run/haproxy && \

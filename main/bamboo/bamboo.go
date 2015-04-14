@@ -3,19 +3,20 @@ package main
 import (
 	"flag"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"path"
+	"strings"
 	"syscall"
 	"time"
 
-	"github.com/kardianos/osext"
-	lumberjack "github.com/natefinch/lumberjack"
-	"github.com/samuel/go-zookeeper/zk"
-	"github.com/zenazn/goji"
-
+	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/kardianos/osext"
+	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/natefinch/lumberjack"
+	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/samuel/go-zookeeper/zk"
+	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/zenazn/goji"
 	"github.com/QubitProducts/bamboo/api"
 	"github.com/QubitProducts/bamboo/configuration"
 	"github.com/QubitProducts/bamboo/qzk"
@@ -68,6 +69,7 @@ func main() {
 	handlers := event_bus.Handlers{Conf: &conf, Zookeeper: zkConn}
 	eventBus.Register(handlers.MarathonEventHandler)
 	eventBus.Register(handlers.ServiceEventHandler)
+	eventBus.Publish(event_bus.MarathonEvent { EventType: "bamboo_startup", Timestamp: time.Now().Format(time.RFC3339) })
 
 	// Start server
 	initServer(&conf, zkConn, eventBus)
@@ -117,7 +119,23 @@ func registerMarathonEvent(conf *configuration.Configuration) {
 		url := marathon + "/v2/eventSubscriptions?callbackUrl=" + conf.Bamboo.Endpoint + "/api/marathon/event_callback"
 		req, _ := http.NewRequest("POST", url, nil)
 		req.Header.Add("Content-Type", "application/json")
-		client.Do(req)
+		resp, err := client.Do(req)
+		if err != nil {
+			errorMsg := "An error occurred while accessing Marathon callback system: %s\n"
+			log.Printf(errorMsg, err)
+			return
+		}
+		bodyBytes, err := ioutil.ReadAll(resp.Body)
+		resp.Body.Close()
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
+		body := string(bodyBytes)
+		if strings.HasPrefix(body, "{\"message") {
+			warningMsg := "Access to the callback system of Marathon seems to be failed, response: %s\n"
+			log.Printf(warningMsg, body)
+		}
 	}
 }
 
