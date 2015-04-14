@@ -1,30 +1,15 @@
 package event_bus
 
 import (
+	"io/ioutil"
+	"log"
+	"os/exec"
+
 	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/samuel/go-zookeeper/zk"
 	"github.com/QubitProducts/bamboo/configuration"
 	"github.com/QubitProducts/bamboo/services/haproxy"
 	"github.com/QubitProducts/bamboo/services/template"
-	"io/ioutil"
-	"log"
-	"os/exec"
 )
-
-type MarathonEvent struct {
-	// EventType can be
-	// api_post_event, status_update_event, subscribe_event
-	EventType string
-	Timestamp string
-}
-
-type ZookeeperEvent struct {
-	Source    string
-	EventType string
-}
-
-type ServiceEvent struct {
-	EventType string
-}
 
 type Handlers struct {
 	Conf      *configuration.Configuration
@@ -32,7 +17,8 @@ type Handlers struct {
 }
 
 func (h *Handlers) MarathonEventHandler(event MarathonEvent) {
-	log.Printf("%s => %s\n", event.EventType, event.Timestamp)
+	log.Printf("Marathon event(type=%s, timestamp=%s): %s\n",
+		event.EventType, event.Timestamp, event.Plaintext())
 	queueUpdate(h)
 	h.Conf.StatsD.Increment(1.0, "callback.marathon", 1)
 }

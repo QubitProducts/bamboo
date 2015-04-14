@@ -69,7 +69,7 @@ func main() {
 	handlers := event_bus.Handlers{Conf: &conf, Zookeeper: zkConn}
 	eventBus.Register(handlers.MarathonEventHandler)
 	eventBus.Register(handlers.ServiceEventHandler)
-	eventBus.Publish(event_bus.MarathonEvent { EventType: "bamboo_startup", Timestamp: time.Now().Format(time.RFC3339) })
+	eventBus.Publish(event_bus.MarathonEvent{EventType: "bamboo_startup", Timestamp: time.Now().Format(time.RFC3339)})
 
 	// Start server
 	initServer(&conf, zkConn, eventBus)
