@@ -24,6 +24,13 @@ type MarathonEvent struct {
 }
 
 func (me *MarathonEvent) Plaintext() string {
+	if me.plaintext == "" {
+		me.plaintext = generatePlaintext(
+			map[string]interface{}{
+				"eventType": me.EventType,
+				"timestamp": me.Timestamp,
+			})
+	}
 	return me.plaintext
 }
 
@@ -39,21 +46,25 @@ func RestoreMarathonEvent(contentMap map[string]interface{}) (*MarathonEvent, bo
 	if !ok {
 		return nil, false
 	}
+	marathonEvent := MarathonEvent{eventType, timestamp, ""}
+	marathonEvent.plaintext = generatePlaintext(contentMap)
+	return &marathonEvent, true
+}
+
+func generatePlaintext(m map[string]interface{}) string {
 	keys := make([]string, 0)
-	for k, _ := range contentMap {
+	for k, _ := range m {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
-	marathonEvent := MarathonEvent{eventType, timestamp, ""}
 	var buffer bytes.Buffer
 	buffer.WriteString("{")
 	for _, key := range keys {
-		buffer.WriteString(fmt.Sprintf("%s: %v, ", key, contentMap[key]))
+		buffer.WriteString(fmt.Sprintf("%s: %v, ", key, m[key]))
 	}
 	buffer.Truncate(buffer.Len() - 2)
 	buffer.WriteString("}")
-	marathonEvent.plaintext = buffer.String()
-	return &marathonEvent, true
+	return buffer.String()
 }
 
 func hasStringValue(contentMap map[string]interface{}, key string) (string, bool) {
