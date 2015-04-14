@@ -6,6 +6,27 @@ import (
 	"sort"
 )
 
+var eventKeys = make(map[string]bool)
+
+func init() {
+	eventKeys["clientIp"] = true
+	eventKeys["uri"] = true
+	eventKeys["frameworkId"] = true
+	eventKeys["master"] = true
+	eventKeys["callbackUrl"] = true
+	eventKeys["appId"] = true
+	eventKeys["version"] = true
+	eventKeys["taskId"] = true
+	eventKeys["alive"] = true
+	eventKeys["groupId"] = true
+	eventKeys["id"] = true
+	eventKeys["taskStatus"] = true
+	eventKeys["slaveId"] = true
+	eventKeys["host"] = true
+	eventKeys["ports"] = true
+	eventKeys["executorId"] = true
+}
+
 type ZookeeperEvent struct {
 	Source    string
 	EventType string
@@ -54,7 +75,9 @@ func RestoreMarathonEvent(contentMap map[string]interface{}) (*MarathonEvent, bo
 func generatePlaintext(m map[string]interface{}) string {
 	keys := make([]string, 0)
 	for k, _ := range m {
-		keys = append(keys, k)
+		if eventKeys[k] {
+			keys = append(keys, k)
+		}
 	}
 	sort.Strings(keys)
 	var buffer bytes.Buffer
