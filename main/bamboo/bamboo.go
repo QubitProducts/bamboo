@@ -72,9 +72,12 @@ func main() {
 	eventBus.Register(handlers.MarathonEventHandler)
 	eventBus.Register(handlers.ServiceEventHandler)
 	eventBus.Publish(event_bus.MarathonEvent{EventType: "bamboo_startup", Timestamp: time.Now().Format(time.RFC3339)})
+<<<<<<< HEAD
 
 	// Handle gracefully exit
 	registerOSSignals()
+=======
+>>>>>>> Improve the method 'Plaintext of ''MarathonEvent'.
 
 	// Start server
 	initServer(&conf, zkConn, eventBus)

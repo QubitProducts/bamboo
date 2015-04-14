@@ -17,7 +17,7 @@ type Handlers struct {
 }
 
 func (h *Handlers) MarathonEventHandler(event MarathonEvent) {
-	log.Printf("Marathon event: %s\n", event.plaintext)
+	log.Printf("Marathon event: %s\n", event.Plaintext())
 	queueUpdate(h)
 	h.Conf.StatsD.Increment(1.0, "callback.marathon", 1)
 }
