@@ -1,9 +1,9 @@
 package event_bus
 
 import (
+	"log"
 	"reflect"
 	"sync"
-	"log"
 )
 
 type EventBus struct {
@@ -50,7 +50,7 @@ func (ebus *EventBus) Register(fn interface{}, forTypes ...interface{}) {
 /**
  * Publish an event to the EventBus
  */
-func (ebus *EventBus) Publish(event interface {}) error {
+func (ebus *EventBus) Publish(event interface{}) error {
 	ebus.lock.RLock()
 	defer ebus.lock.RUnlock()
 
