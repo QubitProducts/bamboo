@@ -3,8 +3,11 @@ package api
 import (
 	"encoding/json"
 <<<<<<< HEAD
+<<<<<<< HEAD
 	"github.com/QubitProducts/bamboo/configuration"
 	eb "github.com/QubitProducts/bamboo/services/event_bus"
+=======
+>>>>>>> Improve 'MarathonEvent', so that it can contain more information.
 =======
 >>>>>>> Improve 'MarathonEvent', so that it can contain more information.
 	"io"
@@ -12,6 +15,12 @@ import (
 	"log"
 	"net/http"
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+
+	"github.com/QubitProducts/bamboo/configuration"
+	eb "github.com/QubitProducts/bamboo/services/event_bus"
+>>>>>>> Improve 'MarathonEvent', so that it can contain more information.
 =======
 
 	"github.com/QubitProducts/bamboo/configuration"

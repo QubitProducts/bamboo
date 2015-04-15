@@ -81,16 +81,26 @@ func generatePlaintext(m map[string]interface{}) string {
 			keys = append(keys, k)
 		}
 	}
+<<<<<<< HEAD
+=======
+	if len(keys) == 0 {
+		return "{}"
+	}
+>>>>>>> Improve 'MarathonEvent', so that it can contain more information.
 	sort.Strings(keys)
 	var buffer bytes.Buffer
 	buffer.WriteString("{")
 	for _, key := range keys {
 		buffer.WriteString(fmt.Sprintf("%s: %v, ", key, m[key]))
 	}
+<<<<<<< HEAD
 	length := buffer.Len()
 	if length >= 2 {
 		buffer.Truncate(length - 2)
 	}
+=======
+	buffer.Truncate(buffer.Len() - 2)
+>>>>>>> Improve 'MarathonEvent', so that it can contain more information.
 	buffer.WriteString("}")
 	return buffer.String()
 }
