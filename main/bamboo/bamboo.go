@@ -28,10 +28,12 @@ import (
 */
 var configFilePath string
 var logPath string
+var serverBindPort string
 
 func init() {
 	flag.StringVar(&configFilePath, "config", "config/development.json", "Full path of the configuration JSON file")
 	flag.StringVar(&logPath, "log", "", "Log path to a file. Default logs to stdout")
+	flag.StringVar(&serverBindPort, "bind", ":8000", "Bind HTTP server to a specific port")
 }
 
 func main() {
@@ -104,7 +106,7 @@ func initServer(conf *configuration.Configuration, conn *zk.Conn, eventBus *even
 	router.Use(martini.Static(path.Join(executableFolder(), "webapp")))
 
 	registerMarathonEvent(conf)
-	router.RunOnAddr(":8000")
+	router.RunOnAddr(serverBindPort)
 }
 
 // Get current executable folder path
