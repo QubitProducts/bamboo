@@ -19,9 +19,14 @@ It features:
 ### Compatibility
 
 v0.1.1 supports Marathon 0.6 and Mesos 0.19.x
+
 v0.2.2 supports both DNS and non-DNS proxy ACL rules
+
 v0.2.8 supports both HTTP & TCP via custom Marathon enviroment variables (read below for details)
-v0.2.9 supports Marathon 0.7.* (with [http_callback enabled](https://mesosphere.github.io/marathon/docs/rest-api.html#event-subscriptions)) and Mesos 0.21.x
+
+v0.2.9 supports Marathon 0.7.* (with [http_callback
+enabled](https://mesosphere.github.io/marathon/docs/rest-api.html#event-subscriptions)) and Mesos 0.21.x
+
 v0.2.11 improves API, deprecate previous API endpoint
 
 
