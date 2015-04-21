@@ -31,7 +31,7 @@
   },
   "napa": {
     "angular-strap": "mgcrea/angular-strap#v2.0.5",
-    "angular": "angular/bower-angular#v1.2.22-build.376+sha.93b0c2d",
+    "angular": "angular/bower-angular#v1.2.22",
     "angular-animate": "angular/bower-angular-animate#v1.2.22-build.376+sha.93b0c2d",
     "angular-resource": "angular/bower-angular-resource#v1.2.22-build.376+sha.93b0c2d",
     "angular-ui-router": "angular-ui/ui-router#0.2.10"
