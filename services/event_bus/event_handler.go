@@ -34,9 +34,24 @@ var updateChan = make(chan *Handlers, 1)
 func init() {
 	go func() {
 		log.Println("Starting update loop")
-		for {
-			h := <-updateChan
-			handleHAPUpdate(h.Conf, h.Zookeeper)
+		loop := true
+		monitor := func() (abnormal bool) {
+			defer func() {
+				if err := recover(); err != nil {
+					log.Fatalf("An fatal error occurred while updating haproxy config file: %s\n", err)
+					abnormal = true
+				}
+			}()
+			for {
+				h := <-updateChan
+				handleHAPUpdate(h.Conf, h.Zookeeper)
+			}
+		}
+		for loop {
+			loop = monitor()
+			if loop {
+				log.Println("Restarting update loop")
+			}
 		}
 	}()
 }
@@ -58,11 +73,13 @@ func queueUpdate(h *Handlers) {
 }
 
 func handleHAPUpdate(conf *configuration.Configuration, conn *zk.Conn) bool {
+	log.Println("Updating HAProxy configuration file...")
 	currentContent, _ := ioutil.ReadFile(conf.HAProxy.OutputPath)
 
 	templateContent, err := ioutil.ReadFile(conf.HAProxy.TemplatePath)
 	if err != nil {
-		log.Panicf("Cannot read template file: %s", err)
+		log.Fatalf("Ignore to updating because cannot read template file: %s", err)
+		return false
 	}
 
 	templateData := haproxy.GetTemplateData(conf, conn)
@@ -70,7 +87,8 @@ func handleHAPUpdate(conf *configuration.Configuration, conn *zk.Conn) bool {
 	newContent, err := template.RenderTemplate(conf.HAProxy.TemplatePath, string(templateContent), templateData)
 
 	if err != nil {
-		log.Fatalf("Template syntax error: \n %s", err)
+		log.Fatalf("Ignore to updating because template syntax error: \n %s", err)
+		return false
 	}
 
 	if currentContent == nil || string(currentContent) != newContent {
