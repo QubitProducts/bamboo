@@ -2,7 +2,6 @@ package configuration
 
 import (
 	"time"
-
 	"strings"
 )
 

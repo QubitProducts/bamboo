@@ -2,13 +2,13 @@ package service
 
 import (
 	"net/url"
-
-	"github.com/samuel/go-zookeeper/zk"
+	"strings"
+	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/samuel/go-zookeeper/zk"
 	conf "github.com/QubitProducts/bamboo/configuration"
 )
 
 type Service struct {
-	Id string `param:"id"`
+	Id  string `param:"id"`
 	Acl string `param:"acl"`
 }
 
@@ -43,7 +43,7 @@ func All(conn *zk.Conn, zkConf conf.Zookeeper) (map[string]Service, error) {
    http://zookeeper.apache.org/doc/trunk/zookeeperProgrammers.html#sc_ACLPermissions
 */
 func Create(conn *zk.Conn, zkConf conf.Zookeeper, appId string, domainValue string) (string, error) {
-	path := concatPath(zkConf.Path, appId)
+	path := concatPath(zkConf.Path, validateAppId(appId))
 	resPath, err := conn.Create(path, []byte(domainValue), 0, defaultACL())
 	if err != nil {
 		return "", err
@@ -52,14 +52,18 @@ func Create(conn *zk.Conn, zkConf conf.Zookeeper, appId string, domainValue stri
 	return resPath, nil
 }
 
-
 func Put(conn *zk.Conn, zkConf conf.Zookeeper, appId string, domainValue string) (*zk.Stat, error) {
-	path := concatPath(zkConf.Path, appId)
-	stats, err := conn.Set(path, []byte(domainValue), -1)
-
+	path := concatPath(zkConf.Path, validateAppId(appId))
+	err := ensurePathExists(conn, path)
 	if err != nil {
 		return nil, err
 	}
+
+	stats, err := conn.Set(path, []byte(domainValue), -1)
+	if err != nil {
+		return nil, err
+	}
+
 	// Force triger an event on parent
 	conn.Set(zkConf.Path, []byte{}, -1)
 
@@ -67,7 +71,7 @@ func Put(conn *zk.Conn, zkConf conf.Zookeeper, appId string, domainValue string)
 }
 
 func Delete(conn *zk.Conn, zkConf conf.Zookeeper, appId string) error {
-	path := concatPath(zkConf.Path, appId)
+	path := concatPath(zkConf.Path, validateAppId(appId))
 	return conn.Delete(path, -1)
 }
 
@@ -93,6 +97,14 @@ func defaultACL() []zk.ACL {
 	return []zk.ACL{zk.ACL{Perms: zk.PermAll, Scheme: "world", ID: "anyone"}}
 }
 
+func validateAppId(appId string) string {
+	if strings.HasPrefix(appId, "/") {
+		return appId
+	} else {
+		return "/" + appId
+	}
+}
+
 func escapeSlashes(id string) string {
 	return url.QueryEscape(id)
 }
@@ -100,5 +112,3 @@ func escapeSlashes(id string) string {
 func unescapeSlashes(id string) (string, error) {
 	return url.QueryUnescape(id)
 }
-
-

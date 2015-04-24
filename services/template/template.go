@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"text/template"
 	"github.com/QubitProducts/bamboo/services/service"
+	"strings"
 )
 
 func hasKey(data map[string]service.Service, appId string) bool {
@@ -20,7 +21,14 @@ func getService(data map[string]service.Service, appId string) service.Service {
 	Returns string content of a rendered template
 */
 func RenderTemplate(templateName string, templateContent string, data interface{}) (string, error) {
-	funcMap := template.FuncMap{ "hasKey": hasKey,  "getService": getService }
+	funcMap := template.FuncMap{ 
+		"hasKey": hasKey,  
+		"getService": getService,
+		"Split": strings.Split,
+		"Join": strings.Join,
+		"Replace": strings.Replace,
+		"ToUpper": strings.ToUpper,
+		"ToLower": strings.ToLower}
 
 	tpl := template.Must(template.New(templateName).Funcs(funcMap).Parse(templateContent))
 

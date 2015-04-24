@@ -3,19 +3,20 @@ package main
 import (
 	"flag"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"path"
+	"strings"
 	"syscall"
 	"time"
 
-	"github.com/kardianos/osext"
-	lumberjack "github.com/natefinch/lumberjack"
-	"github.com/samuel/go-zookeeper/zk"
-	"github.com/zenazn/goji"
-
+	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/go-martini/martini"
+	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/kardianos/osext"
+	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/natefinch/lumberjack"
+	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/samuel/go-zookeeper/zk"
 	"github.com/QubitProducts/bamboo/api"
 	"github.com/QubitProducts/bamboo/configuration"
 	"github.com/QubitProducts/bamboo/qzk"
@@ -27,10 +28,12 @@ import (
 */
 var configFilePath string
 var logPath string
+var serverBindPort string
 
 func init() {
 	flag.StringVar(&configFilePath, "config", "config/development.json", "Full path of the configuration JSON file")
 	flag.StringVar(&logPath, "log", "", "Log path to a file. Default logs to stdout")
+	flag.StringVar(&serverBindPort, "bind", ":8000", "Bind HTTP server to a specific port")
 }
 
 func main() {
@@ -68,6 +71,10 @@ func main() {
 	handlers := event_bus.Handlers{Conf: &conf, Zookeeper: zkConn}
 	eventBus.Register(handlers.MarathonEventHandler)
 	eventBus.Register(handlers.ServiceEventHandler)
+	eventBus.Publish(event_bus.MarathonEvent{EventType: "bamboo_startup", Timestamp: time.Now().Format(time.RFC3339)})
+
+	// Handle gracefully exit
+	registerOSSignals()
 
 	// Start server
 	initServer(&conf, zkConn, eventBus)
@@ -80,24 +87,26 @@ func initServer(conf *configuration.Configuration, conn *zk.Conn, eventBus *even
 
 	conf.StatsD.Increment(1.0, "restart", 1)
 	// Status live information
-	goji.Get("/status", api.HandleStatus)
+	router := martini.Classic()
+	router.Get("/status", api.HandleStatus)
 
-	// State API
-	goji.Get("/api/state", stateAPI.Get)
-
-	// Service API
-	goji.Get("/api/services", serviceAPI.All)
-	goji.Post("/api/services", serviceAPI.Create)
-	goji.Put("/api/services/:id", serviceAPI.Put)
-	goji.Delete("/api/services/:id", serviceAPI.Delete)
-	goji.Post("/api/marathon/event_callback", eventSubAPI.Callback)
+	// API
+	router.Group("/api", func(api martini.Router) {
+		// State API
+		api.Get("/state", stateAPI.Get)
+		// Service API
+		api.Get("/services", serviceAPI.All)
+		api.Post("/services", serviceAPI.Create)
+		api.Put("/services/**", serviceAPI.Put)
+		api.Delete("/services/**", serviceAPI.Delete)
+		api.Post("/marathon/event_callback", eventSubAPI.Callback)
+	})
 
 	// Static pages
-	goji.Get("/*", http.FileServer(http.Dir(path.Join(executableFolder(), "webapp"))))
+	router.Use(martini.Static(path.Join(executableFolder(), "webapp")))
 
 	registerMarathonEvent(conf)
-
-	goji.Serve()
+	router.RunOnAddr(serverBindPort)
 }
 
 // Get current executable folder path
@@ -117,7 +126,23 @@ func registerMarathonEvent(conf *configuration.Configuration) {
 		url := marathon + "/v2/eventSubscriptions?callbackUrl=" + conf.Bamboo.Endpoint + "/api/marathon/event_callback"
 		req, _ := http.NewRequest("POST", url, nil)
 		req.Header.Add("Content-Type", "application/json")
-		client.Do(req)
+		resp, err := client.Do(req)
+		if err != nil {
+			errorMsg := "An error occurred while accessing Marathon callback system: %s\n"
+			log.Printf(errorMsg, err)
+			return
+		}
+		bodyBytes, err := ioutil.ReadAll(resp.Body)
+		resp.Body.Close()
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
+		body := string(bodyBytes)
+		if strings.HasPrefix(body, "{\"message") {
+			warningMsg := "Access to the callback system of Marathon seems to be failed, response: %s\n"
+			log.Printf(warningMsg, body)
+		}
 	}
 }
 
@@ -157,4 +182,15 @@ func configureLog() {
 			MaxAge: 28,
 		}, os.Stdout))
 	}
+}
+
+func registerOSSignals() {
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	go func() {
+		for _ = range c {
+			log.Println("Server Stopped")
+			os.Exit(0)
+		}
+	}()
 }
