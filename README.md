@@ -157,6 +157,29 @@ Shows the data structure used for rendering template
 curl -i http://localhost:8000/api/state
 ```
 
+#### GET /api/services
+
+Shows all service configurations
+
+```bash
+curl -i http://localhost:8000/api/services
+```
+
+Example result:
+
+```json
+{
+    "/authentication-service": {
+        "Id": "/authentication-service",
+        "Acl": "path_beg -i /authentication-service"
+    },
+    "/payment-service": {
+        "Id": "/payment-service",
+        "Acl": "path_beg -i /payment-service"
+    }
+}
+```
+
 #### POST /api/services
 
 Creates a service configuration for a Marathon Application ID
