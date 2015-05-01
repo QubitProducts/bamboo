@@ -79,7 +79,12 @@ func handleHAPUpdate(conf *configuration.Configuration, conn *zk.Conn) bool {
 		log.Panicf("Cannot read template file: %s", err)
 	}
 
-	templateData := haproxy.GetTemplateData(conf, conn)
+	templateData, err := haproxy.GetTemplateData(conf, conn)
+	
+	if err != nil {
+	  log.Printf("Not updating haproxy because we failed to retrieve template data: \n %s\n", err)
+	  return false
+	}
 
 	newContent, err := template.RenderTemplate(conf.HAProxy.TemplatePath, string(templateContent), templateData)
 
