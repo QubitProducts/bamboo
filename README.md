@@ -89,7 +89,7 @@ This section tries to explain usage in code comment style:
   "HAProxy": {
     "TemplatePath": "/var/bamboo/haproxy_template.cfg",
     "OutputPath": "/etc/haproxy/haproxy.cfg",
-    "ReloadCommand": "read PIDS < /var/run/haproxy.pid; haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -sf $PIDS && while ps -p $PIDS; do sleep 0.2; done"
+    "ReloadCommand": "haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -D -sf $(cat /var/run/haproxy.pid)"
   },
   
   // Enable or disable StatsD event tracking
