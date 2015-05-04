@@ -21,7 +21,7 @@ type App struct {
 	EscapedId       string
 	HealthCheckPath string
 	Tasks           []Task
-	ServicePort     int
+	ServicePorts    []int
 	Env             map[string]string
 }
 
@@ -176,10 +176,7 @@ func createApps(tasksById map[string][]MarathonTask, marathonApps map[string]Mar
 			Tasks:           simpleTasks,
 			HealthCheckPath: parseHealthCheckPath(marathonApps[appId].HealthChecks),
 			Env:             marathonApps[appId].Env,
-		}
-
-		if len(marathonApps[appId].Ports) > 0 {
-			app.ServicePort = marathonApps[appId].Ports[0]
+			ServicePorts:    marathonApps[appId].Ports,
 		}
 
 		apps = append(apps, app)
