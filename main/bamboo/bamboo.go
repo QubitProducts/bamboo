@@ -26,11 +26,13 @@ import (
 /*
 	Commandline arguments
 */
+var configFromFlags bool
 var configFilePath string
 var logPath string
 var serverBindPort string
 
 func init() {
+	flag.BoolVar(&configFromFlags, "configFromFlags", false, "Read configuration from flags or file")
 	flag.StringVar(&configFilePath, "config", "config/development.json", "Full path of the configuration JSON file")
 	flag.StringVar(&logPath, "log", "", "Log path to a file. Default logs to stdout")
 	flag.StringVar(&serverBindPort, "bind", ":8000", "Bind HTTP server to a specific port")
@@ -41,9 +43,15 @@ func main() {
 	configureLog()
 
 	// Load configuration
-	conf, err := configuration.FromFile(configFilePath)
+	var conf configuration.Configuration
+	var err error
+	if configFromFlags {
+		conf, err = configuration.FromFlags()
+	} else {
+		conf, err = configuration.FromFile(configFilePath)
+	}
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("A error occur when load configuration: ", err)
 	}
 
 	eventBus := event_bus.New()
