@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"os/signal"
 	"path"
 	"strings"
@@ -26,12 +27,14 @@ import (
 /*
 	Commandline arguments
 */
+var haproxyCheck bool
 var configFromFlags bool
 var configFilePath string
 var logPath string
 var serverBindPort string
 
 func init() {
+	flag.BoolVar(&haproxyCheck, "haproxy_check", false, "Check the process of HAProxy ")
 	flag.BoolVar(&configFromFlags, "config_from_flags", false, "Read configuration from flags")
 	flag.StringVar(&configFilePath, "config", "config/development.json", "Full path of the configuration JSON file")
 	flag.StringVar(&logPath, "log", "", "Log path to a file. Default logs to stdout")
@@ -41,6 +44,37 @@ func init() {
 func main() {
 	flag.Parse()
 	configureLog()
+
+	// Check HAProxy
+	if haproxyCheck {
+		validHAProxy, err := checkHAProxy()
+		if err != nil {
+			log.Fatal("A error occur when HAProxy checking: ", err)
+		}
+		if !validHAProxy {
+			var hintMsg = `Not found the process of HAProxy. 
+Please install & run HAProxy before running Bamboo. Look at the following tips:
+- Install HAProxy:
+    apt-get install -yqq software-properties-common && \
+    apt-add-repository ppa:vbernat/haproxy-1.5 && \
+    apt-get update -yqq && \
+    apt-get install -yqq haproxy
+- Append the following content to /etc/haproxy/haproxy.cfg (optional):
+  # Begin
+  listen stats :1936
+      mode http
+      stats enable
+      stats hide-version
+      stats realm Haproxy\ Statistics
+      stats uri /
+      stats auth Username:Password
+  # End
+- Run HAProxy:
+    haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -D
+		`
+			log.Fatal("Error: ", hintMsg)
+		}
+	}
 
 	// Load configuration
 	var conf configuration.Configuration
@@ -89,6 +123,19 @@ func main() {
 
 	// Start server
 	initServer(&conf, zkConn, eventBus)
+}
+
+func checkHAProxy() (bool, error) {
+	var result bool
+	output, err := exec.Command("pidof", "haproxy").Output()
+	if err != nil {
+		return result, err
+	}
+	pid := string(output)
+	if len(pid) > 0 {
+		result = true
+	}
+	return result, err
 }
 
 func initServer(conf *configuration.Configuration, conn *zk.Conn, eventBus *event_bus.EventBus) {
