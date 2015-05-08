@@ -11,3 +11,4 @@ node_modules
 builder/build
 builder/*.deb
 *.sublime-project
+dist/*
