@@ -190,12 +190,13 @@ curl -i -X POST -d '{"id":"/ExampleAppGroup/app1","acl":"hdr(host) -i app-1.exam
 
 #### PUT /api/services/:id
 
-Updates an existing service configuration for a Marathon application. `:id` is Marathon Application ID
+Updates an existing or creates a new service configuration for a Marathon application. `:id` is the Marathon Application ID
 
 ```bash
 curl -i -X PUT -d '{"id":"/ExampleAppGroup/app1", "acl":"path_beg -i /group/app-1"}' http://localhost:8000/api/services//ExampleAppGroup/app1
 ```
 
+**Note**: Create semantics are available since version 0.2.11.
 
 #### DELETE /api/services/:id
 
