@@ -125,6 +125,9 @@ func registerMarathonEvent(conf *configuration.Configuration) {
 	for _, marathon := range conf.Marathon.Endpoints() {
 		url := marathon + "/v2/eventSubscriptions?callbackUrl=" + conf.Bamboo.Endpoint + "/api/marathon/event_callback"
 		req, _ := http.NewRequest("POST", url, nil)
+		if (len(conf.Marathon.AuthUsername) > 0) {
+			req.SetBasicAuth(conf.Marathon.AuthUsername, conf.Marathon.AuthPassword)
+		}
 		req.Header.Add("Content-Type", "application/json")
 		resp, err := client.Do(req)
 		if err != nil {
