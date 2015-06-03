@@ -3,8 +3,8 @@ machine:
   ruby:
     version: 2.1.1
   environment:
-    BAMBOO_PROJECT_DIR: .
-    WORKSPACE: .
+    BAMBOO_PROJECT_DIR: /home/ubuntu/bamboo
+    WORKSPACE: /home/ubuntu/bamboo
 
 dependencies:
   pre:
@@ -16,4 +16,5 @@ dependencies:
 test:
   pre:
   override:
+    - mkdir -p  $WORKSPACE/test_output
     - go test -v github.com/QubitProducts/bamboo/... | go2xunit > $WORKSPACE/test_output/tests.xml
