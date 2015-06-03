@@ -2,7 +2,7 @@
 machine:
   ruby:
     version: 2.1.1
-   environment:
+  environment:
     BAMBOO_PROJECT_DIR: .
     WORKSPACE: .
 
