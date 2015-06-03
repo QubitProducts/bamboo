@@ -1,0 +1,19 @@
+# circle.yml
+machine:
+  ruby:
+    version: 2.1.1
+   environment:
+    BAMBOO_PROJECT_DIR: .
+    WORKSPACE: .
+
+dependencies:
+  pre:
+    - go get github.com/tools/godep
+    - go get bitbucket.org/tebeka/go2xunit
+    - go get -t github.com/smartystreets/goconvey
+
+
+test:
+  pre:
+  override:
+    - go test -v github.com/QubitProducts/bamboo/... | go2xunit > $WORKSPACE/test_output/tests.xml
