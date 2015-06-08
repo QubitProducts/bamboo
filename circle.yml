@@ -3,6 +3,7 @@ machine:
   ruby:
     version: 2.1.1
   environment:
+    FOO: up
     BAMBOO_PROJECT_DIR: /home/ubuntu/bamboo
     WORKSPACE: /home/ubuntu/bamboo
 
