@@ -13,6 +13,8 @@ dependencies:
     - go get bitbucket.org/tebeka/go2xunit
     - go get -t github.com/smartystreets/goconvey
 
+  post:
+    - /builder/build.sh
 
 test:
   pre:
