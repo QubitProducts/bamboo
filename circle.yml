@@ -6,7 +6,6 @@ machine:
     FOO: up
     BAMBOO_PROJECT_DIR: /home/ubuntu/bamboo
     WORKSPACE: /home/ubuntu/bamboo
-    TEST_OUTPUT: /home/unbuntu/bamboo/test_output
 
 dependencies:
   pre:
@@ -19,4 +18,4 @@ test:
   pre:
   override:
     - mkdir -p  $WORKSPACE/test_output
-    - go test -v github.com/QubitProducts/bamboo/... | go2xunit > $TEST_OUTPUT/tests.xml
+    - go test -v github.com/QubitProducts/bamboo/... | go2xunit > $WORKSPACE/test_output/tests.xml
