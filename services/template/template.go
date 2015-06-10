@@ -25,6 +25,7 @@ func RenderTemplate(templateName string, templateContent string, data interface{
 		"hasKey": hasKey,  
 		"getService": getService,
 		"Split": strings.Split,
+		"Contains":strings.Contains,
 		"Join": strings.Join,
 		"Replace": strings.Replace,
 		"ToUpper": strings.ToUpper,

@@ -31,6 +31,19 @@ func TestTemplateSplitFunction(t *testing.T) {
 	})
 }
 
+func TestTemplateContainsFunction(t *testing.T) {
+	Convey("#RenderTemplate", t, func() {
+		templateName := "templateName"
+		params := map[string]string{"ip": "10.12.12.15", "subnet": "10.12"}
+
+		templateContent := "{{if Contains .ip .subnet}}true{{end}}"
+		Convey("should verify if contains ip in subnet", func() {
+			content, _ := RenderTemplate(templateName, templateContent, params)
+			So(content, ShouldEqual, "true")
+		})
+	})
+}
+
 func TestTemplateJoinFunction(t *testing.T) {
 	Convey("#RenderTemplate", t, func() {
 		templateName := "templateName"
