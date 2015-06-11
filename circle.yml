@@ -27,4 +27,4 @@ deployment:
     branch: master
     commands:
       - sudo pip install awscli
-      - aws s3 sync builder/bamboo*.deb s3://placeable-artifacts/qubit-bamboo/
+      - aws s3 sync builder/ s3://placeable-artifacts/qubit-bamboo/  --include "*.deb"
