@@ -17,14 +17,14 @@ func GetTemplateData(config *conf.Configuration, conn *zk.Conn) (interface{}, er
 	apps, err := marathon.FetchApps(config.Marathon)
 
 	if err != nil {
-	   return nil, err
- 	}
+		return nil, err
+	}
 
 	services, err := service.All(conn, config.Bamboo.Zookeeper)
 
 	if err != nil {
-	   return nil, err
- 	}
+		return nil, err
+	}
 
 	return templateData{apps, services}, nil
 }

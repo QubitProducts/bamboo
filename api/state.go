@@ -16,7 +16,7 @@ type StateAPI struct {
 }
 
 func (state *StateAPI) Get(w http.ResponseWriter, r *http.Request) {
-        templateData, _ := haproxy.GetTemplateData(state.Config, state.Zookeeper)
+	templateData, _ := haproxy.GetTemplateData(state.Config, state.Zookeeper)
 	payload, _ := json.Marshal(templateData)
 	io.WriteString(w, string(payload))
 }

@@ -1,8 +1,8 @@
 package configuration
 
 import (
-	"time"
 	"strings"
+	"time"
 )
 
 /*
@@ -12,7 +12,7 @@ type Zookeeper struct {
 	// comma separated host:port connection strings set
 	Host string
 	// zookeeper path
-	Path           string
+	Path string
 	// Delay n seconds to report change event
 	ReportingDelay int64
 

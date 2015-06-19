@@ -76,13 +76,13 @@ type MarathonApps struct {
 
 type MarathonApp struct {
 	Id           string            `json:id`
-	HealthChecks []HealthCheck    `json:healthChecks`
+	HealthChecks []HealthCheck     `json:healthChecks`
 	Ports        []int             `json:ports`
 	Env          map[string]string `json:env`
 }
 
 type HealthCheck struct {
-	Path string `json:path`
+	Path     string `json:path`
 	Protocol string `json:protocol`
 }
 
@@ -91,28 +91,28 @@ func fetchMarathonApps(endpoint string) (map[string]MarathonApp, error) {
 
 	if err != nil {
 		return nil, err
-	} else {
-		defer response.Body.Close()
-		var appResponse MarathonApps
-
-		contents, err := ioutil.ReadAll(response.Body)
-		if err != nil {
-			return nil, err
-		}
-
-		err = json.Unmarshal(contents, &appResponse)
-		if err != nil {
-			return nil, err
-		}
-
-		dataById := map[string]MarathonApp{}
-
-		for _, appConfig := range appResponse.Apps {
-			dataById[appConfig.Id] = appConfig
-		}
-
-		return dataById, nil
 	}
+
+	defer response.Body.Close()
+	var appResponse MarathonApps
+
+	contents, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(contents, &appResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	dataById := map[string]MarathonApp{}
+
+	for _, appConfig := range appResponse.Apps {
+		dataById[appConfig.Id] = appConfig
+	}
+
+	return dataById, nil
 }
 
 func fetchTasks(endpoint string) (map[string][]MarathonTask, error) {
@@ -125,31 +125,31 @@ func fetchTasks(endpoint string) (map[string][]MarathonTask, error) {
 
 	if err != nil {
 		return nil, err
-	} else {
-		contents, err := ioutil.ReadAll(response.Body)
-		defer response.Body.Close()
-		if err != nil {
-			return nil, err
-		}
-
-		err = json.Unmarshal(contents, &tasks)
-		if err != nil {
-			return nil, err
-		}
-
-		taskList := tasks.Tasks
-		sort.Sort(taskList)
-
-		tasksById := map[string][]MarathonTask{}
-		for _, task := range taskList {
-			if tasksById[task.AppId] == nil {
-				tasksById[task.AppId] = []MarathonTask{}
-			}
-			tasksById[task.AppId] = append(tasksById[task.AppId], task)
-		}
-
-		return tasksById, nil
 	}
+
+	contents, err := ioutil.ReadAll(response.Body)
+	defer response.Body.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(contents, &tasks)
+	if err != nil {
+		return nil, err
+	}
+
+	taskList := tasks.Tasks
+	sort.Sort(taskList)
+
+	tasksById := map[string][]MarathonTask{}
+	for _, task := range taskList {
+		if tasksById[task.AppId] == nil {
+			tasksById[task.AppId] = []MarathonTask{}
+		}
+		tasksById[task.AppId] = append(tasksById[task.AppId], task)
+	}
+
+	return tasksById, nil
 }
 
 func createApps(tasksById map[string][]MarathonTask, marathonApps map[string]MarathonApp) AppList {

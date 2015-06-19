@@ -1,10 +1,10 @@
 package service
 
 import (
-	"net/url"
-	"strings"
 	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/samuel/go-zookeeper/zk"
 	conf "github.com/QubitProducts/bamboo/configuration"
+	"net/url"
+	"strings"
 )
 
 type Service struct {
