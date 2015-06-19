@@ -25,6 +25,7 @@ type App struct {
 	ServicePort     int
 	ServicePorts    []int
 	Env             map[string]string
+	Labels          map[string]string
 }
 
 type AppList []App
@@ -79,6 +80,7 @@ type MarathonApp struct {
 	HealthChecks []HealthCheck     `json:healthChecks`
 	Ports        []int             `json:ports`
 	Env          map[string]string `json:env`
+	Labels       map[string]string `json:labels`
 }
 
 type HealthCheck struct {
@@ -179,6 +181,7 @@ func createApps(tasksById map[string][]MarathonTask, marathonApps map[string]Mar
 			Tasks:           simpleTasks,
 			HealthCheckPath: parseHealthCheckPath(marathonApps[appId].HealthChecks),
 			Env:             marathonApps[appId].Env,
+			Labels:          marathonApps[appId].Labels,
 		}
 
 		if len(marathonApps[appId].Ports) > 0 {
