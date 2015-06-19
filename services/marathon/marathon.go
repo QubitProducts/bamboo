@@ -42,13 +42,13 @@ func (slice AppList) Swap(i, j int) {
 	slice[i], slice[j] = slice[j], slice[i]
 }
 
-type MarathonTaskList []MarathonTask
+type marathonTaskList []marathonTask
 
-type MarathonTasks struct {
-	Tasks MarathonTaskList `json:tasks`
+type marathonTasks struct {
+	Tasks marathonTaskList `json:tasks`
 }
 
-type MarathonTask struct {
+type marathonTask struct {
 	AppId        string
 	Id           string
 	Host         string
@@ -59,36 +59,36 @@ type MarathonTask struct {
 	Version      string
 }
 
-func (slice MarathonTaskList) Len() int {
+func (slice marathonTaskList) Len() int {
 	return len(slice)
 }
 
-func (slice MarathonTaskList) Less(i, j int) bool {
+func (slice marathonTaskList) Less(i, j int) bool {
 	return slice[i].StagedAt < slice[j].StagedAt
 }
 
-func (slice MarathonTaskList) Swap(i, j int) {
+func (slice marathonTaskList) Swap(i, j int) {
 	slice[i], slice[j] = slice[j], slice[i]
 }
 
-type MarathonApps struct {
-	Apps []MarathonApp `json:apps`
+type marathonApps struct {
+	Apps []marathonApp `json:apps`
 }
 
-type MarathonApp struct {
+type marathonApp struct {
 	Id           string            `json:id`
-	HealthChecks []HealthCheck     `json:healthChecks`
+	HealthChecks []healthCheck     `json:healthChecks`
 	Ports        []int             `json:ports`
 	Env          map[string]string `json:env`
 	Labels       map[string]string `json:labels`
 }
 
-type HealthCheck struct {
+type healthCheck struct {
 	Path     string `json:path`
 	Protocol string `json:protocol`
 }
 
-func fetchMarathonApps(endpoint string) (map[string]MarathonApp, error) {
+func fetchMarathonApps(endpoint string) (map[string]marathonApp, error) {
 	response, err := http.Get(endpoint + "/v2/apps")
 
 	if err != nil {
@@ -96,7 +96,7 @@ func fetchMarathonApps(endpoint string) (map[string]MarathonApp, error) {
 	}
 
 	defer response.Body.Close()
-	var appResponse MarathonApps
+	var appResponse marathonApps
 
 	contents, err := ioutil.ReadAll(response.Body)
 	if err != nil {
@@ -108,7 +108,7 @@ func fetchMarathonApps(endpoint string) (map[string]MarathonApp, error) {
 		return nil, err
 	}
 
-	dataById := map[string]MarathonApp{}
+	dataById := map[string]marathonApp{}
 
 	for _, appConfig := range appResponse.Apps {
 		dataById[appConfig.Id] = appConfig
@@ -117,13 +117,13 @@ func fetchMarathonApps(endpoint string) (map[string]MarathonApp, error) {
 	return dataById, nil
 }
 
-func fetchTasks(endpoint string) (map[string][]MarathonTask, error) {
+func fetchTasks(endpoint string) (map[string][]marathonTask, error) {
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", endpoint+"/v2/tasks", nil)
 	req.Header.Add("Accept", "application/json")
 	response, err := client.Do(req)
 
-	var tasks MarathonTasks
+	var tasks marathonTasks
 
 	if err != nil {
 		return nil, err
@@ -143,10 +143,10 @@ func fetchTasks(endpoint string) (map[string][]MarathonTask, error) {
 	taskList := tasks.Tasks
 	sort.Sort(taskList)
 
-	tasksById := map[string][]MarathonTask{}
+	tasksById := map[string][]marathonTask{}
 	for _, task := range taskList {
 		if tasksById[task.AppId] == nil {
-			tasksById[task.AppId] = []MarathonTask{}
+			tasksById[task.AppId] = []marathonTask{}
 		}
 		tasksById[task.AppId] = append(tasksById[task.AppId], task)
 	}
@@ -154,7 +154,7 @@ func fetchTasks(endpoint string) (map[string][]MarathonTask, error) {
 	return tasksById, nil
 }
 
-func createApps(tasksById map[string][]MarathonTask, marathonApps map[string]MarathonApp) AppList {
+func createApps(tasksById map[string][]marathonTask, marathonApps map[string]marathonApp) AppList {
 
 	apps := AppList{}
 
@@ -194,7 +194,7 @@ func createApps(tasksById map[string][]MarathonTask, marathonApps map[string]Mar
 	return apps
 }
 
-func parseHealthCheckPath(checks []HealthCheck) string {
+func parseHealthCheckPath(checks []healthCheck) string {
 	for _, check := range checks {
 		if check.Protocol != "HTTP" {
 			continue
