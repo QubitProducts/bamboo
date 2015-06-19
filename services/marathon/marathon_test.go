@@ -7,10 +7,10 @@ import (
 
 func TestParseHealthCheckPathTCP(t *testing.T) {
 	Convey("#parseHealthCheckPath", t, func() {
-		checks := []healthCheck{
-			healthCheck{"/", "TCP"},
-			healthCheck{"/foobar", "TCP"},
-			healthCheck{"", "TCP"},
+		checks := []marathonHealthCheck{
+			marathonHealthCheck{"/", "TCP", 0},
+			marathonHealthCheck{"/foobar", "TCP", 0},
+			marathonHealthCheck{"", "TCP", 0},
 		}
 		Convey("should return no path if all checks are TCP", func() {
 			So(parseHealthCheckPath(checks), ShouldEqual, "")
@@ -20,10 +20,10 @@ func TestParseHealthCheckPathTCP(t *testing.T) {
 
 func TestParseHealthCheckPathHTTP(t *testing.T) {
 	Convey("#parseHealthCheckPath", t, func() {
-		checks := []healthCheck{
-			healthCheck{"/first", "HTTP"},
-			healthCheck{"/", "HTTP"},
-			healthCheck{"", "HTTP"},
+		checks := []marathonHealthCheck{
+			marathonHealthCheck{"/first", "HTTP", 0},
+			marathonHealthCheck{"/", "HTTP", 0},
+			marathonHealthCheck{"", "HTTP", 0},
 		}
 		Convey("should return the first path if all checks are HTTP", func() {
 			So(parseHealthCheckPath(checks), ShouldEqual, "/first")
@@ -33,10 +33,10 @@ func TestParseHealthCheckPathHTTP(t *testing.T) {
 
 func TestParseHealthCheckPathMixed(t *testing.T) {
 	Convey("#parseHealthCheckPath", t, func() {
-		checks := []healthCheck{
-			healthCheck{"", "TCP"},
-			healthCheck{"/path", "HTTP"},
-			healthCheck{"/", "HTTP"},
+		checks := []marathonHealthCheck{
+			marathonHealthCheck{"", "TCP", 0},
+			marathonHealthCheck{"/path", "HTTP", 0},
+			marathonHealthCheck{"/", "HTTP", 0},
 		}
 		Convey("should return the first path if some checks are HTTP", func() {
 			So(parseHealthCheckPath(checks), ShouldEqual, "/path")

@@ -16,11 +16,22 @@ type Task struct {
 	Ports []int
 }
 
+// A health check on the application
+type HealthCheck struct {
+	// One of TCP, HTTP or COMMAND
+	Protocol string
+	// The path (if Protocol is HTTP)
+	Path string
+	// The position of the port targeted in the ports array
+	PortIndex int
+}
+
 // An app may have multiple processes
 type App struct {
 	Id              string
 	EscapedId       string
 	HealthCheckPath string
+	HealthChecks    []HealthCheck
 	Tasks           []Task
 	ServicePort     int
 	ServicePorts    []int
@@ -77,15 +88,16 @@ type marathonApps struct {
 
 type marathonApp struct {
 	Id           string            `json:"id"`
-	HealthChecks []healthCheck     `json:"healthChecks"`
+	HealthChecks []marathonHealthCheck     `json:"healthChecks"`
 	Ports        []int             `json:"ports"`
 	Env          map[string]string `json:"env"`
 	Labels       map[string]string `json:"labels"`
 }
 
-type healthCheck struct {
+type marathonHealthCheck struct {
 	Path     string `json:"path"`
 	Protocol string `json:"protocol"`
+	PortIndex int `json:"portIndex"`
 }
 
 func fetchMarathonApps(endpoint string) (map[string]marathonApp, error) {
@@ -159,6 +171,8 @@ func createApps(tasksById map[string][]marathonTask, marathonApps map[string]mar
 	apps := AppList{}
 
 	for appId, tasks := range tasksById {
+		marathonApp := marathonApps[appId]
+
 		simpleTasks := []Task{}
 
 		for _, task := range tasks {
@@ -179,9 +193,19 @@ func createApps(tasksById map[string][]marathonTask, marathonApps map[string]mar
 			// Used for template
 			EscapedId:       strings.Replace(appId, "/", "::", -1),
 			Tasks:           simpleTasks,
-			HealthCheckPath: parseHealthCheckPath(marathonApps[appId].HealthChecks),
+			HealthCheckPath: parseHealthCheckPath(marathonApp.HealthChecks),
 			Env:             marathonApps[appId].Env,
 			Labels:          marathonApps[appId].Labels,
+		}
+
+		app.HealthChecks = make([]HealthCheck, 0, len(marathonApp.HealthChecks))
+		for _, marathonCheck := range marathonApp.HealthChecks {
+			check := HealthCheck{
+				Protocol: marathonCheck.Protocol,
+				Path: marathonCheck.Path,
+				PortIndex: marathonCheck.PortIndex,
+			}
+			app.HealthChecks = append(app.HealthChecks, check)
 		}
 
 		if len(marathonApps[appId].Ports) > 0 {
@@ -194,7 +218,7 @@ func createApps(tasksById map[string][]marathonTask, marathonApps map[string]mar
 	return apps
 }
 
-func parseHealthCheckPath(checks []healthCheck) string {
+func parseHealthCheckPath(checks []marathonHealthCheck) string {
 	for _, check := range checks {
 		if check.Protocol != "HTTP" {
 			continue
