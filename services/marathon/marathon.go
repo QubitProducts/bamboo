@@ -87,17 +87,17 @@ type marathonApps struct {
 }
 
 type marathonApp struct {
-	Id           string            `json:"id"`
-	HealthChecks []marathonHealthCheck     `json:"healthChecks"`
-	Ports        []int             `json:"ports"`
-	Env          map[string]string `json:"env"`
-	Labels       map[string]string `json:"labels"`
+	Id           string                `json:"id"`
+	HealthChecks []marathonHealthCheck `json:"healthChecks"`
+	Ports        []int                 `json:"ports"`
+	Env          map[string]string     `json:"env"`
+	Labels       map[string]string     `json:"labels"`
 }
 
 type marathonHealthCheck struct {
-	Path     string `json:"path"`
-	Protocol string `json:"protocol"`
-	PortIndex int `json:"portIndex"`
+	Path      string `json:"path"`
+	Protocol  string `json:"protocol"`
+	PortIndex int    `json:"portIndex"`
 }
 
 func fetchMarathonApps(endpoint string) (map[string]marathonApp, error) {
@@ -201,8 +201,8 @@ func createApps(tasksById map[string][]marathonTask, marathonApps map[string]mar
 		app.HealthChecks = make([]HealthCheck, 0, len(marathonApp.HealthChecks))
 		for _, marathonCheck := range marathonApp.HealthChecks {
 			check := HealthCheck{
-				Protocol: marathonCheck.Protocol,
-				Path: marathonCheck.Path,
+				Protocol:  marathonCheck.Protocol,
+				Path:      marathonCheck.Path,
 				PortIndex: marathonCheck.PortIndex,
 			}
 			app.HealthChecks = append(app.HealthChecks, check)
