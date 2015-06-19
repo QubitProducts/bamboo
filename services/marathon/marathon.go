@@ -76,13 +76,14 @@ type MarathonApps struct {
 
 type MarathonApp struct {
 	Id           string            `json:id`
-	HealthChecks []HealthChecks    `json:healthChecks`
+	HealthChecks []HealthCheck    `json:healthChecks`
 	Ports        []int             `json:ports`
 	Env          map[string]string `json:env`
 }
 
-type HealthChecks struct {
+type HealthCheck struct {
 	Path string `json:path`
+	Protocol string `json:protocol`
 }
 
 func fetchMarathonApps(endpoint string) (map[string]MarathonApp, error) {
@@ -190,9 +191,12 @@ func createApps(tasksById map[string][]MarathonTask, marathonApps map[string]Mar
 	return apps
 }
 
-func parseHealthCheckPath(checks []HealthChecks) string {
-	if len(checks) > 0 {
-		return checks[0].Path
+func parseHealthCheckPath(checks []HealthCheck) string {
+	for _, check := range checks {
+		if check.Protocol != "HTTP" {
+			continue
+		}
+		return check.Path
 	}
 	return ""
 }
