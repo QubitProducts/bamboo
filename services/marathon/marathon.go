@@ -45,7 +45,7 @@ func (slice AppList) Swap(i, j int) {
 type marathonTaskList []marathonTask
 
 type marathonTasks struct {
-	Tasks marathonTaskList `json:tasks`
+	Tasks marathonTaskList `json:"tasks"`
 }
 
 type marathonTask struct {
@@ -72,20 +72,20 @@ func (slice marathonTaskList) Swap(i, j int) {
 }
 
 type marathonApps struct {
-	Apps []marathonApp `json:apps`
+	Apps []marathonApp `json:"apps"`
 }
 
 type marathonApp struct {
-	Id           string            `json:id`
-	HealthChecks []healthCheck     `json:healthChecks`
-	Ports        []int             `json:ports`
-	Env          map[string]string `json:env`
-	Labels       map[string]string `json:labels`
+	Id           string            `json:"id"`
+	HealthChecks []healthCheck     `json:"healthChecks"`
+	Ports        []int             `json:"ports"`
+	Env          map[string]string `json:"env"`
+	Labels       map[string]string `json:"labels"`
 }
 
 type healthCheck struct {
-	Path     string `json:path`
-	Protocol string `json:protocol`
+	Path     string `json:"path"`
+	Protocol string `json:"protocol"`
 }
 
 func fetchMarathonApps(endpoint string) (map[string]marathonApp, error) {
