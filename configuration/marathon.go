@@ -10,6 +10,8 @@ import (
 type Marathon struct {
 	// comma separated marathon http endpoints including port number
 	Endpoint string
+	User string
+	Password string
 }
 
 func (m Marathon) Endpoints() []string {
