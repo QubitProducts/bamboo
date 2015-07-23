@@ -170,16 +170,7 @@ func createApps(tasksById map[string][]marathonTask, marathonApps map[string]mar
 
 	apps := AppList{}
 
-	for appId, tasks := range tasksById {
-		marathonApp := marathonApps[appId]
-
-		simpleTasks := []Task{}
-
-		for _, task := range tasks {
-			if len(task.Ports) > 0 {
-				simpleTasks = append(simpleTasks, Task{Host: task.Host, Port: task.Ports[0], Ports: task.Ports})
-			}
-		}
+	for appId, mApp := range marathonApps {
 
 		// Try to handle old app id format without slashes
 		appPath := appId
@@ -187,19 +178,17 @@ func createApps(tasksById map[string][]marathonTask, marathonApps map[string]mar
 			appPath = "/" + appId
 		}
 
+		// build App from marathonApp
 		app := App{
-			// Since Marathon 0.7, apps are namespaced with path
-			Id: appPath,
-			// Used for template
+			Id:              appPath,
 			EscapedId:       strings.Replace(appId, "/", "::", -1),
-			Tasks:           simpleTasks,
-			HealthCheckPath: parseHealthCheckPath(marathonApp.HealthChecks),
-			Env:             marathonApps[appId].Env,
-			Labels:          marathonApps[appId].Labels,
+			HealthCheckPath: parseHealthCheckPath(mApp.HealthChecks),
+			Env:             mApp.Env,
+			Labels:          mApp.Labels,
 		}
 
-		app.HealthChecks = make([]HealthCheck, 0, len(marathonApp.HealthChecks))
-		for _, marathonCheck := range marathonApp.HealthChecks {
+		app.HealthChecks = make([]HealthCheck, 0, len(mApp.HealthChecks))
+		for _, marathonCheck := range mApp.HealthChecks {
 			check := HealthCheck{
 				Protocol:  marathonCheck.Protocol,
 				Path:      marathonCheck.Path,
@@ -208,10 +197,24 @@ func createApps(tasksById map[string][]marathonTask, marathonApps map[string]mar
 			app.HealthChecks = append(app.HealthChecks, check)
 		}
 
-		if len(marathonApps[appId].Ports) > 0 {
-			app.ServicePort = marathonApps[appId].Ports[0]
-			app.ServicePorts = marathonApps[appId].Ports
+		if len(mApp.Ports) > 0 {
+			app.ServicePort = mApp.Ports[0]
+			app.ServicePorts = mApp.Ports
 		}
+
+		// build Tasks for this App
+		tasks := []Task{}
+		for _, mTask := range tasksById[appId] {
+			if len(mTask.Ports) > 0 {
+				t := Task{
+					Host:  mTask.Host,
+					Port:  mTask.Ports[0],
+					Ports: mTask.Ports,
+				}
+				tasks = append(tasks, t)
+			}
+		}
+		app.Tasks = tasks
 
 		apps = append(apps, app)
 	}
