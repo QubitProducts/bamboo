@@ -270,9 +270,9 @@ docker run -t -i --rm -p 8000:8000 -p 80:80 \
     -e BAMBOO_ENDPOINT=http://bamboo:8000 \
     -e BAMBOO_ZK_HOST=zk:2181 \
     -e BAMBOO_ZK_PATH=/bamboo \
-    -e BIND=":8000"
-    -e CONFIG_PATH="config/production.example.json"
-    -e BAMBOO_DOCKER_AUTO_HOST=true
+    -e BIND=":8000" \
+    -e CONFIG_PATH="config/production.example.json" \
+    -e BAMBOO_DOCKER_AUTO_HOST=true \
     bamboo
 ````
 
