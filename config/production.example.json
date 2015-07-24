@@ -6,7 +6,7 @@
   "Bamboo": {
     "Endpoint": "http://haproxy-ip-address:8000",
     "Zookeeper": {
-      "Host": "localhost",
+      "Host": "zk01.example.com:2181,zk02.example.com:2181",
       "Path": "/marathon-haproxy/state",
       "ReportingDelay": 5
     }
