@@ -64,8 +64,8 @@ This section tries to explain usage in code comment style:
 {
   // Marathon instance configuration
   "Marathon": {
-    // Marathon service HTTP endpoint
-    "Endpoint": "http://localhost:8080"
+    // Marathon service HTTP endpoints
+    "Endpoint": "http://marathon1:8080,http://marathon2:8080,http://marathon3:8080"
   },
 
   "Bamboo": {
@@ -266,9 +266,9 @@ Once the image has been built, running as a container is straightforward - you d
 
 ````
 docker run -t -i --rm -p 8000:8000 -p 80:80 \
-    -e MARATHON_ENDPOINT=http://marathon:8080 \
+    -e MARATHON_ENDPOINT=http://marathon1:8080,http://marathon2:8080,http://marathon3:8080 \
     -e BAMBOO_ENDPOINT=http://bamboo:8000 \
-    -e BAMBOO_ZK_HOST=zk:2181 \
+    -e BAMBOO_ZK_HOST=zk01.example.com:2181,zk02.example.com:2181 \
     -e BAMBOO_ZK_PATH=/bamboo \
     -e BIND=":8000" \
     -e CONFIG_PATH="config/production.example.json" \
