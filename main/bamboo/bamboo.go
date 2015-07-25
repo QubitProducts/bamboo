@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bufio"
+	"encoding/json"
 	"flag"
 	"io"
 	"io/ioutil"
@@ -76,6 +78,11 @@ func main() {
 	// Handle gracefully exit
 	registerOSSignals()
 
+	if conf.Marathon.UseEventStream {
+		// Listen events stream from Marathon
+		listenToEventStream(conf, eventBus)
+	}
+
 	// Start server
 	initServer(&conf, zkConn, eventBus)
 }
@@ -105,7 +112,9 @@ func initServer(conf *configuration.Configuration, conn *zk.Conn, eventBus *even
 	// Static pages
 	router.Use(martini.Static(path.Join(executableFolder(), "webapp")))
 
-	registerMarathonEvent(conf)
+	if !conf.Marathon.UseEventStream {
+		registerMarathonEvent(conf)
+	}
 	router.RunOnAddr(serverBindPort)
 }
 
@@ -172,6 +181,67 @@ func listenToZookeeper(conf configuration.Configuration, eventBus *event_bus.Eve
 		}
 	}()
 	return serviceConn
+}
+
+func listenToEventStream(conf configuration.Configuration, eventBus *event_bus.EventBus) {
+	client := &http.Client{}
+	client.Timeout = 0 * time.Second
+
+	for _, marathon := range conf.Marathon.Endpoints() {
+		go func() {
+			for {
+				req, err := http.NewRequest("GET", marathon+"/v2/events", nil)
+				req.Header.Set("Accept", "text/event-stream")
+				if err != nil {
+					errorMsg := "An error occurred while creating request to Marathon events system: %s\n"
+					log.Printf(errorMsg, err)
+					continue
+				}
+
+				resp, err := client.Do(req)
+				if err != nil {
+					continue
+				}
+
+				reader := bufio.NewReader(resp.Body)
+				for {
+					line, err := reader.ReadString('\n')
+					if err != nil {
+						if err != io.EOF {
+							errorMsg := "An error occurred while reading Marathon event: %s\n"
+							log.Printf(errorMsg, err)
+						}
+						break
+					}
+
+					if len(strings.TrimSpace(line)) == 0 {
+						continue
+					}
+
+					if !strings.HasPrefix(line, "data: ") {
+						errorMsg := "Wrong event format: %s\n"
+						log.Printf(errorMsg, line)
+						continue
+					}
+
+					line = line[6:]
+
+					var event event_bus.MarathonEvent
+					err = json.Unmarshal([]byte(line), &event)
+
+					if err != nil {
+						errorMsg := "Unable to decode JSON Marathon Event request: %s\n"
+						log.Printf(errorMsg, line)
+						continue
+					}
+
+					eventBus.Publish(event)
+				}
+
+				_ = resp.Body.Close()
+			}
+		}()
+	}
 }
 
 func configureLog() {
