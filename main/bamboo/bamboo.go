@@ -188,8 +188,9 @@ func listenToEventStream(conf configuration.Configuration, eventBus *event_bus.E
 	client.Timeout = 0 * time.Second
 
 	for _, marathon := range conf.Marathon.Endpoints() {
+		ticker := time.NewTicker(1 * time.Second)
 		go func() {
-			for {
+			for _ = range ticker.C {
 				req, err := http.NewRequest("GET", marathon+"/v2/events", nil)
 				req.Header.Set("Accept", "text/event-stream")
 				if err != nil {
@@ -200,6 +201,8 @@ func listenToEventStream(conf configuration.Configuration, eventBus *event_bus.E
 
 				resp, err := client.Do(req)
 				if err != nil {
+					errorMsg := "An error occurred while making a request to Marathon events system: %s\n"
+					log.Printf(errorMsg, err)
 					continue
 				}
 
