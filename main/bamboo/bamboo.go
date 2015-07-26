@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"encoding/json"
 	"flag"
 	"io"
 	"io/ioutil"
@@ -78,11 +77,6 @@ func main() {
 	// Handle gracefully exit
 	registerOSSignals()
 
-	if conf.Marathon.UseEventStream {
-		// Listen events stream from Marathon
-		listenToEventStream(conf, eventBus)
-	}
-
 	// Start server
 	initServer(&conf, zkConn, eventBus)
 }
@@ -112,7 +106,10 @@ func initServer(conf *configuration.Configuration, conn *zk.Conn, eventBus *even
 	// Static pages
 	router.Use(martini.Static(path.Join(executableFolder(), "webapp")))
 
-	if !conf.Marathon.UseEventStream {
+	if conf.Marathon.UseEventStream {
+		// Listen events stream from Marathon
+		listenToEventStream(conf, eventSubAPI)
+	} else {
 		registerMarathonEvent(conf)
 	}
 	router.RunOnAddr(serverBindPort)
@@ -183,7 +180,7 @@ func listenToZookeeper(conf configuration.Configuration, eventBus *event_bus.Eve
 	return serviceConn
 }
 
-func listenToEventStream(conf configuration.Configuration, eventBus *event_bus.EventBus) {
+func listenToEventStream(conf *configuration.Configuration, sub api.EventSubscriptionAPI) {
 	client := &http.Client{}
 	client.Timeout = 0 * time.Second
 
@@ -230,17 +227,7 @@ func listenToEventStream(conf configuration.Configuration, eventBus *event_bus.E
 					}
 
 					line = line[6:]
-
-					var event event_bus.MarathonEvent
-					err = json.Unmarshal([]byte(line), &event)
-
-					if err != nil {
-						errorMsg := "Unable to decode JSON Marathon Event request: %s\n"
-						log.Printf(errorMsg, line)
-						continue
-					}
-
-					eventBus.Publish(event)
+					sub.Notify([]byte(line))
 				}
 
 				log.Println("Event stream connection was closed. Re-opening...")
