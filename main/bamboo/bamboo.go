@@ -203,6 +203,8 @@ func listenToEventStream(conf configuration.Configuration, eventBus *event_bus.E
 					continue
 				}
 
+				defer resp.Body.Close()
+
 				reader := bufio.NewReader(resp.Body)
 				for {
 					line, err := reader.ReadString('\n')
@@ -238,7 +240,7 @@ func listenToEventStream(conf configuration.Configuration, eventBus *event_bus.E
 					eventBus.Publish(event)
 				}
 
-				_ = resp.Body.Close()
+				log.Println("Event stream connection was closed. Re-opening...")
 			}
 		}()
 	}
