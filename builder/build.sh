@@ -14,6 +14,7 @@ workspace="builder"
 pkgtype=${_PKGTYPE:-"deb"}
 builddir="build"
 installdir="opt"
+outputdir="output"
 function cleanup() {
     cd ${origdir}/${workspace}
     rm -rf ${name}*.{deb,rpm}
@@ -68,7 +69,8 @@ function mkdeb() {
     --prefix=/ \
     -s dir \
     -- .
-  mv ${name}*.${pkgtype} ${origdir}/${workspace}/
+  mkdir -p ${origdir}/${outputdir}
+  mv ${name}*.${pkgtype} ${origdir}/${outputdir}/
   popd
 }
 

@@ -218,18 +218,25 @@ curl -i http://localhost:8000/status
 ## Deployment
 
 We recommend installing binary with deb or rpm package. 
-The repository includes examples of [a Jenkins build script](https://github.com/QubitProducts/bamboo/blob/master/builder/ci-jenkins.sh)
-and [a deb packages build script](https://github.com/QubitProducts/bamboo/blob/master/builder/build.sh).
+The repository includes example build scripts:
+- a [Jenkins build script](builder/ci-jenkins.sh)
+- a [deb packages build script](builder/build.sh) (using [fpm](https://github.com/jordansissel/fpm)):
+
+  ```
+  go build bamboo.go
+  ./builder/build.sh
+  ```
+
+- a [Dockerfile to build the deb](Dockerfile-deb):
+
+  ```
+  docker build -f Dockerfile-deb -t bamboo-build
+  docker run -it -v $(pwd)/output bamboo-build
+  ```
+
+A deb package will be generated in `./output` directory. You can copy to a server or publish to your own apt repository.
+
 Read comments in the script to customize your build distribution workflow.
-
-In short, [install fpm](https://github.com/jordansissel/fpm) and run the following command:
-
-```
-go build bamboo.go
-./builder/build.sh
-```
-
-A deb package will be generated in `./builder` directory. You can copy to a server or publish to your own apt repository.
 
 The example deb package deploys:
 
