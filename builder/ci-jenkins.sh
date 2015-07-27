@@ -34,4 +34,4 @@ if ! gem spec fpm > /dev/null 2>&1; then gem install fpm; fi
 ./builder/build.sh
 
 # Copy files to workspace root directory
-cp $BAMBOO_PROJECT_DIR/builder/*.deb $WORKSPACE/
+cp $BAMBOO_PROJECT_DIR/output/*.deb $WORKSPACE/
