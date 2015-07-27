@@ -108,7 +108,7 @@ func initServer(conf *configuration.Configuration, conn *zk.Conn, eventBus *even
 
 	if conf.Marathon.UseEventStream {
 		// Listen events stream from Marathon
-		listenToEventStream(conf, eventSubAPI)
+		listenToMarathonEventStream(conf, eventSubAPI)
 	} else {
 		registerMarathonEvent(conf)
 	}
@@ -180,7 +180,7 @@ func listenToZookeeper(conf configuration.Configuration, eventBus *event_bus.Eve
 	return serviceConn
 }
 
-func listenToEventStream(conf *configuration.Configuration, sub api.EventSubscriptionAPI) {
+func listenToMarathonEventStream(conf *configuration.Configuration, sub api.EventSubscriptionAPI) {
 	client := &http.Client{}
 	client.Timeout = 0 * time.Second
 
