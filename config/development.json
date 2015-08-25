@@ -15,7 +15,9 @@
   "HAProxy": {
     "TemplatePath": "config/haproxy_template.cfg",
     "OutputPath": "/etc/haproxy/haproxy.cfg",
-    "ReloadCommand": "haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -D -sf $(cat /var/run/haproxy.pid)"
+    "ReloadCommand": "haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -D -sf $(cat /var/run/haproxy.pid)",
+    "ShutdownCommand": "PID=$(cat /var/run/haproxy.pid); kill -USR1 $PID; while kill -0 $PID; do sleep 0.1; done",
+    "GraceSeconds": 5
   },
 
   "StatsD": {

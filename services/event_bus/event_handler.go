@@ -98,7 +98,7 @@ func handleHAPUpdate(conf *configuration.Configuration, conn *zk.Conn) bool {
 			log.Fatalf("Failed to write template on path: %s", err)
 		}
 
-		err = execCommand(conf.HAProxy.ReloadCommand)
+		err = ExecCommand(conf.HAProxy.ReloadCommand)
 		if err != nil {
 			log.Fatalf("HAProxy: update failed\n")
 		} else {
@@ -112,7 +112,7 @@ func handleHAPUpdate(conf *configuration.Configuration, conn *zk.Conn) bool {
 	}
 }
 
-func execCommand(cmd string) error {
+func ExecCommand(cmd string) error {
 	log.Printf("Exec cmd: %s \n", cmd)
 	output, err := exec.Command("sh", "-c", cmd).CombinedOutput()
 	if err != nil {
