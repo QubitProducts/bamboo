@@ -1,5 +1,7 @@
 # circle.yml
 machine:
+  services:
+    - docker
   ruby:
     version: 2.1.1
   environment:
@@ -23,6 +25,11 @@ test:
     - go test -v github.com/QubitProducts/bamboo/... | go2xunit > $WORKSPACE/test_output/tests.xml
 
 deployment:
+  hub:
+    branch: ab_rebase_to_qubit
+    commands:
+      - docker login-e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      - docker push placeable/bamboo:ab_rebase
   production:
     branch: master
     commands:
