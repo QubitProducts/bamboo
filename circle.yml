@@ -9,7 +9,8 @@ dependencies:
 
 test:
   override:
-    - docker run -t -i --rm -p 8000:8000 -p 80:80  -e MARATHON_ENDPOINT=http://admin-mesos-ue1.placeable.in:8080 -e BAMBOO_ENDPOINT=http://bamboo:8000 -e BAMBOO_ZK_HOST=admin-mesos-ue1.placeable.in:2181 -e BAMBOO_ZK_PATH=/bamboo -e BIND=":8000" -e CONFIG_PATH="config/production.example.json" -e BAMBOO_DOCKER_AUTO_HOST=true  bamboo
+    - docker run -d -p 8000:8000 -p 80:80  -e MARATHON_ENDPOINT=http://admin-mesos-ue1.placeable.in:8080 -e BAMBOO_ENDPOINT=http://bamboo:8000 -e BAMBOO_ZK_HOST=admin-mesos-ue1.placeable.in:2181 -e BAMBOO_ZK_PATH=/bamboo -e BIND=":8000" -e CONFIG_PATH="config/production.example.json" -e BAMBOO_DOCKER_AUTO_HOST=true  bamboo
+    - curl --retry 10 --retry-delay 5 -v http://localhost:8000
 
 deployment:
   hub:
