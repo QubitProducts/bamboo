@@ -28,7 +28,7 @@ deployment:
   hub:
     branch: ab_rebase_to_qubit
     commands:
-      - docker login-e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
       - docker push placeable/bamboo:ab_rebase
   production:
     branch: master
