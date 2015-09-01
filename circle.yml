@@ -5,11 +5,11 @@ machine:
 
 dependencies:
   override:
-    - docker build -t bamboo .
+    - docker build -t placeable/qubit-bamboo .
 
 test:
   override:
-    - ls
+    - docker images
 
 deployment:
   hub:
