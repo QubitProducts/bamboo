@@ -19,6 +19,7 @@ install:
 # Tests should fail if go fmt is required
 script:
   - '[[ -z "$(go fmt ./... | tee -a /dev/stderr)" ]]'
+  - go vet ./...
   - go test -v ./...
 
 notifications:
