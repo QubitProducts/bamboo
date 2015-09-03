@@ -16,8 +16,10 @@ install:
   - go get -t github.com/smartystreets/goconvey
   - go get -v -u github.com/tools/godep
 
-  # Travis auto execute go test
-  #  - go test -v ./...
+# Tests should fail if go fmt is required
+script:
+  - '[[ -z "$(go fmt ./... | tee -a /dev/stderr)" ]]'
+  - go test -v ./...
 
 notifications:
   email: false
