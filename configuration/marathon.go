@@ -10,7 +10,7 @@ import (
 type Marathon struct {
 	// comma separated marathon http endpoints including port number
 	Endpoint string
-	User string
+	User     string
 	Password string
 }
 
