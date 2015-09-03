@@ -30,7 +30,6 @@ func All(conn *zk.Conn, zkConf conf.Zookeeper) (map[string]Service, error) {
 		bite, _, e := conn.Get(zkConf.Path + "/" + childPath)
 		if e != nil {
 			return nil, e
-			break
 		}
 		appId, _ := unescapeSlashes(childPath)
 		services[appId] = Service{Id: appId, Acl: string(bite)}

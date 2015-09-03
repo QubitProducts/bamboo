@@ -72,7 +72,7 @@ func setValueFromEnv(field *string, envVar string) {
 func setBoolValueFromEnv(field *bool, envVar string) {
 	env := os.Getenv(envVar)
 	if len(env) > 0 {
-		log.Printf("Using environment override %s=%t", envVar, env)
+		log.Printf("Using environment override %s=%s", envVar, env)
 		x, err := strconv.ParseBool(env)
 		if err != nil {
 			log.Printf("Error converting boolean value: %s\n", err)
