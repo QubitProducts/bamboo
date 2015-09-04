@@ -83,15 +83,20 @@ This section tries to explain usage in code comment style:
       "ReportingDelay": 5
     }
   }
-  
-  
+
+
   // Make sure using absolute path on production
   "HAProxy": {
     "TemplatePath": "/var/bamboo/haproxy_template.cfg",
     "OutputPath": "/etc/haproxy/haproxy.cfg",
-    "ReloadCommand": "haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -D -sf $(cat /var/run/haproxy.pid)"
+    "ReloadCommand": "haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -D -sf $(cat /var/run/haproxy.pid)",
+    // A command that will validate the config before running reload command.
+    // '{{.}}' will be expanded to a temporary path that contains the config contents
+    "ReloadValidationCommand": "haproxy -c -f {{.}}",
+    // A command that will always be run after ReloadCommand, even if the reload fails
+    "ReloadCleanupCommand": "exit 0"
   },
-  
+
   // Enable or disable StatsD event tracking
   "StatsD": {
     "Enabled": false,
