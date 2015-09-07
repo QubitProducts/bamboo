@@ -102,7 +102,7 @@ func ensureLatestConfig(conf *configuration.Configuration, conn *zk.Conn) (reloa
 		return
 	}
 
-	err = validateConfig(conf.HAProxy.ReloadValidateCommand, content)
+	err = validateConfig(conf.HAProxy.ReloadValidationCommand, content)
 	if err != nil {
 		return
 	}

@@ -4,6 +4,6 @@ type HAProxy struct {
 	TemplatePath          string
 	OutputPath            string
 	ReloadCommand         string
-	ReloadValidateCommand string
+	ReloadValidationCommand string
 	ReloadCleanupCommand  string
 }
