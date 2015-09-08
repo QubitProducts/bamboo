@@ -5,8 +5,8 @@ machine:
 
 dependencies:
   override:
-    - docker build -t placeable/qubit-bamboo:$CIRCLE_BRANCH-$CIRCLE_BUILD_NUM .
-    - docker tag placeable/qubit-bamboo:$CIRCLE_BRANCH-$CIRCLE_BUILD_NUM placeable/qubit-bamboo:latest
+    - docker build -t placeable/qubit-bamboo:$CIRCLE_BRANCH-$CIRCLE_BUILD_NUM_$CIRCLE_SHA1 .
+    - docker tag placeable/qubit-bamboo:$CIRCLE_BRANCH-$CIRCLE_BUILD_NUM_$CIRCLE_SHA1 placeable/qubit-bamboo:latest
 
 test:
   override:
