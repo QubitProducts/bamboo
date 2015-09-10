@@ -104,10 +104,10 @@ func fetchMarathonApps(endpoint string, conf *configuration.Configuration) (map[
 	client := &http.Client{}
 	req, _ := http.NewRequest("GET", endpoint+"/v2/apps", nil)
 	req.Header.Add("Accept", "application/json")
-        req.Header.Add("Content-Type", "application/json")
-        if len(conf.Marathon.User) > 0 && len(conf.Marathon.Password) > 0 {
-                req.SetBasicAuth(conf.Marathon.User, conf.Marathon.Password)
-        }
+	req.Header.Add("Content-Type", "application/json")
+	if len(conf.Marathon.User) > 0 && len(conf.Marathon.Password) > 0 {
+		req.SetBasicAuth(conf.Marathon.User, conf.Marathon.Password)
+	}
 	response, err := client.Do(req)
 
 	if err != nil {
@@ -138,13 +138,13 @@ func fetchMarathonApps(endpoint string, conf *configuration.Configuration) (map[
 
 func fetchTasks(endpoint string, conf *configuration.Configuration) (map[string][]marathonTask, error) {
 	client := &http.Client{}
-        req, _ := http.NewRequest("GET", endpoint+"/v2/tasks", nil)
-        req.Header.Add("Accept", "application/json")
-        req.Header.Add("Content-Type", "application/json")
-        if len(conf.Marathon.User) > 0 && len(conf.Marathon.Password) > 0 {
-                req.SetBasicAuth(conf.Marathon.User, conf.Marathon.Password)
-        }
-        response, err := client.Do(req)
+	req, _ := http.NewRequest("GET", endpoint+"/v2/tasks", nil)
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Content-Type", "application/json")
+	if len(conf.Marathon.User) > 0 && len(conf.Marathon.Password) > 0 {
+		req.SetBasicAuth(conf.Marathon.User, conf.Marathon.Password)
+	}
+	response, err := client.Do(req)
 
 	var tasks marathonTasks
 
