@@ -191,6 +191,9 @@ func listenToMarathonEventStream(conf *configuration.Configuration, sub api.Even
 			for _ = range ticker.C {
 				req, err := http.NewRequest("GET", eventsURL, nil)
 				req.Header.Set("Accept", "text/event-stream")
+				if len(conf.Marathon.User) > 0 && len(conf.Marathon.Password) > 0 {
+					req.SetBasicAuth(conf.Marathon.User, conf.Marathon.Password)
+				}
 				if err != nil {
 					errorMsg := "An error occurred while creating request to Marathon events system: %s\n"
 					log.Printf(errorMsg, err)
