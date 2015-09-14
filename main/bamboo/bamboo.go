@@ -186,9 +186,10 @@ func listenToMarathonEventStream(conf *configuration.Configuration, sub api.Even
 
 	for _, marathon := range conf.Marathon.Endpoints() {
 		ticker := time.NewTicker(1 * time.Second)
+		eventsURL := marathon + "/v2/events"
 		go func() {
 			for _ = range ticker.C {
-				req, err := http.NewRequest("GET", marathon+"/v2/events", nil)
+				req, err := http.NewRequest("GET", eventsURL, nil)
 				req.Header.Set("Accept", "text/event-stream")
 				if err != nil {
 					errorMsg := "An error occurred while creating request to Marathon events system: %s\n"
