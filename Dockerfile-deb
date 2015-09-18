@@ -12,10 +12,11 @@ ADD . /opt/go/src/github.com/QubitProducts/bamboo
 WORKDIR /opt/go/src/github.com/QubitProducts/bamboo
 
 RUN go get github.com/tools/godep && \
-    go get -t github.com/smartystreets/goconvey
+    go get -t github.com/smartystreets/goconvey && \
+    go build
 
 RUN mkdir -p /output
 VOLUME /output
 
 ENV USER root
-CMD builder/build.sh && mv builder/bamboo*.deb /output
+CMD builder/build.sh && mv output/bamboo*.deb /output

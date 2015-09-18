@@ -237,10 +237,10 @@ Moreover, there is
 - a [Jenkins build script](builder/ci-jenkins.sh) to run `build.sh` from a Jenkins job
 - and a [Docker build container](builder/build.sh) which will generate the deb package in the volume mounted output directory:
 
-  ```
-  docker build -f Dockerfile-deb -t bamboo-build
-  docker run -it -v $(pwd)/output bamboo-build
-  ```
+```
+docker build -f Dockerfile-deb -t bamboo-build .
+docker run -it -v $(pwd)/output:/output bamboo-build
+```
 
 Independently how you build the deb package, you can copy it to a server or publish to your own apt repository.
 
