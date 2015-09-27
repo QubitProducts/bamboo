@@ -100,8 +100,15 @@ type marathonHealthCheck struct {
 	PortIndex int    `json:"portIndex"`
 }
 
-func fetchMarathonApps(endpoint string) (map[string]marathonApp, error) {
-	response, err := http.Get(endpoint + "/v2/apps")
+func fetchMarathonApps(endpoint string, conf *configuration.Configuration) (map[string]marathonApp, error) {
+	client := &http.Client{}
+	req, _ := http.NewRequest("GET", endpoint+"/v2/apps", nil)
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Content-Type", "application/json")
+	if len(conf.Marathon.User) > 0 && len(conf.Marathon.Password) > 0 {
+		req.SetBasicAuth(conf.Marathon.User, conf.Marathon.Password)
+	}
+	response, err := client.Do(req)
 
 	if err != nil {
 		return nil, err
@@ -129,10 +136,14 @@ func fetchMarathonApps(endpoint string) (map[string]marathonApp, error) {
 	return dataById, nil
 }
 
-func fetchTasks(endpoint string) (map[string][]marathonTask, error) {
+func fetchTasks(endpoint string, conf *configuration.Configuration) (map[string][]marathonTask, error) {
 	client := &http.Client{}
-	req, err := http.NewRequest("GET", endpoint+"/v2/tasks", nil)
+	req, _ := http.NewRequest("GET", endpoint+"/v2/tasks", nil)
 	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Content-Type", "application/json")
+	if len(conf.Marathon.User) > 0 && len(conf.Marathon.Password) > 0 {
+		req.SetBasicAuth(conf.Marathon.User, conf.Marathon.Password)
+	}
 	response, err := client.Do(req)
 
 	var tasks marathonTasks
@@ -238,14 +249,14 @@ func parseHealthCheckPath(checks []marathonHealthCheck) string {
 	Parameters:
 		endpoint: Marathon HTTP endpoint, e.g. http://localhost:8080
 */
-func FetchApps(maraconf configuration.Marathon) (AppList, error) {
+func FetchApps(maraconf configuration.Marathon, conf *configuration.Configuration) (AppList, error) {
 
 	var applist AppList
 	var err error
 
 	// try all configured endpoints until one succeeds
 	for _, url := range maraconf.Endpoints() {
-		applist, err = _fetchApps(url)
+		applist, err = _fetchApps(url, conf)
 		if err == nil {
 			return applist, err
 		}
@@ -254,13 +265,13 @@ func FetchApps(maraconf configuration.Marathon) (AppList, error) {
 	return nil, err
 }
 
-func _fetchApps(url string) (AppList, error) {
-	tasks, err := fetchTasks(url)
+func _fetchApps(url string, conf *configuration.Configuration) (AppList, error) {
+	tasks, err := fetchTasks(url, conf)
 	if err != nil {
 		return nil, err
 	}
 
-	marathonApps, err := fetchMarathonApps(url)
+	marathonApps, err := fetchMarathonApps(url, conf)
 	if err != nil {
 		return nil, err
 	}

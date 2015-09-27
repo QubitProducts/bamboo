@@ -14,7 +14,7 @@ type templateData struct {
 
 func GetTemplateData(config *conf.Configuration, conn *zk.Conn) (interface{}, error) {
 
-	apps, err := marathon.FetchApps(config.Marathon)
+	apps, err := marathon.FetchApps(config.Marathon, config)
 
 	if err != nil {
 		return nil, err
