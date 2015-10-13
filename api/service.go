@@ -36,9 +36,9 @@ func (d *ServiceAPI) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err2 := service.Create(d.Zookeeper, d.Config.Bamboo.Zookeeper, serviceModel.Id, serviceModel.Acl)
-	if err2 != nil {
-		responseError(w, "Marathon ID might already exist")
+	_, err = service.Create(d.Zookeeper, d.Config.Bamboo.Zookeeper, serviceModel.Id, serviceModel.Acl)
+	if err != nil {
+		responseError(w, err.Error())
 		return
 	}
 
@@ -56,9 +56,9 @@ func (d *ServiceAPI) Put(params martini.Params, w http.ResponseWriter, r *http.R
 		return
 	}
 
-	_, err1 := service.Put(d.Zookeeper, d.Config.Bamboo.Zookeeper, identity, serviceModel.Acl)
-	if err1 != nil {
-		responseError(w, err1.Error())
+	_, err = service.Put(d.Zookeeper, d.Config.Bamboo.Zookeeper, identity, serviceModel.Acl)
+	if err != nil {
+		responseError(w, err.Error())
 		return
 	}
 
