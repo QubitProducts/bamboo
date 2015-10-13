@@ -12,7 +12,7 @@ type templateData struct {
 	Services map[string]service.Service
 }
 
-func GetTemplateData(config *conf.Configuration, conn *zk.Conn) (interface{}, error) {
+func GetTemplateData(config *conf.Configuration, conn *zk.Conn) (*templateData, error) {
 
 	apps, err := marathon.FetchApps(config.Marathon, config)
 
@@ -26,5 +26,5 @@ func GetTemplateData(config *conf.Configuration, conn *zk.Conn) (interface{}, er
 		return nil, err
 	}
 
-	return templateData{apps, services}, nil
+	return &templateData{apps, services}, nil
 }
