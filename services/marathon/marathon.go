@@ -14,6 +14,7 @@ type Task struct {
 	Host  string
 	Port  int
 	Ports []int
+	Healthy bool
 }
 
 // A health check on the application
@@ -61,6 +62,7 @@ type marathonTasks struct {
 
 type marathonTask struct {
 	AppId        string
+	HealthCheckResults []healthCheckResult
 	Id           string
 	Host         string
 	Ports        []int
@@ -68,6 +70,15 @@ type marathonTask struct {
 	StartedAt    string
 	StagedAt     string
 	Version      string
+}
+
+type healthCheckResult struct {
+	Alive bool
+	ConsecutiveFailures int
+	FirstSuccess string
+	LastFailure string
+	LastSuccess string
+	TaskId string
 }
 
 func (slice marathonTaskList) Len() int {
@@ -217,10 +228,20 @@ func createApps(tasksById map[string][]marathonTask, marathonApps map[string]mar
 		tasks := []Task{}
 		for _, mTask := range tasksById[appId] {
 			if len(mTask.Ports) > 0 {
+				// If task is within grace period, it has no
+				// healthCheckResults but startedAt is nil, otherwise
+				// startedAt is a timestamp string
+				var healthy = (len(mTask.StartedAt) > 4)
+				// Only healthy if initially all cheack are healthy,
+				// and task has started
+				for _, marathonCheck := range mTask.HealthCheckResults {
+				  healthy = healthy && marathonCheck.Alive
+				}
 				t := Task{
 					Host:  mTask.Host,
 					Port:  mTask.Ports[0],
 					Ports: mTask.Ports,
+					Healthy: healthy,
 				}
 				tasks = append(tasks, t)
 			}
