@@ -275,7 +275,7 @@ docker build -t bamboo .
 
 #### Running Bamboo as a Docker container
 
-Once the image has been built, running as a container is straightforward - you do however still need to provide the configuration to the image as environment variables. Docker allows two options for this - using the `-e` option  or by putting them in a file and using the `--env-file` option. For this example we will use the former and we will map through ports 8000 and 80 to the docker host (obviously the hosts configured here will need to be reachable from this container):
+Once the image has been built, running as a container is straightforward - you do however still need to provide the configuration to the image as environment variables. Docker allows two options for this - using the `-e` option  or by putting them in a file and using the `--env-file` option. Bamboo use Marathon event bus to get app info, so make sure set `--event_subscriber http_callback` or env `MARATHON_EVENT_SUBSCRIBER=http_callback` before start marathon instance.For this example we will use the former and we will map through ports 8000 and 80 to the docker host (obviously the hosts configured here will need to be reachable from this container):
 
 ````
 docker run -t -i --rm -p 8000:8000 -p 80:80 \
