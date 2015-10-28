@@ -69,10 +69,11 @@ This section tries to explain usage in code comment style:
   },
 
   "Bamboo": {
-
     // Bamboo's HTTP address can be accessed by Marathon
-    // This is used for Marathon HTTP callback; must be reachable by Marathon
-    "Host": "http://localhost:8000",
+    // This is used for Marathon HTTP callback, and each instance of Bamboo
+    // must be provided a unique Endpoint directly addressable by Marathon
+    // (e.g., the IP address of each server)
+    "Endpoint": "http://localhost:8000",
 
     // Proxy setting information is stored in Zookeeper
     // Bamboo will create this path if it does not already exist
