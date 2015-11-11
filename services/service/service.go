@@ -8,8 +8,9 @@ import (
 )
 
 type Service struct {
-	Id  string `param:"id"`
-	Acl string `param:"acl"`
+	Id     string            `param:"id"`
+	Acl    string            `param:"acl"`
+	Config map[string]string `param:"config"`
 }
 
 func All(conn *zk.Conn, zkConf conf.Zookeeper) (map[string]Service, error) {
