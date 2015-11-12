@@ -47,6 +47,7 @@ func FromFile(filePath string) (Configuration, error) {
 	setValueFromEnv(&conf.Marathon.Endpoint, "MARATHON_ENDPOINT")
 	setValueFromEnv(&conf.Marathon.User, "MARATHON_USER")
 	setValueFromEnv(&conf.Marathon.Password, "MARATHON_PASSWORD")
+	setBoolValueFromEnv(&conf.Marathon.UseEventStream, "MARATHON_USE_EVENT_STREAM")
 
 	setValueFromEnv(&conf.Bamboo.Endpoint, "BAMBOO_ENDPOINT")
 	setValueFromEnv(&conf.Bamboo.Zookeeper.Host, "BAMBOO_ZK_HOST")
