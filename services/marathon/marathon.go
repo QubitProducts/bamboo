@@ -75,7 +75,7 @@ func (slice marathonTaskList) Len() int {
 }
 
 func (slice marathonTaskList) Less(i, j int) bool {
-	return slice[i].StagedAt < slice[j].StagedAt
+	return slice[i].Id < slice[j].Id
 }
 
 func (slice marathonTaskList) Swap(i, j int) {
@@ -136,7 +136,7 @@ func fetchMarathonApps(endpoint string, conf *configuration.Configuration) (map[
 	return dataById, nil
 }
 
-func fetchTasks(endpoint string, conf *configuration.Configuration) (map[string][]marathonTask, error) {
+func fetchTasks(endpoint string, conf *configuration.Configuration) (map[string]marathonTaskList, error) {
 	client := &http.Client{}
 	req, _ := http.NewRequest("GET", endpoint+"/v2/tasks", nil)
 	req.Header.Add("Accept", "application/json")
@@ -166,18 +166,22 @@ func fetchTasks(endpoint string, conf *configuration.Configuration) (map[string]
 	taskList := tasks.Tasks
 	sort.Sort(taskList)
 
-	tasksById := map[string][]marathonTask{}
+	tasksById := map[string]marathonTaskList{}
 	for _, task := range taskList {
 		if tasksById[task.AppId] == nil {
-			tasksById[task.AppId] = []marathonTask{}
+			tasksById[task.AppId] = marathonTaskList{}
 		}
 		tasksById[task.AppId] = append(tasksById[task.AppId], task)
+	}
+
+	for _, task_list := range tasksById {
+		sort.Sort(task_list)
 	}
 
 	return tasksById, nil
 }
 
-func createApps(tasksById map[string][]marathonTask, marathonApps map[string]marathonApp) AppList {
+func createApps(tasksById map[string]marathonTaskList, marathonApps map[string]marathonApp) AppList {
 
 	apps := AppList{}
 
