@@ -22,6 +22,7 @@ import (
 	"github.com/QubitProducts/bamboo/configuration"
 	"github.com/QubitProducts/bamboo/qzk"
 	"github.com/QubitProducts/bamboo/services/event_bus"
+	"github.com/QubitProducts/bamboo/services/service"
 )
 
 /*
@@ -68,8 +69,14 @@ func main() {
 	// Create Zookeeper connection
 	zkConn := listenToZookeeper(conf, eventBus)
 
+	// Create the storage backend
+	storage, err := service.NewZKStorage(zkConn, conf.Bamboo.Zookeeper)
+	if err != nil {
+		log.Panicf("Failed to create ZK storage: %v", err)
+	}
+
 	// Register handlers
-	handlers := event_bus.Handlers{Conf: &conf, Zookeeper: zkConn}
+	handlers := event_bus.Handlers{Conf: &conf, Storage: storage}
 	eventBus.Register(handlers.MarathonEventHandler)
 	eventBus.Register(handlers.ServiceEventHandler)
 	eventBus.Publish(event_bus.MarathonEvent{EventType: "bamboo_startup", Timestamp: time.Now().Format(time.RFC3339)})
@@ -78,12 +85,12 @@ func main() {
 	registerOSSignals()
 
 	// Start server
-	initServer(&conf, zkConn, eventBus)
+	initServer(&conf, storage, eventBus)
 }
 
-func initServer(conf *configuration.Configuration, conn *zk.Conn, eventBus *event_bus.EventBus) {
-	stateAPI := api.StateAPI{Config: conf, Zookeeper: conn}
-	serviceAPI := api.ServiceAPI{Config: conf, Zookeeper: conn}
+func initServer(conf *configuration.Configuration, storage service.Storage, eventBus *event_bus.EventBus) {
+	stateAPI := api.StateAPI{Config: conf, Storage: storage}
+	serviceAPI := api.ServiceAPI{Config: conf, Storage: storage}
 	eventSubAPI := api.EventSubscriptionAPI{Conf: conf, EventBus: eventBus}
 
 	conf.StatsD.Increment(1.0, "restart", 1)
