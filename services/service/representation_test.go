@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"testing"
 	"math/rand"
+	"reflect"
+	"testing/quick"
 
 	. "github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/smartystreets/goconvey/convey"
-
-	//"github.com/QubitProducts/bamboo/configuration"
 )
 
 // Yanked off http://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-golang
@@ -155,6 +155,20 @@ func TestV2ServiceRepr(t *testing.T) {
 					So(service.Config["arb"], ShouldEqual, "barb")
 				})
 			})
+		})
+	})
+
+	Convey("#MakeV2ServiceRepr", t, func() {
+		Convey("MakeV2ServiceRepr and V2ServiceRepr.Service should compose to identity", func() {
+			property := func(s Service) bool {
+				// The generator may create services with different .Acl and .Conf["Acl"]
+				s.Config["Acl"] = s.Acl
+				s2 := MakeV2ServiceRepr(s).Service()
+				return reflect.DeepEqual(s, s2)
+			}
+
+			err := quick.Check(property, nil)
+			So(err, ShouldBeNil)
 		})
 	})
 }

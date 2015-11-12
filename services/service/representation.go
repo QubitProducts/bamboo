@@ -58,6 +58,25 @@ type V2ServiceRepr struct {
 	Config  map[string]string `json:"config"`
 }
 
+func MakeV2ServiceRepr(service Service) *V2ServiceRepr {
+	config := make(map[string]string, len(service.Config) + 1)
+	for k, v := range service.Config {
+		config[k] = v
+	}
+	if service.Acl != "" {
+		config["Acl"] = service.Acl
+	}
+	return NewV2ServiceRepr(service.Id, config)
+}
+
+func NewV2ServiceRepr(appID string, config map[string]string) *V2ServiceRepr {
+	return &V2ServiceRepr{
+		ID: appID,
+		Version: "2",
+		Config: config,
+	}
+}
+
 func ParseV2ServiceRepr(body []byte, path string) (ServiceRepr, error) {
 	var repr V2ServiceRepr
 	err := json.Unmarshal(body, &repr)
