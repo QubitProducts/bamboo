@@ -174,9 +174,9 @@ func fetchTasks(endpoint string, conf *configuration.Configuration) (map[string]
 		tasksById[task.AppId] = append(tasksById[task.AppId], task)
 	}
 
-  for _, task_list := range tasksById {
-    sort.Sort(task_list)
-  }
+	for _, task_list := range tasksById {
+		sort.Sort(task_list)
+	}
 
 	return tasksById, nil
 }
