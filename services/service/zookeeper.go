@@ -60,7 +60,7 @@ func (z *ZKStorage) All() (services []Service, err error) {
 }
 
 func (z *ZKStorage) Upsert(service Service) (err error) {
-	repr := NewV2ServiceRepr(service.Id, service.Config)
+	repr := MakeV2ServiceRepr(service)
 
 	body, err := repr.Serialize()
 	if err != nil {
