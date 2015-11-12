@@ -15,12 +15,16 @@ install:
   - go get github.com/smartystreets/assertions
   - go get -t github.com/smartystreets/goconvey
   - go get -v -u github.com/tools/godep
+  - go get github.com/mattn/goveralls
+  - go get github.com/go-playground/overalls
 
 # Tests should fail if go fmt is required
 script:
   - '[[ -z "$(go fmt ./... | tee -a /dev/stderr)" ]]'
   - go vet ./...
   - go test -v ./...
+  - overalls -project=github.com/QubitProducts/bamboo -covermode=count -debug -ignore=Godeps,webapp,builder,.git
+  - goveralls -coverprofile=./overalls.coverprofile -service=travis-ci
 
 notifications:
   email: false

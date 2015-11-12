@@ -11,3 +11,5 @@ node_modules
 builder/build
 *.sublime-project
 output
+*.test
+*.coverprofile
