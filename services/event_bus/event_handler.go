@@ -3,8 +3,8 @@ package event_bus
 import (
 	"github.com/QubitProducts/bamboo/configuration"
 	"github.com/QubitProducts/bamboo/services/haproxy"
-	"github.com/QubitProducts/bamboo/services/template"
 	"github.com/QubitProducts/bamboo/services/service"
+	"github.com/QubitProducts/bamboo/services/template"
 	"io/ioutil"
 	"log"
 	"os"
@@ -29,8 +29,8 @@ type ServiceEvent struct {
 }
 
 type Handlers struct {
-	Conf      *configuration.Configuration
-	Storage   service.Storage
+	Conf    *configuration.Configuration
+	Storage service.Storage
 }
 
 func (h *Handlers) MarathonEventHandler(event MarathonEvent) {

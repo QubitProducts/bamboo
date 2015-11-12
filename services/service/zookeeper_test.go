@@ -1,11 +1,11 @@
 package service
 
 import (
-	"testing"
 	. "github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/smartystreets/goconvey/convey"
+	"testing"
 
-	"time"
 	"log"
+	"time"
 
 	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/samuel/go-zookeeper/zk"
 	"github.com/QubitProducts/bamboo/configuration"
@@ -13,11 +13,10 @@ import (
 
 var zkTimeout = time.Second
 var zkConf = configuration.Zookeeper{
-	Host: "localhost:2181",
-	Path: "/test-bamboo",
+	Host:           "localhost:2181",
+	Path:           "/test-bamboo",
 	ReportingDelay: 1,
 }
-
 
 func cleanZK(conn *zk.Conn) {
 	deleteRecursive(conn, zkConf.Path)
@@ -30,7 +29,7 @@ func deleteRecursive(conn *zk.Conn, path string) {
 		return
 	}
 	for _, child := range children {
-		deleteRecursive(conn, path + "/" + child)
+		deleteRecursive(conn, path+"/"+child)
 	}
 	err = conn.Delete(path, -1)
 	if err != nil {
@@ -167,7 +166,7 @@ func TestZKStorage(t *testing.T) {
 		testService := Service{
 			Id: "test",
 			Config: map[string]string{
-				"Acl": "foo",
+				"Acl":   "foo",
 				"barst": "carst",
 			},
 		}
@@ -230,7 +229,6 @@ func TestZKStorage(t *testing.T) {
 		s, err := NewZKStorage(conn, zkConf)
 		So(err, ShouldBeNil)
 
-
 		Convey("when I delete the only service", func() {
 			cleanZK(conn)
 			loadToZK(conn, [][2]string{
@@ -240,7 +238,6 @@ func TestZKStorage(t *testing.T) {
 
 			err := s.Delete("test")
 			So(err, ShouldBeNil)
-
 
 			Convey("there should be zero entries", func() {
 				entries, err := s.All()
@@ -259,7 +256,6 @@ func TestZKStorage(t *testing.T) {
 				So(err, ShouldNotBeNil)
 			})
 			So(err, ShouldNotBeNil)
-
 
 			Convey("there should be zero entries", func() {
 				entries, err := s.All()

@@ -6,13 +6,13 @@ import (
 	"net/http"
 
 	"github.com/QubitProducts/bamboo/configuration"
-	"github.com/QubitProducts/bamboo/services/service"
 	"github.com/QubitProducts/bamboo/services/haproxy"
+	"github.com/QubitProducts/bamboo/services/service"
 )
 
 type StateAPI struct {
-	Config    *configuration.Configuration
-	Storage   service.Storage
+	Config  *configuration.Configuration
+	Storage service.Storage
 }
 
 func (state *StateAPI) Get(w http.ResponseWriter, r *http.Request) {

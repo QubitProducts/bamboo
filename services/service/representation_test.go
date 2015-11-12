@@ -2,9 +2,9 @@ package service
 
 import (
 	"fmt"
-	"testing"
 	"math/rand"
 	"reflect"
+	"testing"
 	"testing/quick"
 
 	. "github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/smartystreets/goconvey/convey"

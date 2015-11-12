@@ -1,7 +1,7 @@
 package service
 
 type Service struct {
-	Id     string            `param:"id"`
+	Id string `param:"id"`
 	// Acl is present for backwards compatability, and should not be written to.
 	// Instead, write to the "Acl" key in Config
 	Acl    string            `param:"acl"`

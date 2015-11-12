@@ -3,21 +3,21 @@ package service
 import (
 	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/samuel/go-zookeeper/zk"
 	conf "github.com/QubitProducts/bamboo/configuration"
-	"net/url"
 	"log"
+	"net/url"
 )
 
 type ZKStorage struct {
 	conn *zk.Conn
 	conf conf.Zookeeper
-	acl []zk.ACL
+	acl  []zk.ACL
 }
 
 func NewZKStorage(conn *zk.Conn, conf conf.Zookeeper) (s *ZKStorage, err error) {
 	s = &ZKStorage{
 		conn: conn,
 		conf: conf,
-		acl: defaultACL(),
+		acl:  defaultACL(),
 	}
 	err = s.ensurePathExists()
 	return s, err

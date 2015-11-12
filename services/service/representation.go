@@ -59,7 +59,7 @@ type V2ServiceRepr struct {
 }
 
 func MakeV2ServiceRepr(service Service) *V2ServiceRepr {
-	config := make(map[string]string, len(service.Config) + 1)
+	config := make(map[string]string, len(service.Config)+1)
 	for k, v := range service.Config {
 		config[k] = v
 	}
@@ -71,9 +71,9 @@ func MakeV2ServiceRepr(service Service) *V2ServiceRepr {
 
 func NewV2ServiceRepr(appID string, config map[string]string) *V2ServiceRepr {
 	return &V2ServiceRepr{
-		ID: appID,
+		ID:      appID,
 		Version: "2",
-		Config: config,
+		Config:  config,
 	}
 }
 

@@ -12,8 +12,8 @@ import (
 )
 
 type ServiceAPI struct {
-	Config    *conf.Configuration
-	Storage   service.Storage
+	Config  *conf.Configuration
+	Storage service.Storage
 }
 
 func (d *ServiceAPI) All(w http.ResponseWriter, r *http.Request) {
