@@ -65,7 +65,9 @@ This section tries to explain usage in code comment style:
   // Marathon instance configuration
   "Marathon": {
     // Marathon service HTTP endpoints
-    "Endpoint": "http://marathon1:8080,http://marathon2:8080,http://marathon3:8080"
+    "Endpoint": "http://marathon1:8080,http://marathon2:8080,http://marathon3:8080",
+    // Use the Marathon HTTP event streaming feature (Bamboo 0.2.16, Marathon v0.9.0)
+    "UseEventStream": true
   },
 
   "Bamboo": {
