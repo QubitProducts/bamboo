@@ -1,0 +1,39 @@
+FROM registry.shurenyun.com/centos7/base:omega.v0.2
+
+ENV GOPATH /opt/go
+RUN \
+  yum update -y && \
+  yum install -y epel-release wget && \
+  yum install -y net-tools python-setuptools hostname inotify-tools yum-utils && \
+  yum install -y  haproxy-1.5.4 git hg && \
+  yum install -y  golang && \
+
+  yum clean all && \
+
+  easy_install supervisor
+
+ADD . /opt/go/src/github.com/QubitProducts/bamboo
+ADD config/haproxy_template.gateway.centos.cfg /opt/go/src/github.com/QubitProducts/bamboo/config/haproxy_template.gateway.cfg
+ADD config/haproxy_template.proxy.centos.cfg /opt/go/src/github.com/QubitProducts/bamboo/config/haproxy_template.proxy.cfg
+
+ADD builder/supervisord.conf /etc/supervisord.conf
+ADD builder/run.sh /run.sh
+
+WORKDIR /opt/go/src/github.com/QubitProducts/bamboo
+
+RUN go get github.com/tools/godep && \
+    go get -t github.com/smartystreets/goconvey && \
+    go build && \
+    ln -s /opt/go/src/github.com/QubitProducts/bamboo /var/bamboo && \
+    mkdir -p /run/haproxy && \
+    mkdir -p /var/log/supervisor
+
+VOLUME /var/log/supervisor
+VOLUME /opt/go/src/github.com/QubitProducts/bamboo/config
+
+RUN rm -rf /tmp/* /var/tmp/* && \
+    rm -f /etc/ssh/ssh_host_*
+
+EXPOSE 80 
+
+CMD /run.sh
