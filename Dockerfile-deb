@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV GOPATH /opt/go
 
 RUN apt-get update -yqq
-RUN apt-get install -yqq golang git mercurial ruby-dev gcc make
+RUN apt-get install -yqq golang git mercurial ruby ruby-dev gcc make
 RUN gem install fpm
 
 ADD . /opt/go/src/github.com/QubitProducts/bamboo
