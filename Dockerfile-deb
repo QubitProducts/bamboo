@@ -4,13 +4,13 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV GOPATH /opt/go
 
 RUN apt-get update -yqq
-RUN apt-get install -yqq golang git mercurial ruby-dev gcc make
+RUN apt-get install -yqq software-properties-common curl git mercurial ruby-dev gcc make
+RUN add-apt-repository -y ppa:ethereum/ethereum && apt-get update && apt-get -y install golang
 RUN gem install fpm
 
 ADD . /opt/go/src/github.com/QubitProducts/bamboo
 
 WORKDIR /opt/go/src/github.com/QubitProducts/bamboo
-
 RUN go get github.com/tools/godep && \
     go get -t github.com/smartystreets/goconvey && \
     go build
