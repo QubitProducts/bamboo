@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM ubuntu:15.10
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV GOPATH /opt/go

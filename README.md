@@ -1,4 +1,4 @@
-# Bamboo  [![Build Status](https://travis-ci.org/QubitProducts/bamboo.svg?branch=master)](https://travis-ci.org/QubitProducts/bamboo)
+# Bamboo  [![Build Status](https://travis-ci.org/QubitProducts/bamboo.svg?branch=master)](https://travis-ci.org/QubitProducts/bamboo) [![Coverage Status](https://coveralls.io/repos/QubitProducts/bamboo/badge.svg?branch=coverage&service=github)](https://coveralls.io/github/QubitProducts/bamboo?branch=coverage)
 
 ![bamboo-logo](https://cloud.githubusercontent.com/assets/37033/4110258/a8cc58bc-31ef-11e4-87c9-dd20bd2468c2.png)
 
@@ -65,14 +65,17 @@ This section tries to explain usage in code comment style:
   // Marathon instance configuration
   "Marathon": {
     // Marathon service HTTP endpoints
-    "Endpoint": "http://marathon1:8080,http://marathon2:8080,http://marathon3:8080"
+    "Endpoint": "http://marathon1:8080,http://marathon2:8080,http://marathon3:8080",
+    // Use the Marathon HTTP event streaming feature (Bamboo 0.2.16, Marathon v0.9.0)
+    "UseEventStream": true
   },
 
   "Bamboo": {
-
     // Bamboo's HTTP address can be accessed by Marathon
-    // This is used for Marathon HTTP callback; must be reachable by Marathon
-    "Host": "http://localhost:8000",
+    // This is used for Marathon HTTP callback, and each instance of Bamboo
+    // must be provided a unique Endpoint directly addressable by Marathon
+    // (e.g., the IP address of each server)
+    "Endpoint": "http://localhost:8000",
 
     // Proxy setting information is stored in Zookeeper
     // Bamboo will create this path if it does not already exist
@@ -275,7 +278,7 @@ docker build -t bamboo .
 
 #### Running Bamboo as a Docker container
 
-Once the image has been built, running as a container is straightforward - you do however still need to provide the configuration to the image as environment variables. Docker allows two options for this - using the `-e` option  or by putting them in a file and using the `--env-file` option. For this example we will use the former and we will map through ports 8000 and 80 to the docker host (obviously the hosts configured here will need to be reachable from this container):
+Once the image has been built, running as a container is straightforward - you do however still need to provide the configuration to the image as environment variables. Docker allows two options for this - using the `-e` option  or by putting them in a file and using the `--env-file` option. Bamboo use Marathon event bus to get app info, so make sure set `--event_subscriber http_callback` or env `MARATHON_EVENT_SUBSCRIBER=http_callback` before start marathon instance.For this example we will use the former and we will map through ports 8000 and 80 to the docker host (obviously the hosts configured here will need to be reachable from this container):
 
 ````
 docker run -t -i --rm -p 8000:8000 -p 80:80 \
