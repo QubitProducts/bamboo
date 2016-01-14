@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/go-martini/martini"
 	conf "github.com/QubitProducts/bamboo/configuration"
@@ -83,6 +84,9 @@ func extractService(r *http.Request) (service.Service, error) {
 	err := json.Unmarshal(payload, &serviceModel)
 	if err != nil {
 		return serviceModel, errors.New("Unable to decode JSON request")
+	}
+	if !strings.HasPrefix(serviceModel.Id, "/") {
+		serviceModel.Id = "/" + serviceModel.Id
 	}
 
 	return serviceModel, nil
