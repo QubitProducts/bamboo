@@ -1,0 +1,27 @@
+{
+  "Marathon": {
+    "Endpoint": "http://marathon1:8080,http://marathon2:8080,http://marathon3:8080"
+  },
+
+  "Bamboo": {
+    "Endpoint": "http://haproxy-ip-address:8000",
+    "Zookeeper": {
+      "Host": "zk01.example.com:2181,zk02.example.com:2181",
+      "Path": "/marathon-haproxy/state",
+      "ReportingDelay": 5
+    }
+  },
+
+  "HAProxy": {
+    "TemplatePath": "config/haproxy_template.proxy.cfg",
+    "OutputPath": "/etc/haproxy/haproxy.cfg",
+    "ReloadCommand": "haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -D -sf $(cat /var/run/haproxy.pid)",
+    "ReloadValidationCommand": "haproxy -c -f {{.}}"
+  },
+
+  "StatsD": {
+    "Enabled": false,
+    "Host": "localhost:8125",
+    "Prefix": "bamboo-server.development."
+  }
+}

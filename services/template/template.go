@@ -2,9 +2,11 @@ package template
 
 import (
 	"bytes"
-	"github.com/QubitProducts/bamboo/services/service"
+	"strconv"
 	"strings"
 	"text/template"
+
+	"github.com/QubitProducts/bamboo/services/service"
 )
 
 func hasKey(data map[string]service.Service, appId string) bool {
@@ -29,7 +31,10 @@ func RenderTemplate(templateName string, templateContent string, data interface{
 		"Join":       strings.Join,
 		"Replace":    strings.Replace,
 		"ToUpper":    strings.ToUpper,
-		"ToLower":    strings.ToLower}
+		"ToLower":    strings.ToLower,
+		"Atoi":       strconv.Atoi,
+		"Itoa":       strconv.Itoa,
+	}
 
 	tpl := template.Must(template.New(templateName).Funcs(funcMap).Parse(templateContent))
 

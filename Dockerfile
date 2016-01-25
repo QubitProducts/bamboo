@@ -24,6 +24,7 @@ RUN go get github.com/tools/godep && \
     mkdir -p /var/log/supervisor
 
 VOLUME /var/log/supervisor
+VOLUME /opt/go/src/github.com/QubitProducts/bamboo/config
 
 RUN apt-get clean && \
     rm -rf /tmp/* /var/tmp/* && \
