@@ -314,7 +314,7 @@ cd $GOPATH/src/github.com/QubitProducts/bamboo
 # Build your binary
 go build
 
-# Run test
+# Run test (requires a local zookeeper running)
 goconvey
 ```
 

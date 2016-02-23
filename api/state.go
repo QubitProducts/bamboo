@@ -5,18 +5,18 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/samuel/go-zookeeper/zk"
 	"github.com/QubitProducts/bamboo/configuration"
 	"github.com/QubitProducts/bamboo/services/haproxy"
+	"github.com/QubitProducts/bamboo/services/service"
 )
 
 type StateAPI struct {
-	Config    *configuration.Configuration
-	Zookeeper *zk.Conn
+	Config  *configuration.Configuration
+	Storage service.Storage
 }
 
 func (state *StateAPI) Get(w http.ResponseWriter, r *http.Request) {
-	templateData, _ := haproxy.GetTemplateData(state.Config, state.Zookeeper)
+	templateData, _ := haproxy.GetTemplateData(state.Config, state.Storage)
 	payload, _ := json.Marshal(templateData)
 	io.WriteString(w, string(payload))
 }

@@ -2,6 +2,11 @@ language: go
 
 sudo: false
 
+addons:
+  apt:
+    packages:
+      - zookeeperd
+
 go:
   - 1.4
 
