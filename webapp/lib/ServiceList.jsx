@@ -7,13 +7,13 @@ import Service from './Service.jsx'
 function sortServices (services) {
   const active = _.filter(services, (s) =>
                           !_.isUndefined(s.config) && !_.isUndefined(s.tasks))
-          .sort((a, b) => a.id < b.id)
+          .sort((a, b) => a.id < b.id ? -1 : 1)
   const undeployed = _.filter(services, (s) =>
                               !_.isUndefined(s.config) && _.isUndefined(s.tasks))
-          .sort((a, b) => a.id < b.id)
+          .sort((a, b) => a.id < b.id ? -1 : 1)
   const unconfigured = _.filter(services, (s) =>
                               _.isUndefined(s.config) && !_.isUndefined(s.tasks))
-          .sort((a, b) => a.id < b.id)
+          .sort((a, b) => a.id < b.id ? -1 : 1)
 
   return [].concat(active, undeployed, unconfigured)
 }
