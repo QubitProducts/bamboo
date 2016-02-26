@@ -9,7 +9,7 @@ export default React.createClass({
       <nav className="navbar navbar-bamboo">
         <div className="container-fluid">
           <a className="navbar-brand">Bamboo</a>
-          <EditButton style={NEW} label="New" onUpdate={this.props.onUpdate}/>
+          <EditButton mode={NEW} label="New" {...this.props}/>
         </div>
       </nav>
     )

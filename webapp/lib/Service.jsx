@@ -31,7 +31,7 @@ export default React.createClass({
           <i className="message">Missing app in Marathon</i>
           <EditButton id={this.props.id}
                       config={this.props.config}
-                      style={EDIT}
+                      mode={EDIT}
                       onUpdate={this.props.onUpdate} />
           <DeleteButton id={this.props.id}
                         onUpdate={this.props.onUpdate}/>
@@ -42,7 +42,7 @@ export default React.createClass({
       return (
         <span className="item-actions-group">
         <i className="message">Using default proxy rule</i>
-        <EditButton id={this.props.id} style={NEW} onUpdate={this.props.onUpdate}/>
+        <EditButton id={this.props.id} mode={NEW} onUpdate={this.props.onUpdate}/>
         </span>
     )
 
@@ -52,7 +52,7 @@ export default React.createClass({
         <span className="item-actions-group">
           <EditButton id={this.props.id}
                       config={this.props.config}
-                      style={EDIT}
+                      mode={EDIT}
                       onUpdate={this.props.onUpdate}/>
           <DeleteButton id={this.props.id}
                         onUpdate={this.props.onUpdate}/>

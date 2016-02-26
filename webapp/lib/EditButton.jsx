@@ -131,7 +131,7 @@ export default React.createClass({
           <div className="modal-header">
             <button type="button" className="close" onClick={this.closeForm}>x</button>
             <h4 className="modal-title">
-              {this.props.style === EDIT ? 'Update' : 'Create new'} Service Configuration
+              {this.props.mode === EDIT ? 'Update' : 'Create new'} Service Configuration
             </h4>
           </div>
 
@@ -182,7 +182,7 @@ export default React.createClass({
               Close
             </button>
             <button type="button" className="btn btn-primary" onClick={this.submitForm}>
-              {this.props.style === EDIT ? 'Update' : 'Create'}
+              {this.props.mode === EDIT ? 'Update' : 'Create'}
             </button>
           </div>
         </div>
@@ -195,7 +195,7 @@ export default React.createClass({
   render () {
     let btnClasses
     let iconClasses
-    if (this.props.style === NEW) {
+    if (this.props.mode === NEW) {
       btnClasses = 'btn btn-primary btn-create-service'
       iconClasses = 'icon ion-plus-round'
     } else {
