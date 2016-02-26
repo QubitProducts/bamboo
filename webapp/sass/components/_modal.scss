@@ -25,3 +25,16 @@
   background: #E9E9E9;
   box-shadow: 0px 0px 1px #222;
 }
+
+.edit-form-body {
+  max-height: 900px;
+  overflow-y: auto;
+}
+
+@media (min-height: 500px) {
+    .edit-form-body { height: 400px; }
+}
+
+@media (min-height: 800px) {
+    .edit-form-body { height: 700px; }
+}

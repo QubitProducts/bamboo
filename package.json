@@ -1,89 +1,37 @@
 {
-  "name": "angular-boot",
+  "name": "bamboo",
+  "version": "0.2.16",
   "description": "",
-  "version": "0.1.0",
-  "dependencies": {
-    "lodash": "2.4.1",
-    "jquery": "~2.1.0",
-    "angular-moment": "~0.7.0",
-    "moment": "~2.6.0"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/QubitProducts/bamboo.git"
   },
+  "author": "",
+  "license": "Apache2.0",
+  "bugs": {
+    "url": "https://github.com/QubitProducts/bamboo/issues"
+  },
+  "homepage": "https://github.com/QubitProducts/bamboo",
   "devDependencies": {
-    "browserify": "~3.38.0",
-    "expect.js": "^0.3.1",
-    "grunt": "~0.4.4",
-    "grunt-browserify": "~2.0.8",
-    "grunt-contrib-copy": "~0.5.0",
-    "grunt-contrib-sass": "~0.7.3",
-    "grunt-contrib-watch": "~0.6.1",
-    "hbsfy": "1.3.2",
-    "karma": "~0.12.14",
-    "karma-bro": "^0.2.2",
-    "karma-chrome-launcher": "^0.1.3",
-    "mocha": "~1.18.2",
-    "napa": "~0.4.1",
-    "partialify": "*",
-    "uglifyify": "^2.5.0",
-    "watchify": "^0.8.2"
+    "babel-core": "^6.5.2",
+    "babel-loader": "^6.2.3",
+    "babel-preset-es2015": "^6.5.0",
+    "babel-preset-react": "^6.5.0",
+    "css-loader": "^0.23.1",
+    "file-loader": "^0.8.5",
+    "node-sass": "^3.4.2",
+    "sass-loader": "^3.1.2",
+    "style-loader": "^0.13.0",
+    "webpack": "^1.12.14",
+    "webpack-dev-server": "^1.14.1"
   },
-  "script": {
-    "install": "napa"
-  },
-  "napa": {
-    "angular-strap": "mgcrea/angular-strap#v2.0.5",
-    "angular": "angular/bower-angular#v1.2.22",
-    "angular-animate": "angular/bower-angular-animate#v1.2.22-build.376+sha.93b0c2d",
-    "angular-resource": "angular/bower-angular-resource#v1.2.22-build.376+sha.93b0c2d",
-    "angular-ui-router": "angular-ui/ui-router#0.2.10"
-  },
-  "shims": {
-    "jquery": {
-      "path": "./node_modules/jquery/dist/jquery.js",
-      "exports": "$"
-    },
-    "angular": {
-      "path": "./node_modules/angular/angular.js",
-      "exports": "angular"
-    },
-    "angular-resource": {
-      "path": "./node_modules/angular-resource/angular-resource.js",
-      "depends": [
-        "angular"
-      ]
-    },
-    "angular-animate": {
-      "path": "./node_modules/angular-animate/angular-animate.js",
-      "depends": [
-        "angular"
-      ]
-    },
-    "angular-strap": {
-      "path": "./node_modules/angular-strap/dist/angular-strap.js",
-      "depends": [
-        "angular",
-        "angular-animate",
-        "angular-strap-tpl"
-      ]
-    },
-    "angular-strap-tpl": {
-      "path": "./node_modules/angular-strap/dist/angular-strap.tpl.js"
-    },
-    "angular-ui-router": {
-      "path": "./node_modules/angular-ui-router/release/angular-ui-router.js",
-      "depends": [
-        "angular"
-      ]
-    },
-    "moment": {
-      "path": "./node_modules/moment/moment.js",
-      "exports": "moment"
-    },
-    "angular-moment": {
-      "path": "./node_modules/angular-moment/angular-moment.js",
-      "depends": [
-        "moment",
-        "angular"
-      ]
-    }
+  "dependencies": {
+    "axios": "^0.9.1",
+    "bluebird": "^3.3.1",
+    "classnames": "^2.2.3",
+    "lodash": "^4.5.1",
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7",
+    "react-modal": "^0.6.1"
   }
 }
