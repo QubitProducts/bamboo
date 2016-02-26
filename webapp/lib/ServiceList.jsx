@@ -55,7 +55,7 @@ export default React.createClass({
     return (
       <div className="row service-list-title">
         <div className="col-xs-4">Marathon ID</div>
-        <div className="col-xs-4">ACL</div>
+        <div className="col-xs-4">Configuration</div>
         <div className="col-xs-1">Instances</div>
         <div className="col-xs-3"></div>
       </div>

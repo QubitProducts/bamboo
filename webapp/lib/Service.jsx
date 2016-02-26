@@ -60,7 +60,7 @@ export default React.createClass({
       config = ""
     } else {
       config = _.map(_.toPairs(this.props.config),
-                     ([k, v]) => `${k}=${v}`
+                     ([k, v]) => `${k} = ${v}`
                     ).join(', ')
     }
     const taskCount = this.status() == UNDEPLOYED ? '-' : this.props.tasks.length
