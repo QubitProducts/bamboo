@@ -60,7 +60,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	__webpack_require__(206);
+	__webpack_require__(207);
 
 	_reactDom2.default.render(_react2.default.createElement(_Page2.default, null), document.getElementById('content'));
 
@@ -19683,7 +19683,7 @@
 
 	var _NavBar2 = _interopRequireDefault(_NavBar);
 
-	var _ServiceList = __webpack_require__(163);
+	var _ServiceList = __webpack_require__(204);
 
 	var _ServiceList2 = _interopRequireDefault(_ServiceList);
 
@@ -19693,7 +19693,6 @@
 	  displayName: 'Page',
 	  render: function render() {
 	    var serviceList = _react2.default.createElement(_ServiceList2.default, { pollInterval: 5000 });
-	    console.log(serviceList.handleServiceUpdate);
 	    return _react2.default.createElement(
 	      'div',
 	      null,
@@ -19713,6 +19712,8 @@
 	  value: true
 	});
 
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
@@ -19721,7 +19722,7 @@
 
 	var _EditButton2 = _interopRequireDefault(_EditButton);
 
-	var _constants = __webpack_require__(162);
+	var _constants = __webpack_require__(184);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -19739,7 +19740,7 @@
 	          { className: 'navbar-brand' },
 	          'Bamboo'
 	        ),
-	        _react2.default.createElement(_EditButton2.default, { style: _constants.NEW, label: 'New', onUpdate: this.props.onUpdate })
+	        _react2.default.createElement(_EditButton2.default, _extends({ mode: _constants.NEW, label: 'New' }, this.props))
 	      )
 	    );
 	  }
@@ -19755,9 +19756,9 @@
 	  value: true
 	});
 
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var _lodash = __webpack_require__(164);
+	var _lodash = __webpack_require__(162);
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
@@ -19765,31 +19766,23 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactModal = __webpack_require__(186);
+	var _reactModal = __webpack_require__(164);
 
 	var _reactModal2 = _interopRequireDefault(_reactModal);
 
-	var _classnames = __webpack_require__(184);
+	var _constants = __webpack_require__(184);
 
-	var _classnames2 = _interopRequireDefault(_classnames);
+	var _EditForm = __webpack_require__(185);
 
-	var _axios = __webpack_require__(166);
-
-	var _axios2 = _interopRequireDefault(_axios);
-
-	var _constants = __webpack_require__(162);
+	var _EditForm2 = _interopRequireDefault(_EditForm);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = _react2.default.createClass({
 	  displayName: 'EditButton',
 	  getInitialState: function getInitialState() {
-	    var config = _lodash2.default.isEmpty(this.props.config) ? [["", ""]] : _lodash2.default.toPairs(this.props.config);
-
 	    return {
-	      isFormOpen: false,
-	      id: this.props.id || "",
-	      config: config
+	      isFormOpen: false
 	    };
 	  },
 	  openForm: function openForm() {
@@ -19797,104 +19790,6 @@
 	  },
 	  closeForm: function closeForm() {
 	    this.setState(this.getInitialState());
-	  },
-	  submitForm: function submitForm() {
-	    var _this = this;
-
-	    console.log(this.state);
-	    var payload = {
-	      id: this.state.id,
-	      config: _lodash2.default.fromPairs(this.state.config)
-	    };
-	    _axios2.default.post('/api/services', payload).then(function (res) {
-	      _this.closeForm();
-	      _this.props.onUpdate(res.data);
-	    });
-	  },
-	  handleIdChange: function handleIdChange(ev) {
-	    this.setState({ id: ev.target.value });
-	  },
-	  removeConfigEntry: function removeConfigEntry(i) {
-	    var _this2 = this;
-
-	    return function (ev) {
-	      var config = _lodash2.default.cloneDeep(_this2.state.config);
-	      config.splice(i, 1);
-	      if (config.length === 0) {
-	        config = [["", ""]];
-	      }
-	      _this2.setState({ config: config });
-	    };
-	  },
-	  changeConfigKey: function changeConfigKey(i) {
-	    var _this3 = this;
-
-	    return function (ev) {
-	      var config = _lodash2.default.cloneDeep(_this3.state.config);
-	      config[i][0] = ev.target.value;
-
-	      _this3.setState({ config: config });
-	    };
-	  },
-	  changeConfigValue: function changeConfigValue(i) {
-	    var _this4 = this;
-
-	    return function (ev) {
-	      var config = _lodash2.default.cloneDeep(_this4.state.config);
-	      config[i][1] = ev.target.value;
-
-	      _this4.setState({ config: config });
-	    };
-	  },
-	  addConfigEntry: function addConfigEntry() {
-	    var config = _lodash2.default.cloneDeep(this.state.config);
-	    config.push(["", ""]);
-
-	    this.setState({ config: config });
-	  },
-	  configTable: function configTable() {
-	    var _this5 = this;
-
-	    return _lodash2.default.map(this.state.config, function (_ref, i) {
-	      var _ref2 = _slicedToArray(_ref, 2);
-
-	      var k = _ref2[0];
-	      var v = _ref2[1];
-
-	      var kPlaceholder = i == 0 ? "Acl" : "";
-	      var vPlaceholder = i == 0 ? "hdr(host) -i app.example.com" : "";
-	      return _react2.default.createElement(
-	        'tr',
-	        { key: i },
-	        _react2.default.createElement(
-	          'td',
-	          null,
-	          _react2.default.createElement('input', { className: 'form-control',
-	            type: 'text',
-	            value: k,
-	            placeholder: kPlaceholder,
-	            onChange: _this5.changeConfigKey(i) })
-	        ),
-	        _react2.default.createElement(
-	          'td',
-	          null,
-	          _react2.default.createElement('input', { className: 'form-control',
-	            type: 'text',
-	            value: v,
-	            placeholder: vPlaceholder,
-	            onChange: _this5.changeConfigValue(i) })
-	        ),
-	        _react2.default.createElement(
-	          'td',
-	          null,
-	          _react2.default.createElement(
-	            'button',
-	            { className: 'btn btn-danger', onClick: _this5.removeConfigEntry(i) },
-	            _react2.default.createElement('i', { className: 'icon ion-android-trash' })
-	          )
-	        )
-	      );
-	    });
 	  },
 	  formModal: function formModal() {
 	    var modalStyle = {
@@ -19921,127 +19816,14 @@
 	        className: 'Modal__Bootstrap modal-dialog',
 	        isOpen: this.state.isFormOpen,
 	        onRequestClose: this.closeForm },
-	      _react2.default.createElement(
-	        'div',
-	        { className: 'modal-content' },
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'modal-header' },
-	          _react2.default.createElement(
-	            'button',
-	            { type: 'button', className: 'close', onClick: this.closeForm },
-	            'x'
-	          ),
-	          _react2.default.createElement(
-	            'h4',
-	            { className: 'modal-title' },
-	            this.props.style === _constants.EDIT ? 'Update' : 'Create new',
-	            ' Service Configuration'
-	          )
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'modal-body edit-form-body' },
-	          _react2.default.createElement(
-	            'div',
-	            { className: 'inner-form' },
-	            _react2.default.createElement(
-	              'div',
-	              { className: 'form-group' },
-	              _react2.default.createElement(
-	                'label',
-	                null,
-	                'Marathon ID'
-	              ),
-	              _react2.default.createElement('input', { type: 'text',
-	                className: 'form-control',
-	                value: this.state.id,
-	                onChange: this.handleIdChange })
-	            ),
-	            _react2.default.createElement(
-	              'div',
-	              { className: 'form-group' },
-	              _react2.default.createElement(
-	                'label',
-	                null,
-	                'Config Values'
-	              ),
-	              _react2.default.createElement(
-	                'p',
-	                { className: 'help-block' },
-	                'Enter config values for the service. For the default HAProxy template, set the key to \'Acl\', and enter an ACL in the value field',
-	                _react2.default.createElement('br', null),
-	                'DNS approach: ',
-	                _react2.default.createElement(
-	                  'code',
-	                  null,
-	                  'hdr(host) -i app.example.com'
-	                ),
-	                _react2.default.createElement('br', null),
-	                'Path prefix: ',
-	                _react2.default.createElement(
-	                  'code',
-	                  null,
-	                  'path_beg -i /app-group/app1'
-	                ),
-	                _react2.default.createElement(
-	                  'button',
-	                  { type: 'button', className: 'btn btn-primary pull-right', onClick: this.addConfigEntry },
-	                  'Add Entry'
-	                )
-	              ),
-	              _react2.default.createElement(
-	                'table',
-	                { className: 'table table-condensed' },
-	                _react2.default.createElement(
-	                  'thead',
-	                  null,
-	                  _react2.default.createElement(
-	                    'tr',
-	                    null,
-	                    _react2.default.createElement(
-	                      'th',
-	                      null,
-	                      'Key'
-	                    ),
-	                    _react2.default.createElement(
-	                      'th',
-	                      null,
-	                      'Value'
-	                    ),
-	                    _react2.default.createElement('th', null)
-	                  )
-	                ),
-	                _react2.default.createElement(
-	                  'tbody',
-	                  null,
-	                  this.configTable()
-	                )
-	              )
-	            )
-	          )
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'modal-footer' },
-	          _react2.default.createElement(
-	            'button',
-	            { type: 'button', className: 'btn btn-default', onClick: this.closeForm },
-	            'Close'
-	          ),
-	          _react2.default.createElement(
-	            'button',
-	            { type: 'button', className: 'btn btn-primary', onClick: this.submitForm },
-	            this.props.style === _constants.EDIT ? 'Update' : 'Create'
-	          )
-	        )
-	      )
+	      _react2.default.createElement(_EditForm2.default, _extends({}, this.props, {
+	        onRequestClose: this.closeForm }))
 	    );
 	  },
 	  render: function render() {
 	    var btnClasses = undefined;
 	    var iconClasses = undefined;
-	    if (this.props.style === _constants.NEW) {
+	    if (this.props.mode === _constants.NEW) {
 	      btnClasses = 'btn btn-primary btn-create-service';
 	      iconClasses = 'icon ion-plus-round';
 	    } else {
@@ -20066,146 +19848,6 @@
 
 /***/ },
 /* 162 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	// Service statuses
-	// The service is deployed on Marathon, but is not configured in Bamboo
-	var UNCONFIGURED = exports.UNCONFIGURED = 'UNCONFIGURED';
-	// The service is configured in Bamboo, but is not deployed on Marathon
-	var UNDEPLOYED = exports.UNDEPLOYED = 'UNDEPLOYED';
-	// The service is configured in bamboo, and deployed on Marathon
-	var ACTIVE = exports.ACTIVE = 'ACTIVE';
-
-	// Edit button icon states
-	var NEW = exports.NEW = 'NEW';
-	var EDIT = exports.EDIT = 'EDIT';
-
-/***/ },
-/* 163 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _lodash = __webpack_require__(164);
-
-	var _lodash2 = _interopRequireDefault(_lodash);
-
-	var _axios = __webpack_require__(166);
-
-	var _axios2 = _interopRequireDefault(_axios);
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _Service = __webpack_require__(183);
-
-	var _Service2 = _interopRequireDefault(_Service);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function sortServices(services) {
-	  var active = _lodash2.default.filter(services, function (s) {
-	    return !_lodash2.default.isUndefined(s.config) && !_lodash2.default.isUndefined(s.tasks);
-	  }).sort(function (a, b) {
-	    return a.id < b.id;
-	  });
-	  var undeployed = _lodash2.default.filter(services, function (s) {
-	    return !_lodash2.default.isUndefined(s.config) && _lodash2.default.isUndefined(s.tasks);
-	  }).sort(function (a, b) {
-	    return a.id < b.id;
-	  });
-	  var unconfigured = _lodash2.default.filter(services, function (s) {
-	    return _lodash2.default.isUndefined(s.config) && !_lodash2.default.isUndefined(s.tasks);
-	  }).sort(function (a, b) {
-	    return a.id < b.id;
-	  });
-
-	  return [].concat(active, undeployed, unconfigured);
-	}
-
-	exports.default = _react2.default.createClass({
-	  displayName: 'ServiceList',
-	  getInitialState: function getInitialState() {
-	    return { services: [] };
-	  },
-	  loadStateFromAPI: function loadStateFromAPI() {
-	    var _this = this;
-
-	    _axios2.default.get('/api/state').then(function (res) {
-	      var byId = {};
-	      _lodash2.default.forEach(res.data.Services, function (s) {
-	        byId[s.Id] = { id: s.Id, config: s.Config };
-	      });
-	      _lodash2.default.forEach(res.data.Apps, function (a) {
-	        if (_lodash2.default.isUndefined(byId[a.Id])) {
-	          byId[a.Id] = { id: a.Id };
-	        }
-	        byId[a.Id].tasks = a.Tasks;
-	      });
-
-	      var services = sortServices(_lodash2.default.values(byId));
-
-	      _this.setState({ services: services });
-	    });
-	  },
-	  componentDidMount: function componentDidMount() {
-	    this.loadStateFromAPI();
-	    setInterval(this.loadStateFromAPI, this.props.pollInterval);
-	  },
-	  handleServiceUpdate: function handleServiceUpdate() {
-	    this.loadStateFromAPI();
-	  },
-	  headerRow: function headerRow() {
-	    return _react2.default.createElement(
-	      'div',
-	      { className: 'row service-list-title' },
-	      _react2.default.createElement(
-	        'div',
-	        { className: 'col-xs-4' },
-	        'Marathon ID'
-	      ),
-	      _react2.default.createElement(
-	        'div',
-	        { className: 'col-xs-4' },
-	        'ACL'
-	      ),
-	      _react2.default.createElement(
-	        'div',
-	        { className: 'col-xs-1' },
-	        'Instances'
-	      ),
-	      _react2.default.createElement('div', { className: 'col-xs-3' })
-	    );
-	  },
-	  render: function render() {
-	    var _this2 = this;
-
-	    var services = _lodash2.default.map(this.state.services, function (s) {
-	      return _react2.default.createElement(_Service2.default, { key: s.id, id: s.id, config: s.config, tasks: s.tasks,
-	        onUpdate: _this2.handleServiceUpdate });
-	    });
-
-	    return _react2.default.createElement(
-	      'div',
-	      { className: 'container-fluid service-list' },
-	      this.headerRow(),
-	      services
-	    );
-	  }
-	});
-
-/***/ },
-/* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/**
@@ -35142,10 +34784,10 @@
 	  }
 	}.call(this));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(165)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(163)(module), (function() { return this; }())))
 
 /***/ },
-/* 165 */
+/* 163 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -35161,1414 +34803,23 @@
 
 
 /***/ },
-/* 166 */
+/* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(167);
+	module.exports = __webpack_require__(165);
 
-/***/ },
-/* 167 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var defaults = __webpack_require__(168);
-	var utils = __webpack_require__(169);
-	var dispatchRequest = __webpack_require__(170);
-	var InterceptorManager = __webpack_require__(178);
-	var isAbsoluteURL = __webpack_require__(179);
-	var combineURLs = __webpack_require__(180);
-	var bind = __webpack_require__(181);
-	var transformData = __webpack_require__(174);
-
-	function Axios(defaultConfig) {
-	  this.defaults = utils.merge({}, defaultConfig);
-	  this.interceptors = {
-	    request: new InterceptorManager(),
-	    response: new InterceptorManager()
-	  };
-	}
-
-	Axios.prototype.request = function request(config) {
-	  /*eslint no-param-reassign:0*/
-	  // Allow for axios('example/url'[, config]) a la fetch API
-	  if (typeof config === 'string') {
-	    config = utils.merge({
-	      url: arguments[0]
-	    }, arguments[1]);
-	  }
-
-	  config = utils.merge(defaults, this.defaults, { method: 'get' }, config);
-
-	  // Support baseURL config
-	  if (config.baseURL && !isAbsoluteURL(config.url)) {
-	    config.url = combineURLs(config.baseURL, config.url);
-	  }
-
-	  // Don't allow overriding defaults.withCredentials
-	  config.withCredentials = config.withCredentials || this.defaults.withCredentials;
-
-	  // Transform request data
-	  config.data = transformData(
-	    config.data,
-	    config.headers,
-	    config.transformRequest
-	  );
-
-	  // Flatten headers
-	  config.headers = utils.merge(
-	    config.headers.common || {},
-	    config.headers[config.method] || {},
-	    config.headers || {}
-	  );
-
-	  utils.forEach(
-	    ['delete', 'get', 'head', 'post', 'put', 'patch', 'common'],
-	    function cleanHeaderConfig(method) {
-	      delete config.headers[method];
-	    }
-	  );
-
-	  // Hook up interceptors middleware
-	  var chain = [dispatchRequest, undefined];
-	  var promise = Promise.resolve(config);
-
-	  this.interceptors.request.forEach(function unshiftRequestInterceptors(interceptor) {
-	    chain.unshift(interceptor.fulfilled, interceptor.rejected);
-	  });
-
-	  this.interceptors.response.forEach(function pushResponseInterceptors(interceptor) {
-	    chain.push(interceptor.fulfilled, interceptor.rejected);
-	  });
-
-	  while (chain.length) {
-	    promise = promise.then(chain.shift(), chain.shift());
-	  }
-
-	  return promise;
-	};
-
-	var defaultInstance = new Axios(defaults);
-	var axios = module.exports = bind(Axios.prototype.request, defaultInstance);
-
-	axios.create = function create(defaultConfig) {
-	  return new Axios(defaultConfig);
-	};
-
-	// Expose defaults
-	axios.defaults = defaultInstance.defaults;
-
-	// Expose all/spread
-	axios.all = function all(promises) {
-	  return Promise.all(promises);
-	};
-	axios.spread = __webpack_require__(182);
-
-	// Expose interceptors
-	axios.interceptors = defaultInstance.interceptors;
-
-	// Provide aliases for supported request methods
-	utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
-	  /*eslint func-names:0*/
-	  Axios.prototype[method] = function(url, config) {
-	    return this.request(utils.merge(config || {}, {
-	      method: method,
-	      url: url
-	    }));
-	  };
-	  axios[method] = bind(Axios.prototype[method], defaultInstance);
-	});
-
-	utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
-	  /*eslint func-names:0*/
-	  Axios.prototype[method] = function(url, data, config) {
-	    return this.request(utils.merge(config || {}, {
-	      method: method,
-	      url: url,
-	      data: data
-	    }));
-	  };
-	  axios[method] = bind(Axios.prototype[method], defaultInstance);
-	});
 
 
 /***/ },
-/* 168 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var utils = __webpack_require__(169);
-
-	var PROTECTION_PREFIX = /^\)\]\}',?\n/;
-	var DEFAULT_CONTENT_TYPE = {
-	  'Content-Type': 'application/x-www-form-urlencoded'
-	};
-
-	module.exports = {
-	  transformRequest: [function transformResponseJSON(data, headers) {
-	    if (utils.isFormData(data)) {
-	      return data;
-	    }
-	    if (utils.isArrayBuffer(data)) {
-	      return data;
-	    }
-	    if (utils.isArrayBufferView(data)) {
-	      return data.buffer;
-	    }
-	    if (utils.isObject(data) && !utils.isFile(data) && !utils.isBlob(data)) {
-	      // Set application/json if no Content-Type has been specified
-	      if (!utils.isUndefined(headers)) {
-	        utils.forEach(headers, function processContentTypeHeader(val, key) {
-	          if (key.toLowerCase() === 'content-type') {
-	            headers['Content-Type'] = val;
-	          }
-	        });
-
-	        if (utils.isUndefined(headers['Content-Type'])) {
-	          headers['Content-Type'] = 'application/json;charset=utf-8';
-	        }
-	      }
-	      return JSON.stringify(data);
-	    }
-	    return data;
-	  }],
-
-	  transformResponse: [function transformResponseJSON(data) {
-	    /*eslint no-param-reassign:0*/
-	    if (typeof data === 'string') {
-	      data = data.replace(PROTECTION_PREFIX, '');
-	      try {
-	        data = JSON.parse(data);
-	      } catch (e) { /* Ignore */ }
-	    }
-	    return data;
-	  }],
-
-	  headers: {
-	    common: {
-	      'Accept': 'application/json, text/plain, */*'
-	    },
-	    patch: utils.merge(DEFAULT_CONTENT_TYPE),
-	    post: utils.merge(DEFAULT_CONTENT_TYPE),
-	    put: utils.merge(DEFAULT_CONTENT_TYPE)
-	  },
-
-	  timeout: 0,
-
-	  xsrfCookieName: 'XSRF-TOKEN',
-	  xsrfHeaderName: 'X-XSRF-TOKEN'
-	};
-
-
-/***/ },
-/* 169 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	/*global toString:true*/
-
-	// utils is a library of generic helper functions non-specific to axios
-
-	var toString = Object.prototype.toString;
-
-	/**
-	 * Determine if a value is an Array
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if value is an Array, otherwise false
-	 */
-	function isArray(val) {
-	  return toString.call(val) === '[object Array]';
-	}
-
-	/**
-	 * Determine if a value is an ArrayBuffer
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if value is an ArrayBuffer, otherwise false
-	 */
-	function isArrayBuffer(val) {
-	  return toString.call(val) === '[object ArrayBuffer]';
-	}
-
-	/**
-	 * Determine if a value is a FormData
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if value is an FormData, otherwise false
-	 */
-	function isFormData(val) {
-	  return toString.call(val) === '[object FormData]';
-	}
-
-	/**
-	 * Determine if a value is a view on an ArrayBuffer
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if value is a view on an ArrayBuffer, otherwise false
-	 */
-	function isArrayBufferView(val) {
-	  var result;
-	  if ((typeof ArrayBuffer !== 'undefined') && (ArrayBuffer.isView)) {
-	    result = ArrayBuffer.isView(val);
-	  } else {
-	    result = (val) && (val.buffer) && (val.buffer instanceof ArrayBuffer);
-	  }
-	  return result;
-	}
-
-	/**
-	 * Determine if a value is a String
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if value is a String, otherwise false
-	 */
-	function isString(val) {
-	  return typeof val === 'string';
-	}
-
-	/**
-	 * Determine if a value is a Number
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if value is a Number, otherwise false
-	 */
-	function isNumber(val) {
-	  return typeof val === 'number';
-	}
-
-	/**
-	 * Determine if a value is undefined
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if the value is undefined, otherwise false
-	 */
-	function isUndefined(val) {
-	  return typeof val === 'undefined';
-	}
-
-	/**
-	 * Determine if a value is an Object
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if value is an Object, otherwise false
-	 */
-	function isObject(val) {
-	  return val !== null && typeof val === 'object';
-	}
-
-	/**
-	 * Determine if a value is a Date
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if value is a Date, otherwise false
-	 */
-	function isDate(val) {
-	  return toString.call(val) === '[object Date]';
-	}
-
-	/**
-	 * Determine if a value is a File
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if value is a File, otherwise false
-	 */
-	function isFile(val) {
-	  return toString.call(val) === '[object File]';
-	}
-
-	/**
-	 * Determine if a value is a Blob
-	 *
-	 * @param {Object} val The value to test
-	 * @returns {boolean} True if value is a Blob, otherwise false
-	 */
-	function isBlob(val) {
-	  return toString.call(val) === '[object Blob]';
-	}
-
-	/**
-	 * Trim excess whitespace off the beginning and end of a string
-	 *
-	 * @param {String} str The String to trim
-	 * @returns {String} The String freed of excess whitespace
-	 */
-	function trim(str) {
-	  return str.replace(/^\s*/, '').replace(/\s*$/, '');
-	}
-
-	/**
-	 * Determine if we're running in a standard browser environment
-	 *
-	 * This allows axios to run in a web worker, and react-native.
-	 * Both environments support XMLHttpRequest, but not fully standard globals.
-	 *
-	 * web workers:
-	 *  typeof window -> undefined
-	 *  typeof document -> undefined
-	 *
-	 * react-native:
-	 *  typeof document.createElement -> undefined
-	 */
-	function isStandardBrowserEnv() {
-	  return (
-	    typeof window !== 'undefined' &&
-	    typeof document !== 'undefined' &&
-	    typeof document.createElement === 'function'
-	  );
-	}
-
-	/**
-	 * Iterate over an Array or an Object invoking a function for each item.
-	 *
-	 * If `obj` is an Array callback will be called passing
-	 * the value, index, and complete array for each item.
-	 *
-	 * If 'obj' is an Object callback will be called passing
-	 * the value, key, and complete object for each property.
-	 *
-	 * @param {Object|Array} obj The object to iterate
-	 * @param {Function} fn The callback to invoke for each item
-	 */
-	function forEach(obj, fn) {
-	  // Don't bother if no value provided
-	  if (obj === null || typeof obj === 'undefined') {
-	    return;
-	  }
-
-	  // Force an array if not already something iterable
-	  if (typeof obj !== 'object' && !isArray(obj)) {
-	    /*eslint no-param-reassign:0*/
-	    obj = [obj];
-	  }
-
-	  if (isArray(obj)) {
-	    // Iterate over array values
-	    for (var i = 0, l = obj.length; i < l; i++) {
-	      fn.call(null, obj[i], i, obj);
-	    }
-	  } else {
-	    // Iterate over object keys
-	    for (var key in obj) {
-	      if (obj.hasOwnProperty(key)) {
-	        fn.call(null, obj[key], key, obj);
-	      }
-	    }
-	  }
-	}
-
-	/**
-	 * Accepts varargs expecting each argument to be an object, then
-	 * immutably merges the properties of each object and returns result.
-	 *
-	 * When multiple objects contain the same key the later object in
-	 * the arguments list will take precedence.
-	 *
-	 * Example:
-	 *
-	 * ```js
-	 * var result = merge({foo: 123}, {foo: 456});
-	 * console.log(result.foo); // outputs 456
-	 * ```
-	 *
-	 * @param {Object} obj1 Object to merge
-	 * @returns {Object} Result of all merge properties
-	 */
-	function merge(/* obj1, obj2, obj3, ... */) {
-	  var result = {};
-	  function assignValue(val, key) {
-	    if (typeof result[key] === 'object' && typeof val === 'object') {
-	      result[key] = merge(result[key], val);
-	    } else {
-	      result[key] = val;
-	    }
-	  }
-
-	  for (var i = 0, l = arguments.length; i < l; i++) {
-	    forEach(arguments[i], assignValue);
-	  }
-	  return result;
-	}
-
-	module.exports = {
-	  isArray: isArray,
-	  isArrayBuffer: isArrayBuffer,
-	  isFormData: isFormData,
-	  isArrayBufferView: isArrayBufferView,
-	  isString: isString,
-	  isNumber: isNumber,
-	  isObject: isObject,
-	  isUndefined: isUndefined,
-	  isDate: isDate,
-	  isFile: isFile,
-	  isBlob: isBlob,
-	  isStandardBrowserEnv: isStandardBrowserEnv,
-	  forEach: forEach,
-	  merge: merge,
-	  trim: trim
-	};
-
-
-/***/ },
-/* 170 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
-
-	/**
-	 * Dispatch a request to the server using whichever adapter
-	 * is supported by the current environment.
-	 *
-	 * @param {object} config The config that is to be used for the request
-	 * @returns {Promise} The Promise to be fulfilled
-	 */
-	module.exports = function dispatchRequest(config) {
-	  return new Promise(function executor(resolve, reject) {
-	    try {
-	      var adapter;
-
-	      if (typeof config.adapter === 'function') {
-	        // For custom adapter support
-	        adapter = config.adapter;
-	      } else if (typeof XMLHttpRequest !== 'undefined') {
-	        // For browsers use XHR adapter
-	        adapter = __webpack_require__(171);
-	      } else if (typeof process !== 'undefined') {
-	        // For node use HTTP adapter
-	        adapter = __webpack_require__(171);
-	      }
-
-	      if (typeof adapter === 'function') {
-	        adapter(resolve, reject, config);
-	      }
-	    } catch (e) {
-	      reject(e);
-	    }
-	  });
-	};
-
-
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
-
-/***/ },
-/* 171 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var utils = __webpack_require__(169);
-	var buildURL = __webpack_require__(172);
-	var parseHeaders = __webpack_require__(173);
-	var transformData = __webpack_require__(174);
-	var isURLSameOrigin = __webpack_require__(175);
-	var btoa = window.btoa || __webpack_require__(176);
-
-	module.exports = function xhrAdapter(resolve, reject, config) {
-	  var requestData = config.data;
-	  var requestHeaders = config.headers;
-
-	  if (utils.isFormData(requestData)) {
-	    delete requestHeaders['Content-Type']; // Let the browser set it
-	  }
-
-	  var request = new XMLHttpRequest();
-
-	  // For IE 8/9 CORS support
-	  // Only supports POST and GET calls and doesn't returns the response headers.
-	  if (window.XDomainRequest && !('withCredentials' in request) && !isURLSameOrigin(config.url)) {
-	    request = new window.XDomainRequest();
-	  }
-
-	  // HTTP basic authentication
-	  if (config.auth) {
-	    var username = config.auth.username || '';
-	    var password = config.auth.password || '';
-	    requestHeaders.Authorization = 'Basic ' + btoa(username + ':' + password);
-	  }
-
-	  request.open(config.method.toUpperCase(), buildURL(config.url, config.params, config.paramsSerializer), true);
-
-	  // Set the request timeout in MS
-	  request.timeout = config.timeout;
-
-	  // Listen for ready state
-	  request.onload = function handleLoad() {
-	    if (!request) {
-	      return;
-	    }
-	    // Prepare the response
-	    var responseHeaders = 'getAllResponseHeaders' in request ? parseHeaders(request.getAllResponseHeaders()) : null;
-	    var responseData = ['text', ''].indexOf(config.responseType || '') !== -1 ? request.responseText : request.response;
-	    var response = {
-	      data: transformData(
-	        responseData,
-	        responseHeaders,
-	        config.transformResponse
-	      ),
-	      // IE sends 1223 instead of 204 (https://github.com/mzabriskie/axios/issues/201)
-	      status: request.status === 1223 ? 204 : request.status,
-	      statusText: request.status === 1223 ? 'No Content' : request.statusText,
-	      headers: responseHeaders,
-	      config: config
-	    };
-
-	    // Resolve or reject the Promise based on the status
-	    ((response.status >= 200 && response.status < 300) ||
-	     (!('status' in request) && response.responseText) ?
-	      resolve :
-	      reject)(response);
-
-	    // Clean up request
-	    request = null;
-	  };
-
-	  // Handle low level network errors
-	  request.onerror = function handleError() {
-	    // Real errors are hidden from us by the browser
-	    // onerror should only fire if it's a network error
-	    reject(new Error('Network Error'));
-
-	    // Clean up request
-	    request = null;
-	  };
-
-	  // Add xsrf header
-	  // This is only done if running in a standard browser environment.
-	  // Specifically not if we're in a web worker, or react-native.
-	  if (utils.isStandardBrowserEnv()) {
-	    var cookies = __webpack_require__(177);
-
-	    // Add xsrf header
-	    var xsrfValue = config.withCredentials || isURLSameOrigin(config.url) ?
-	        cookies.read(config.xsrfCookieName) :
-	        undefined;
-
-	    if (xsrfValue) {
-	      requestHeaders[config.xsrfHeaderName] = xsrfValue;
-	    }
-	  }
-
-	  // Add headers to the request
-	  if ('setRequestHeader' in request) {
-	    utils.forEach(requestHeaders, function setRequestHeader(val, key) {
-	      if (typeof requestData === 'undefined' && key.toLowerCase() === 'content-type') {
-	        // Remove Content-Type if data is undefined
-	        delete requestHeaders[key];
-	      } else {
-	        // Otherwise add header to the request
-	        request.setRequestHeader(key, val);
-	      }
-	    });
-	  }
-
-	  // Add withCredentials to request if needed
-	  if (config.withCredentials) {
-	    request.withCredentials = true;
-	  }
-
-	  // Add responseType to request if needed
-	  if (config.responseType) {
-	    try {
-	      request.responseType = config.responseType;
-	    } catch (e) {
-	      if (request.responseType !== 'json') {
-	        throw e;
-	      }
-	    }
-	  }
-
-	  if (utils.isArrayBuffer(requestData)) {
-	    requestData = new DataView(requestData);
-	  }
-
-	  // Send the request
-	  request.send(requestData);
-	};
-
-
-/***/ },
-/* 172 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var utils = __webpack_require__(169);
-
-	function encode(val) {
-	  return encodeURIComponent(val).
-	    replace(/%40/gi, '@').
-	    replace(/%3A/gi, ':').
-	    replace(/%24/g, '$').
-	    replace(/%2C/gi, ',').
-	    replace(/%20/g, '+').
-	    replace(/%5B/gi, '[').
-	    replace(/%5D/gi, ']');
-	}
-
-	/**
-	 * Build a URL by appending params to the end
-	 *
-	 * @param {string} url The base of the url (e.g., http://www.google.com)
-	 * @param {object} [params] The params to be appended
-	 * @returns {string} The formatted url
-	 */
-	module.exports = function buildURL(url, params, paramsSerializer) {
-	  /*eslint no-param-reassign:0*/
-	  if (!params) {
-	    return url;
-	  }
-
-	  var serializedParams;
-	  if (paramsSerializer) {
-	    serializedParams = paramsSerializer(params);
-	  } else {
-	    var parts = [];
-
-	    utils.forEach(params, function serialize(val, key) {
-	      if (val === null || typeof val === 'undefined') {
-	        return;
-	      }
-
-	      if (utils.isArray(val)) {
-	        key = key + '[]';
-	      }
-
-	      if (!utils.isArray(val)) {
-	        val = [val];
-	      }
-
-	      utils.forEach(val, function parseValue(v) {
-	        if (utils.isDate(v)) {
-	          v = v.toISOString();
-	        } else if (utils.isObject(v)) {
-	          v = JSON.stringify(v);
-	        }
-	        parts.push(encode(key) + '=' + encode(v));
-	      });
-	    });
-
-	    serializedParams = parts.join('&');
-	  }
-
-	  if (serializedParams) {
-	    url += (url.indexOf('?') === -1 ? '?' : '&') + serializedParams;
-	  }
-
-	  return url;
-	};
-
-
-
-/***/ },
-/* 173 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var utils = __webpack_require__(169);
-
-	/**
-	 * Parse headers into an object
-	 *
-	 * ```
-	 * Date: Wed, 27 Aug 2014 08:58:49 GMT
-	 * Content-Type: application/json
-	 * Connection: keep-alive
-	 * Transfer-Encoding: chunked
-	 * ```
-	 *
-	 * @param {String} headers Headers needing to be parsed
-	 * @returns {Object} Headers parsed into an object
-	 */
-	module.exports = function parseHeaders(headers) {
-	  var parsed = {};
-	  var key;
-	  var val;
-	  var i;
-
-	  if (!headers) { return parsed; }
-
-	  utils.forEach(headers.split('\n'), function parser(line) {
-	    i = line.indexOf(':');
-	    key = utils.trim(line.substr(0, i)).toLowerCase();
-	    val = utils.trim(line.substr(i + 1));
-
-	    if (key) {
-	      parsed[key] = parsed[key] ? parsed[key] + ', ' + val : val;
-	    }
-	  });
-
-	  return parsed;
-	};
-
-
-/***/ },
-/* 174 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var utils = __webpack_require__(169);
-
-	/**
-	 * Transform the data for a request or a response
-	 *
-	 * @param {Object|String} data The data to be transformed
-	 * @param {Array} headers The headers for the request or response
-	 * @param {Array|Function} fns A single function or Array of functions
-	 * @returns {*} The resulting transformed data
-	 */
-	module.exports = function transformData(data, headers, fns) {
-	  /*eslint no-param-reassign:0*/
-	  utils.forEach(fns, function transform(fn) {
-	    data = fn(data, headers);
-	  });
-
-	  return data;
-	};
-
-
-/***/ },
-/* 175 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var utils = __webpack_require__(169);
-
-	module.exports = (
-	  utils.isStandardBrowserEnv() ?
-
-	  // Standard browser envs have full support of the APIs needed to test
-	  // whether the request URL is of the same origin as current location.
-	  (function standardBrowserEnv() {
-	    var msie = /(msie|trident)/i.test(navigator.userAgent);
-	    var urlParsingNode = document.createElement('a');
-	    var originURL;
-
-	    /**
-	    * Parse a URL to discover it's components
-	    *
-	    * @param {String} url The URL to be parsed
-	    * @returns {Object}
-	    */
-	    function resolveURL(url) {
-	      var href = url;
-
-	      if (msie) {
-	        // IE needs attribute set twice to normalize properties
-	        urlParsingNode.setAttribute('href', href);
-	        href = urlParsingNode.href;
-	      }
-
-	      urlParsingNode.setAttribute('href', href);
-
-	      // urlParsingNode provides the UrlUtils interface - http://url.spec.whatwg.org/#urlutils
-	      return {
-	        href: urlParsingNode.href,
-	        protocol: urlParsingNode.protocol ? urlParsingNode.protocol.replace(/:$/, '') : '',
-	        host: urlParsingNode.host,
-	        search: urlParsingNode.search ? urlParsingNode.search.replace(/^\?/, '') : '',
-	        hash: urlParsingNode.hash ? urlParsingNode.hash.replace(/^#/, '') : '',
-	        hostname: urlParsingNode.hostname,
-	        port: urlParsingNode.port,
-	        pathname: (urlParsingNode.pathname.charAt(0) === '/') ?
-	                  urlParsingNode.pathname :
-	                  '/' + urlParsingNode.pathname
-	      };
-	    }
-
-	    originURL = resolveURL(window.location.href);
-
-	    /**
-	    * Determine if a URL shares the same origin as the current location
-	    *
-	    * @param {String} requestURL The URL to test
-	    * @returns {boolean} True if URL shares the same origin, otherwise false
-	    */
-	    return function isURLSameOrigin(requestURL) {
-	      var parsed = (utils.isString(requestURL)) ? resolveURL(requestURL) : requestURL;
-	      return (parsed.protocol === originURL.protocol &&
-	            parsed.host === originURL.host);
-	    };
-	  })() :
-
-	  // Non standard browser envs (web workers, react-native) lack needed support.
-	  (function nonStandardBrowserEnv() {
-	    return function isURLSameOrigin() {
-	      return true;
-	    };
-	  })()
-	);
-
-
-/***/ },
-/* 176 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	// btoa polyfill for IE<10 courtesy https://github.com/davidchambers/Base64.js
-
-	var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-
-	function InvalidCharacterError(message) {
-	  this.message = message;
-	}
-	InvalidCharacterError.prototype = new Error;
-	InvalidCharacterError.prototype.code = 5;
-	InvalidCharacterError.prototype.name = 'InvalidCharacterError';
-
-	function btoa(input) {
-	  var str = String(input);
-	  var output = '';
-	  for (
-	    // initialize result and counter
-	    var block, charCode, idx = 0, map = chars;
-	    // if the next str index does not exist:
-	    //   change the mapping table to "="
-	    //   check if d has no fractional digits
-	    str.charAt(idx | 0) || (map = '=', idx % 1);
-	    // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
-	    output += map.charAt(63 & block >> 8 - idx % 1 * 8)
-	  ) {
-	    charCode = str.charCodeAt(idx += 3 / 4);
-	    if (charCode > 0xFF) {
-	      throw new InvalidCharacterError('INVALID_CHARACTER_ERR: DOM Exception 5');
-	    }
-	    block = block << 8 | charCode;
-	  }
-	  return output;
-	}
-
-	module.exports = btoa;
-
-
-/***/ },
-/* 177 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var utils = __webpack_require__(169);
-
-	module.exports = (
-	  utils.isStandardBrowserEnv() ?
-
-	  // Standard browser envs support document.cookie
-	  (function standardBrowserEnv() {
-	    return {
-	      write: function write(name, value, expires, path, domain, secure) {
-	        var cookie = [];
-	        cookie.push(name + '=' + encodeURIComponent(value));
-
-	        if (utils.isNumber(expires)) {
-	          cookie.push('expires=' + new Date(expires).toGMTString());
-	        }
-
-	        if (utils.isString(path)) {
-	          cookie.push('path=' + path);
-	        }
-
-	        if (utils.isString(domain)) {
-	          cookie.push('domain=' + domain);
-	        }
-
-	        if (secure === true) {
-	          cookie.push('secure');
-	        }
-
-	        document.cookie = cookie.join('; ');
-	      },
-
-	      read: function read(name) {
-	        var match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
-	        return (match ? decodeURIComponent(match[3]) : null);
-	      },
-
-	      remove: function remove(name) {
-	        this.write(name, '', Date.now() - 86400000);
-	      }
-	    };
-	  })() :
-
-	  // Non standard browser env (web workers, react-native) lack needed support.
-	  (function nonStandardBrowserEnv() {
-	    return {
-	      write: function write() {},
-	      read: function read() { return null; },
-	      remove: function remove() {}
-	    };
-	  })()
-	);
-
-
-/***/ },
-/* 178 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var utils = __webpack_require__(169);
-
-	function InterceptorManager() {
-	  this.handlers = [];
-	}
-
-	/**
-	 * Add a new interceptor to the stack
-	 *
-	 * @param {Function} fulfilled The function to handle `then` for a `Promise`
-	 * @param {Function} rejected The function to handle `reject` for a `Promise`
-	 *
-	 * @return {Number} An ID used to remove interceptor later
-	 */
-	InterceptorManager.prototype.use = function use(fulfilled, rejected) {
-	  this.handlers.push({
-	    fulfilled: fulfilled,
-	    rejected: rejected
-	  });
-	  return this.handlers.length - 1;
-	};
-
-	/**
-	 * Remove an interceptor from the stack
-	 *
-	 * @param {Number} id The ID that was returned by `use`
-	 */
-	InterceptorManager.prototype.eject = function eject(id) {
-	  if (this.handlers[id]) {
-	    this.handlers[id] = null;
-	  }
-	};
-
-	/**
-	 * Iterate over all the registered interceptors
-	 *
-	 * This method is particularly useful for skipping over any
-	 * interceptors that may have become `null` calling `eject`.
-	 *
-	 * @param {Function} fn The function to call for each interceptor
-	 */
-	InterceptorManager.prototype.forEach = function forEach(fn) {
-	  utils.forEach(this.handlers, function forEachHandler(h) {
-	    if (h !== null) {
-	      fn(h);
-	    }
-	  });
-	};
-
-	module.exports = InterceptorManager;
-
-
-/***/ },
-/* 179 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	/**
-	 * Determines whether the specified URL is absolute
-	 *
-	 * @param {string} url The URL to test
-	 * @returns {boolean} True if the specified URL is absolute, otherwise false
-	 */
-	module.exports = function isAbsoluteURL(url) {
-	  // A URL is considered absolute if it begins with "<scheme>://" or "//" (protocol-relative URL).
-	  // RFC 3986 defines scheme name as a sequence of characters beginning with a letter and followed
-	  // by any combination of letters, digits, plus, period, or hyphen.
-	  return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
-	};
-
-
-/***/ },
-/* 180 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	/**
-	 * Creates a new URL by combining the specified URLs
-	 *
-	 * @param {string} baseURL The base URL
-	 * @param {string} relativeURL The relative URL
-	 * @returns {string} The combined URL
-	 */
-	module.exports = function combineURLs(baseURL, relativeURL) {
-	  return baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '');
-	};
-
-
-/***/ },
-/* 181 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	module.exports = function bind(fn, thisArg) {
-	  return function wrap() {
-	    var args = new Array(arguments.length);
-	    for (var i = 0; i < args.length; i++) {
-	      args[i] = arguments[i];
-	    }
-	    return fn.apply(thisArg, args);
-	  };
-	};
-
-
-/***/ },
-/* 182 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	/**
-	 * Syntactic sugar for invoking a function and expanding an array for arguments.
-	 *
-	 * Common use case would be to use `Function.prototype.apply`.
-	 *
-	 *  ```js
-	 *  function f(x, y, z) {}
-	 *  var args = [1, 2, 3];
-	 *  f.apply(null, args);
-	 *  ```
-	 *
-	 * With `spread` this example can be re-written.
-	 *
-	 *  ```js
-	 *  spread(function(x, y, z) {})([1, 2, 3]);
-	 *  ```
-	 *
-	 * @param {Function} callback
-	 * @returns {Function}
-	 */
-	module.exports = function spread(callback) {
-	  return function wrap(arr) {
-	    return callback.apply(null, arr);
-	  };
-	};
-
-
-/***/ },
-/* 183 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _lodash = __webpack_require__(164);
-
-	var _lodash2 = _interopRequireDefault(_lodash);
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _classnames = __webpack_require__(184);
-
-	var _classnames2 = _interopRequireDefault(_classnames);
-
-	var _constants = __webpack_require__(162);
-
-	var _EditButton = __webpack_require__(161);
-
-	var _EditButton2 = _interopRequireDefault(_EditButton);
-
-	var _DeleteButton = __webpack_require__(185);
-
-	var _DeleteButton2 = _interopRequireDefault(_DeleteButton);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var actionTypes = {
-	  UNCONFIGURED: 'service',
-	  UNDEPLOYED: 'marathon',
-	  ACTIVE: 'default'
-	};
-
-	exports.default = _react2.default.createClass({
-	  displayName: 'Service',
-	  status: function status() {
-	    if (_lodash2.default.isUndefined(this.props.tasks)) {
-	      return _constants.UNDEPLOYED;
-	    }
-	    if (_lodash2.default.isUndefined(this.props.config)) {
-	      return _constants.UNCONFIGURED;
-	    }
-	    return _constants.ACTIVE;
-	  },
-	  actions: function actions() {
-	    var items = undefined;
-	    if (this.status() === _constants.UNDEPLOYED) {
-	      return _react2.default.createElement(
-	        'span',
-	        { className: 'item-actions-group' },
-	        _react2.default.createElement(
-	          'i',
-	          { className: 'message' },
-	          'Missing app in Marathon'
-	        ),
-	        _react2.default.createElement(_EditButton2.default, { id: this.props.id,
-	          config: this.props.config,
-	          style: _constants.EDIT,
-	          onUpdate: this.props.onUpdate }),
-	        _react2.default.createElement(_DeleteButton2.default, { id: this.props.id,
-	          onUpdate: this.props.onUpdate })
-	      );
-	    }
-	    if (this.status() === _constants.UNCONFIGURED) {
-	      return _react2.default.createElement(
-	        'span',
-	        { className: 'item-actions-group' },
-	        _react2.default.createElement(
-	          'i',
-	          { className: 'message' },
-	          'Using default proxy rule'
-	        ),
-	        _react2.default.createElement(_EditButton2.default, { id: this.props.id, style: _constants.NEW, onUpdate: this.props.onUpdate })
-	      );
-	    }
-	    if (this.status() === _constants.ACTIVE) {
-	      return _react2.default.createElement(
-	        'span',
-	        { className: 'item-actions-group' },
-	        _react2.default.createElement(_EditButton2.default, { id: this.props.id,
-	          config: this.props.config,
-	          style: _constants.EDIT,
-	          onUpdate: this.props.onUpdate }),
-	        _react2.default.createElement(_DeleteButton2.default, { id: this.props.id,
-	          onUpdate: this.props.onUpdate })
-	      );
-	    }
-	  },
-	  render: function render() {
-	    var acl = this.status() === _constants.UNCONFIGURED ? '' : this.props.config.Acl;
-	    var taskCount = this.status() == _constants.UNDEPLOYED ? '-' : this.props.tasks.length;
-	    var rowClasses = (0, _classnames2.default)('row', 'service-item', 'service-action-type-' + actionTypes[this.status()]);
-
-	    return _react2.default.createElement(
-	      'div',
-	      { className: rowClasses },
-	      _react2.default.createElement(
-	        'span',
-	        { className: 'col-xs-4' },
-	        this.props.id
-	      ),
-	      _react2.default.createElement(
-	        'span',
-	        { className: 'col-xs-4' },
-	        acl
-	      ),
-	      _react2.default.createElement(
-	        'span',
-	        { className: 'col-xs-1 col-instance-count' },
-	        taskCount
-	      ),
-	      _react2.default.createElement(
-	        'span',
-	        { className: 'col-xs-3 item-actions' },
-	        this.actions()
-	      )
-	    );
-	  }
-	});
-
-/***/ },
-/* 184 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
-	  Copyright (c) 2016 Jed Watson.
-	  Licensed under the MIT License (MIT), see
-	  http://jedwatson.github.io/classnames
-	*/
-	/* global define */
-
-	(function () {
-		'use strict';
-
-		var hasOwn = {}.hasOwnProperty;
-
-		function classNames () {
-			var classes = [];
-
-			for (var i = 0; i < arguments.length; i++) {
-				var arg = arguments[i];
-				if (!arg) continue;
-
-				var argType = typeof arg;
-
-				if (argType === 'string' || argType === 'number') {
-					classes.push(arg);
-				} else if (Array.isArray(arg)) {
-					classes.push(classNames.apply(null, arg));
-				} else if (argType === 'object') {
-					for (var key in arg) {
-						if (hasOwn.call(arg, key) && arg[key]) {
-							classes.push(key);
-						}
-					}
-				}
-			}
-
-			return classes.join(' ');
-		}
-
-		if (typeof module !== 'undefined' && module.exports) {
-			module.exports = classNames;
-		} else if (true) {
-			// register as 'classnames', consistent with npm package name
-			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-				return classNames;
-			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-		} else {
-			window.classNames = classNames;
-		}
-	}());
-
-
-/***/ },
-/* 185 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _axios = __webpack_require__(166);
-
-	var _axios2 = _interopRequireDefault(_axios);
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactModal = __webpack_require__(186);
-
-	var _reactModal2 = _interopRequireDefault(_reactModal);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _react2.default.createClass({
-	  displayName: 'DeleteButton',
-	  getInitialState: function getInitialState() {
-	    return { isWarningOpen: false };
-	  },
-	  performDeletion: function performDeletion() {
-	    _axios2.default.delete('/api/services/' + this.props.id);
-	  },
-	  openWarning: function openWarning() {
-	    this.setState({ isWarningOpen: true });
-	  },
-	  closeWarning: function closeWarning() {
-	    this.setState({ isWarningOpen: false });
-	  },
-	  acceptWarning: function acceptWarning() {
-	    this.closeWarning();
-	    this.performDeletion();
-	    this.props.onUpdate();
-	  },
-	  warningModal: function warningModal() {
-	    // The default modal stylings are rather... opinionated
-	    var modalStyle = {
-	      overlay: {
-	        backgroundColor: 'rgba(0, 0, 0, 0.5)'
-	      },
-	      content: {
-	        position: 'absolute',
-	        top: '0px',
-	        left: '0px',
-	        right: '0px',
-	        bottom: 'auto',
-	        border: '0px solid #ccc',
-	        borderRadius: '0px',
-	        outline: 'none',
-	        padding: '0px'
-	      }
-	    };
-
-	    return _react2.default.createElement(
-	      _reactModal2.default,
-	      {
-	        style: modalStyle,
-	        className: 'Modal__Bootstrap modal-dialog',
-	        isOpen: this.state.isWarningOpen,
-	        onRequestClose: this.closeWarning },
-	      _react2.default.createElement(
-	        'div',
-	        { className: 'modal-content' },
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'modal-header' },
-	          _react2.default.createElement(
-	            'button',
-	            { type: 'button', className: 'close', onClick: this.closeWarning },
-	            'x'
-	          ),
-	          _react2.default.createElement(
-	            'h4',
-	            { className: 'modal-title' },
-	            'Are you sure?'
-	          )
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'modal-body' },
-	          'Delete Marathon ID ',
-	          this.props.id
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'modal-footer' },
-	          _react2.default.createElement(
-	            'button',
-	            { type: 'button', className: 'btn btn-default', onClick: this.closeWarning },
-	            'Close'
-	          ),
-	          _react2.default.createElement(
-	            'button',
-	            { type: 'button', className: 'btn btn-primary', onClick: this.acceptWarning },
-	            'Delete it'
-	          )
-	        )
-	      )
-	    );
-	  },
-	  render: function render() {
-	    return _react2.default.createElement(
-	      'button',
-	      { className: 'btn btn-danger', onClick: this.openWarning },
-	      _react2.default.createElement('i', { className: 'icon ion-android-trash' }),
-	      this.warningModal()
-	    );
-	  }
-	});
-
-/***/ },
-/* 186 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(187);
-
-
-
-/***/ },
-/* 187 */
+/* 165 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	var ExecutionEnvironment = __webpack_require__(188);
-	var ModalPortal = React.createFactory(__webpack_require__(189));
-	var ariaAppHider = __webpack_require__(204);
-	var elementClass = __webpack_require__(205);
+	var ExecutionEnvironment = __webpack_require__(166);
+	var ModalPortal = React.createFactory(__webpack_require__(167));
+	var ariaAppHider = __webpack_require__(182);
+	var elementClass = __webpack_require__(183);
 	var renderSubtreeIntoContainer = __webpack_require__(158).unstable_renderSubtreeIntoContainer;
 
 	var SafeHTMLElement = ExecutionEnvironment.canUseDOM ? window.HTMLElement : {};
@@ -36647,7 +34898,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 188 */
+/* 166 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -36692,14 +34943,14 @@
 
 
 /***/ },
-/* 189 */
+/* 167 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var div = React.DOM.div;
-	var focusManager = __webpack_require__(190);
-	var scopeTab = __webpack_require__(192);
-	var Assign = __webpack_require__(193);
+	var focusManager = __webpack_require__(168);
+	var scopeTab = __webpack_require__(170);
+	var Assign = __webpack_require__(171);
 
 
 	// so that our CSS is statically analyzable
@@ -36896,10 +35147,10 @@
 
 
 /***/ },
-/* 190 */
+/* 168 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var findTabbable = __webpack_require__(191);
+	var findTabbable = __webpack_require__(169);
 	var modalElement = null;
 	var focusLaterElement = null;
 	var needToFocus = false;
@@ -36970,7 +35221,7 @@
 
 
 /***/ },
-/* 191 */
+/* 169 */
 /***/ function(module, exports) {
 
 	/*!
@@ -37026,10 +35277,10 @@
 
 
 /***/ },
-/* 192 */
+/* 170 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var findTabbable = __webpack_require__(191);
+	var findTabbable = __webpack_require__(169);
 
 	module.exports = function(node, event) {
 	  var tabbable = findTabbable(node);
@@ -37047,7 +35298,7 @@
 
 
 /***/ },
-/* 193 */
+/* 171 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -37058,9 +35309,9 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var baseAssign = __webpack_require__(194),
-	    createAssigner = __webpack_require__(200),
-	    keys = __webpack_require__(196);
+	var baseAssign = __webpack_require__(172),
+	    createAssigner = __webpack_require__(178),
+	    keys = __webpack_require__(174);
 
 	/**
 	 * A specialized version of `_.assign` for customizing assigned values without
@@ -37133,7 +35384,7 @@
 
 
 /***/ },
-/* 194 */
+/* 172 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -37144,8 +35395,8 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var baseCopy = __webpack_require__(195),
-	    keys = __webpack_require__(196);
+	var baseCopy = __webpack_require__(173),
+	    keys = __webpack_require__(174);
 
 	/**
 	 * The base implementation of `_.assign` without support for argument juggling,
@@ -37166,7 +35417,7 @@
 
 
 /***/ },
-/* 195 */
+/* 173 */
 /***/ function(module, exports) {
 
 	/**
@@ -37204,7 +35455,7 @@
 
 
 /***/ },
-/* 196 */
+/* 174 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -37215,9 +35466,9 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var getNative = __webpack_require__(197),
-	    isArguments = __webpack_require__(198),
-	    isArray = __webpack_require__(199);
+	var getNative = __webpack_require__(175),
+	    isArguments = __webpack_require__(176),
+	    isArray = __webpack_require__(177);
 
 	/** Used to detect unsigned integer values. */
 	var reIsUint = /^\d+$/;
@@ -37446,7 +35697,7 @@
 
 
 /***/ },
-/* 197 */
+/* 175 */
 /***/ function(module, exports) {
 
 	/**
@@ -37589,7 +35840,7 @@
 
 
 /***/ },
-/* 198 */
+/* 176 */
 /***/ function(module, exports) {
 
 	/**
@@ -37839,7 +36090,7 @@
 
 
 /***/ },
-/* 199 */
+/* 177 */
 /***/ function(module, exports) {
 
 	/**
@@ -38025,7 +36276,7 @@
 
 
 /***/ },
-/* 200 */
+/* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -38036,9 +36287,9 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var bindCallback = __webpack_require__(201),
-	    isIterateeCall = __webpack_require__(202),
-	    restParam = __webpack_require__(203);
+	var bindCallback = __webpack_require__(179),
+	    isIterateeCall = __webpack_require__(180),
+	    restParam = __webpack_require__(181);
 
 	/**
 	 * Creates a function that assigns properties of source object(s) to a given
@@ -38083,7 +36334,7 @@
 
 
 /***/ },
-/* 201 */
+/* 179 */
 /***/ function(module, exports) {
 
 	/**
@@ -38154,7 +36405,7 @@
 
 
 /***/ },
-/* 202 */
+/* 180 */
 /***/ function(module, exports) {
 
 	/**
@@ -38292,7 +36543,7 @@
 
 
 /***/ },
-/* 203 */
+/* 181 */
 /***/ function(module, exports) {
 
 	/**
@@ -38365,7 +36616,7 @@
 
 
 /***/ },
-/* 204 */
+/* 182 */
 /***/ function(module, exports) {
 
 	var _element = typeof document !== 'undefined' ? document.body : null;
@@ -38412,7 +36663,7 @@
 
 
 /***/ },
-/* 205 */
+/* 183 */
 /***/ function(module, exports) {
 
 	module.exports = function(opts) {
@@ -38477,16 +36728,1816 @@
 
 
 /***/ },
+/* 184 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	// Service statuses
+	// The service is deployed on Marathon, but is not configured in Bamboo
+	var UNCONFIGURED = exports.UNCONFIGURED = 'UNCONFIGURED';
+	// The service is configured in Bamboo, but is not deployed on Marathon
+	var UNDEPLOYED = exports.UNDEPLOYED = 'UNDEPLOYED';
+	// The service is configured in bamboo, and deployed on Marathon
+	var ACTIVE = exports.ACTIVE = 'ACTIVE';
+
+	// Edit button icon states
+	var NEW = exports.NEW = 'NEW';
+	var EDIT = exports.EDIT = 'EDIT';
+
+/***/ },
+/* 185 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+	var _lodash = __webpack_require__(162);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _classnames = __webpack_require__(186);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	var _axios = __webpack_require__(187);
+
+	var _axios2 = _interopRequireDefault(_axios);
+
+	var _constants = __webpack_require__(184);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _react2.default.createClass({
+	  displayName: 'EditForm',
+	  getInitialState: function getInitialState() {
+	    var config = _lodash2.default.isEmpty(this.props.config) ? [["", ""]] : _lodash2.default.toPairs(this.props.config);
+
+	    return {
+	      id: this.props.id || "",
+	      config: config
+	    };
+	  },
+	  closeForm: function closeForm() {
+	    this.props.onRequestClose();
+	  },
+	  submitForm: function submitForm() {
+	    var _this = this;
+
+	    var payload = {
+	      id: this.state.id,
+	      config: _lodash2.default.fromPairs(this.state.config)
+	    };
+	    _axios2.default.post('/api/services', payload).then(function () {
+	      _this.closeForm();
+	      _this.props.onUpdate();
+	    });
+	  },
+	  handleIdChange: function handleIdChange(ev) {
+	    this.setState({ id: ev.target.value });
+	  },
+	  removeConfigEntry: function removeConfigEntry(i) {
+	    var _this2 = this;
+
+	    return function () {
+	      var config = _lodash2.default.cloneDeep(_this2.state.config);
+	      config.splice(i, 1);
+	      if (config.length === 0) {
+	        config = [["", ""]];
+	      }
+	      _this2.setState({ config: config });
+	    };
+	  },
+	  changeConfigKey: function changeConfigKey(i) {
+	    var _this3 = this;
+
+	    return function (ev) {
+	      var config = _lodash2.default.cloneDeep(_this3.state.config);
+	      config[i][0] = ev.target.value;
+
+	      _this3.setState({ config: config });
+	    };
+	  },
+	  changeConfigValue: function changeConfigValue(i) {
+	    var _this4 = this;
+
+	    return function (ev) {
+	      var config = _lodash2.default.cloneDeep(_this4.state.config);
+	      config[i][1] = ev.target.value;
+
+	      _this4.setState({ config: config });
+	    };
+	  },
+	  addConfigEntry: function addConfigEntry() {
+	    var config = _lodash2.default.cloneDeep(this.state.config);
+	    config.push(["", ""]);
+
+	    this.setState({ config: config });
+	  },
+	  configTable: function configTable() {
+	    var _this5 = this;
+
+	    return _lodash2.default.map(this.state.config, function (_ref, i) {
+	      var _ref2 = _slicedToArray(_ref, 2);
+
+	      var k = _ref2[0];
+	      var v = _ref2[1];
+
+	      var kPlaceholder = i == 0 ? "Acl" : "";
+	      var vPlaceholder = i == 0 ? "hdr(host) -i app.example.com" : "";
+	      return _react2.default.createElement(
+	        'tr',
+	        { key: i },
+	        _react2.default.createElement(
+	          'td',
+	          null,
+	          _react2.default.createElement('input', { className: 'form-control',
+	            type: 'text',
+	            value: k,
+	            placeholder: kPlaceholder,
+	            onChange: _this5.changeConfigKey(i) })
+	        ),
+	        _react2.default.createElement(
+	          'td',
+	          null,
+	          _react2.default.createElement('input', { className: 'form-control',
+	            type: 'text',
+	            value: v,
+	            placeholder: vPlaceholder,
+	            onChange: _this5.changeConfigValue(i) })
+	        ),
+	        _react2.default.createElement(
+	          'td',
+	          null,
+	          _react2.default.createElement(
+	            'button',
+	            { className: 'btn btn-danger', onClick: _this5.removeConfigEntry(i) },
+	            _react2.default.createElement('i', { className: 'icon ion-android-trash' })
+	          )
+	        )
+	      );
+	    });
+	  },
+	  render: function render() {
+	    return _react2.default.createElement(
+	      'div',
+	      { className: 'modal-content' },
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'modal-header' },
+	        _react2.default.createElement(
+	          'button',
+	          { type: 'button', className: 'close', onClick: this.closeForm },
+	          'x'
+	        ),
+	        _react2.default.createElement(
+	          'h4',
+	          { className: 'modal-title' },
+	          this.props.mode === _constants.EDIT ? 'Update' : 'Create new',
+	          ' Service Configuration'
+	        )
+	      ),
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'modal-body edit-form-body' },
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'inner-form' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'form-group' },
+	            _react2.default.createElement(
+	              'label',
+	              null,
+	              'Marathon ID'
+	            ),
+	            _react2.default.createElement('input', { type: 'text',
+	              className: 'form-control',
+	              value: this.state.id,
+	              onChange: this.handleIdChange })
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'form-group' },
+	            _react2.default.createElement(
+	              'label',
+	              null,
+	              'Config Values'
+	            ),
+	            _react2.default.createElement(
+	              'p',
+	              { className: 'help-block' },
+	              'Enter config values for the service. For the default HAProxy template, set the key to \'Acl\', and enter an ACL in the value field',
+	              _react2.default.createElement('br', null),
+	              'DNS approach: ',
+	              _react2.default.createElement(
+	                'code',
+	                null,
+	                'hdr(host) -i app.example.com'
+	              ),
+	              _react2.default.createElement('br', null),
+	              'Path prefix: ',
+	              _react2.default.createElement(
+	                'code',
+	                null,
+	                'path_beg -i /app-group/app1'
+	              ),
+	              _react2.default.createElement(
+	                'button',
+	                { type: 'button', className: 'btn btn-primary pull-right', onClick: this.addConfigEntry },
+	                'Add Entry'
+	              )
+	            ),
+	            _react2.default.createElement(
+	              'table',
+	              { className: 'table table-condensed' },
+	              _react2.default.createElement(
+	                'thead',
+	                null,
+	                _react2.default.createElement(
+	                  'tr',
+	                  null,
+	                  _react2.default.createElement(
+	                    'th',
+	                    null,
+	                    'Key'
+	                  ),
+	                  _react2.default.createElement(
+	                    'th',
+	                    null,
+	                    'Value'
+	                  ),
+	                  _react2.default.createElement('th', null)
+	                )
+	              ),
+	              _react2.default.createElement(
+	                'tbody',
+	                null,
+	                this.configTable()
+	              )
+	            )
+	          )
+	        )
+	      ),
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'modal-footer' },
+	        _react2.default.createElement(
+	          'button',
+	          { type: 'button', className: 'btn btn-default', onClick: this.closeForm },
+	          'Close'
+	        ),
+	        _react2.default.createElement(
+	          'button',
+	          { type: 'button', className: 'btn btn-primary', onClick: this.submitForm },
+	          this.props.mode === _constants.EDIT ? 'Update' : 'Create'
+	        )
+	      )
+	    );
+	  }
+	});
+
+/***/ },
+/* 186 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	  Copyright (c) 2016 Jed Watson.
+	  Licensed under the MIT License (MIT), see
+	  http://jedwatson.github.io/classnames
+	*/
+	/* global define */
+
+	(function () {
+		'use strict';
+
+		var hasOwn = {}.hasOwnProperty;
+
+		function classNames () {
+			var classes = [];
+
+			for (var i = 0; i < arguments.length; i++) {
+				var arg = arguments[i];
+				if (!arg) continue;
+
+				var argType = typeof arg;
+
+				if (argType === 'string' || argType === 'number') {
+					classes.push(arg);
+				} else if (Array.isArray(arg)) {
+					classes.push(classNames.apply(null, arg));
+				} else if (argType === 'object') {
+					for (var key in arg) {
+						if (hasOwn.call(arg, key) && arg[key]) {
+							classes.push(key);
+						}
+					}
+				}
+			}
+
+			return classes.join(' ');
+		}
+
+		if (typeof module !== 'undefined' && module.exports) {
+			module.exports = classNames;
+		} else if (true) {
+			// register as 'classnames', consistent with npm package name
+			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+				return classNames;
+			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else {
+			window.classNames = classNames;
+		}
+	}());
+
+
+/***/ },
+/* 187 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(188);
+
+/***/ },
+/* 188 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var defaults = __webpack_require__(189);
+	var utils = __webpack_require__(190);
+	var dispatchRequest = __webpack_require__(191);
+	var InterceptorManager = __webpack_require__(199);
+	var isAbsoluteURL = __webpack_require__(200);
+	var combineURLs = __webpack_require__(201);
+	var bind = __webpack_require__(202);
+	var transformData = __webpack_require__(195);
+
+	function Axios(defaultConfig) {
+	  this.defaults = utils.merge({}, defaultConfig);
+	  this.interceptors = {
+	    request: new InterceptorManager(),
+	    response: new InterceptorManager()
+	  };
+	}
+
+	Axios.prototype.request = function request(config) {
+	  /*eslint no-param-reassign:0*/
+	  // Allow for axios('example/url'[, config]) a la fetch API
+	  if (typeof config === 'string') {
+	    config = utils.merge({
+	      url: arguments[0]
+	    }, arguments[1]);
+	  }
+
+	  config = utils.merge(defaults, this.defaults, { method: 'get' }, config);
+
+	  // Support baseURL config
+	  if (config.baseURL && !isAbsoluteURL(config.url)) {
+	    config.url = combineURLs(config.baseURL, config.url);
+	  }
+
+	  // Don't allow overriding defaults.withCredentials
+	  config.withCredentials = config.withCredentials || this.defaults.withCredentials;
+
+	  // Transform request data
+	  config.data = transformData(
+	    config.data,
+	    config.headers,
+	    config.transformRequest
+	  );
+
+	  // Flatten headers
+	  config.headers = utils.merge(
+	    config.headers.common || {},
+	    config.headers[config.method] || {},
+	    config.headers || {}
+	  );
+
+	  utils.forEach(
+	    ['delete', 'get', 'head', 'post', 'put', 'patch', 'common'],
+	    function cleanHeaderConfig(method) {
+	      delete config.headers[method];
+	    }
+	  );
+
+	  // Hook up interceptors middleware
+	  var chain = [dispatchRequest, undefined];
+	  var promise = Promise.resolve(config);
+
+	  this.interceptors.request.forEach(function unshiftRequestInterceptors(interceptor) {
+	    chain.unshift(interceptor.fulfilled, interceptor.rejected);
+	  });
+
+	  this.interceptors.response.forEach(function pushResponseInterceptors(interceptor) {
+	    chain.push(interceptor.fulfilled, interceptor.rejected);
+	  });
+
+	  while (chain.length) {
+	    promise = promise.then(chain.shift(), chain.shift());
+	  }
+
+	  return promise;
+	};
+
+	var defaultInstance = new Axios(defaults);
+	var axios = module.exports = bind(Axios.prototype.request, defaultInstance);
+
+	axios.create = function create(defaultConfig) {
+	  return new Axios(defaultConfig);
+	};
+
+	// Expose defaults
+	axios.defaults = defaultInstance.defaults;
+
+	// Expose all/spread
+	axios.all = function all(promises) {
+	  return Promise.all(promises);
+	};
+	axios.spread = __webpack_require__(203);
+
+	// Expose interceptors
+	axios.interceptors = defaultInstance.interceptors;
+
+	// Provide aliases for supported request methods
+	utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
+	  /*eslint func-names:0*/
+	  Axios.prototype[method] = function(url, config) {
+	    return this.request(utils.merge(config || {}, {
+	      method: method,
+	      url: url
+	    }));
+	  };
+	  axios[method] = bind(Axios.prototype[method], defaultInstance);
+	});
+
+	utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
+	  /*eslint func-names:0*/
+	  Axios.prototype[method] = function(url, data, config) {
+	    return this.request(utils.merge(config || {}, {
+	      method: method,
+	      url: url,
+	      data: data
+	    }));
+	  };
+	  axios[method] = bind(Axios.prototype[method], defaultInstance);
+	});
+
+
+/***/ },
+/* 189 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var utils = __webpack_require__(190);
+
+	var PROTECTION_PREFIX = /^\)\]\}',?\n/;
+	var DEFAULT_CONTENT_TYPE = {
+	  'Content-Type': 'application/x-www-form-urlencoded'
+	};
+
+	module.exports = {
+	  transformRequest: [function transformResponseJSON(data, headers) {
+	    if (utils.isFormData(data)) {
+	      return data;
+	    }
+	    if (utils.isArrayBuffer(data)) {
+	      return data;
+	    }
+	    if (utils.isArrayBufferView(data)) {
+	      return data.buffer;
+	    }
+	    if (utils.isObject(data) && !utils.isFile(data) && !utils.isBlob(data)) {
+	      // Set application/json if no Content-Type has been specified
+	      if (!utils.isUndefined(headers)) {
+	        utils.forEach(headers, function processContentTypeHeader(val, key) {
+	          if (key.toLowerCase() === 'content-type') {
+	            headers['Content-Type'] = val;
+	          }
+	        });
+
+	        if (utils.isUndefined(headers['Content-Type'])) {
+	          headers['Content-Type'] = 'application/json;charset=utf-8';
+	        }
+	      }
+	      return JSON.stringify(data);
+	    }
+	    return data;
+	  }],
+
+	  transformResponse: [function transformResponseJSON(data) {
+	    /*eslint no-param-reassign:0*/
+	    if (typeof data === 'string') {
+	      data = data.replace(PROTECTION_PREFIX, '');
+	      try {
+	        data = JSON.parse(data);
+	      } catch (e) { /* Ignore */ }
+	    }
+	    return data;
+	  }],
+
+	  headers: {
+	    common: {
+	      'Accept': 'application/json, text/plain, */*'
+	    },
+	    patch: utils.merge(DEFAULT_CONTENT_TYPE),
+	    post: utils.merge(DEFAULT_CONTENT_TYPE),
+	    put: utils.merge(DEFAULT_CONTENT_TYPE)
+	  },
+
+	  timeout: 0,
+
+	  xsrfCookieName: 'XSRF-TOKEN',
+	  xsrfHeaderName: 'X-XSRF-TOKEN'
+	};
+
+
+/***/ },
+/* 190 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	/*global toString:true*/
+
+	// utils is a library of generic helper functions non-specific to axios
+
+	var toString = Object.prototype.toString;
+
+	/**
+	 * Determine if a value is an Array
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is an Array, otherwise false
+	 */
+	function isArray(val) {
+	  return toString.call(val) === '[object Array]';
+	}
+
+	/**
+	 * Determine if a value is an ArrayBuffer
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is an ArrayBuffer, otherwise false
+	 */
+	function isArrayBuffer(val) {
+	  return toString.call(val) === '[object ArrayBuffer]';
+	}
+
+	/**
+	 * Determine if a value is a FormData
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is an FormData, otherwise false
+	 */
+	function isFormData(val) {
+	  return toString.call(val) === '[object FormData]';
+	}
+
+	/**
+	 * Determine if a value is a view on an ArrayBuffer
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is a view on an ArrayBuffer, otherwise false
+	 */
+	function isArrayBufferView(val) {
+	  var result;
+	  if ((typeof ArrayBuffer !== 'undefined') && (ArrayBuffer.isView)) {
+	    result = ArrayBuffer.isView(val);
+	  } else {
+	    result = (val) && (val.buffer) && (val.buffer instanceof ArrayBuffer);
+	  }
+	  return result;
+	}
+
+	/**
+	 * Determine if a value is a String
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is a String, otherwise false
+	 */
+	function isString(val) {
+	  return typeof val === 'string';
+	}
+
+	/**
+	 * Determine if a value is a Number
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is a Number, otherwise false
+	 */
+	function isNumber(val) {
+	  return typeof val === 'number';
+	}
+
+	/**
+	 * Determine if a value is undefined
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if the value is undefined, otherwise false
+	 */
+	function isUndefined(val) {
+	  return typeof val === 'undefined';
+	}
+
+	/**
+	 * Determine if a value is an Object
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is an Object, otherwise false
+	 */
+	function isObject(val) {
+	  return val !== null && typeof val === 'object';
+	}
+
+	/**
+	 * Determine if a value is a Date
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is a Date, otherwise false
+	 */
+	function isDate(val) {
+	  return toString.call(val) === '[object Date]';
+	}
+
+	/**
+	 * Determine if a value is a File
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is a File, otherwise false
+	 */
+	function isFile(val) {
+	  return toString.call(val) === '[object File]';
+	}
+
+	/**
+	 * Determine if a value is a Blob
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is a Blob, otherwise false
+	 */
+	function isBlob(val) {
+	  return toString.call(val) === '[object Blob]';
+	}
+
+	/**
+	 * Trim excess whitespace off the beginning and end of a string
+	 *
+	 * @param {String} str The String to trim
+	 * @returns {String} The String freed of excess whitespace
+	 */
+	function trim(str) {
+	  return str.replace(/^\s*/, '').replace(/\s*$/, '');
+	}
+
+	/**
+	 * Determine if we're running in a standard browser environment
+	 *
+	 * This allows axios to run in a web worker, and react-native.
+	 * Both environments support XMLHttpRequest, but not fully standard globals.
+	 *
+	 * web workers:
+	 *  typeof window -> undefined
+	 *  typeof document -> undefined
+	 *
+	 * react-native:
+	 *  typeof document.createElement -> undefined
+	 */
+	function isStandardBrowserEnv() {
+	  return (
+	    typeof window !== 'undefined' &&
+	    typeof document !== 'undefined' &&
+	    typeof document.createElement === 'function'
+	  );
+	}
+
+	/**
+	 * Iterate over an Array or an Object invoking a function for each item.
+	 *
+	 * If `obj` is an Array callback will be called passing
+	 * the value, index, and complete array for each item.
+	 *
+	 * If 'obj' is an Object callback will be called passing
+	 * the value, key, and complete object for each property.
+	 *
+	 * @param {Object|Array} obj The object to iterate
+	 * @param {Function} fn The callback to invoke for each item
+	 */
+	function forEach(obj, fn) {
+	  // Don't bother if no value provided
+	  if (obj === null || typeof obj === 'undefined') {
+	    return;
+	  }
+
+	  // Force an array if not already something iterable
+	  if (typeof obj !== 'object' && !isArray(obj)) {
+	    /*eslint no-param-reassign:0*/
+	    obj = [obj];
+	  }
+
+	  if (isArray(obj)) {
+	    // Iterate over array values
+	    for (var i = 0, l = obj.length; i < l; i++) {
+	      fn.call(null, obj[i], i, obj);
+	    }
+	  } else {
+	    // Iterate over object keys
+	    for (var key in obj) {
+	      if (obj.hasOwnProperty(key)) {
+	        fn.call(null, obj[key], key, obj);
+	      }
+	    }
+	  }
+	}
+
+	/**
+	 * Accepts varargs expecting each argument to be an object, then
+	 * immutably merges the properties of each object and returns result.
+	 *
+	 * When multiple objects contain the same key the later object in
+	 * the arguments list will take precedence.
+	 *
+	 * Example:
+	 *
+	 * ```js
+	 * var result = merge({foo: 123}, {foo: 456});
+	 * console.log(result.foo); // outputs 456
+	 * ```
+	 *
+	 * @param {Object} obj1 Object to merge
+	 * @returns {Object} Result of all merge properties
+	 */
+	function merge(/* obj1, obj2, obj3, ... */) {
+	  var result = {};
+	  function assignValue(val, key) {
+	    if (typeof result[key] === 'object' && typeof val === 'object') {
+	      result[key] = merge(result[key], val);
+	    } else {
+	      result[key] = val;
+	    }
+	  }
+
+	  for (var i = 0, l = arguments.length; i < l; i++) {
+	    forEach(arguments[i], assignValue);
+	  }
+	  return result;
+	}
+
+	module.exports = {
+	  isArray: isArray,
+	  isArrayBuffer: isArrayBuffer,
+	  isFormData: isFormData,
+	  isArrayBufferView: isArrayBufferView,
+	  isString: isString,
+	  isNumber: isNumber,
+	  isObject: isObject,
+	  isUndefined: isUndefined,
+	  isDate: isDate,
+	  isFile: isFile,
+	  isBlob: isBlob,
+	  isStandardBrowserEnv: isStandardBrowserEnv,
+	  forEach: forEach,
+	  merge: merge,
+	  trim: trim
+	};
+
+
+/***/ },
+/* 191 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+
+	/**
+	 * Dispatch a request to the server using whichever adapter
+	 * is supported by the current environment.
+	 *
+	 * @param {object} config The config that is to be used for the request
+	 * @returns {Promise} The Promise to be fulfilled
+	 */
+	module.exports = function dispatchRequest(config) {
+	  return new Promise(function executor(resolve, reject) {
+	    try {
+	      var adapter;
+
+	      if (typeof config.adapter === 'function') {
+	        // For custom adapter support
+	        adapter = config.adapter;
+	      } else if (typeof XMLHttpRequest !== 'undefined') {
+	        // For browsers use XHR adapter
+	        adapter = __webpack_require__(192);
+	      } else if (typeof process !== 'undefined') {
+	        // For node use HTTP adapter
+	        adapter = __webpack_require__(192);
+	      }
+
+	      if (typeof adapter === 'function') {
+	        adapter(resolve, reject, config);
+	      }
+	    } catch (e) {
+	      reject(e);
+	    }
+	  });
+	};
+
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+
+/***/ },
+/* 192 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var utils = __webpack_require__(190);
+	var buildURL = __webpack_require__(193);
+	var parseHeaders = __webpack_require__(194);
+	var transformData = __webpack_require__(195);
+	var isURLSameOrigin = __webpack_require__(196);
+	var btoa = window.btoa || __webpack_require__(197);
+
+	module.exports = function xhrAdapter(resolve, reject, config) {
+	  var requestData = config.data;
+	  var requestHeaders = config.headers;
+
+	  if (utils.isFormData(requestData)) {
+	    delete requestHeaders['Content-Type']; // Let the browser set it
+	  }
+
+	  var request = new XMLHttpRequest();
+
+	  // For IE 8/9 CORS support
+	  // Only supports POST and GET calls and doesn't returns the response headers.
+	  if (window.XDomainRequest && !('withCredentials' in request) && !isURLSameOrigin(config.url)) {
+	    request = new window.XDomainRequest();
+	  }
+
+	  // HTTP basic authentication
+	  if (config.auth) {
+	    var username = config.auth.username || '';
+	    var password = config.auth.password || '';
+	    requestHeaders.Authorization = 'Basic ' + btoa(username + ':' + password);
+	  }
+
+	  request.open(config.method.toUpperCase(), buildURL(config.url, config.params, config.paramsSerializer), true);
+
+	  // Set the request timeout in MS
+	  request.timeout = config.timeout;
+
+	  // Listen for ready state
+	  request.onload = function handleLoad() {
+	    if (!request) {
+	      return;
+	    }
+	    // Prepare the response
+	    var responseHeaders = 'getAllResponseHeaders' in request ? parseHeaders(request.getAllResponseHeaders()) : null;
+	    var responseData = ['text', ''].indexOf(config.responseType || '') !== -1 ? request.responseText : request.response;
+	    var response = {
+	      data: transformData(
+	        responseData,
+	        responseHeaders,
+	        config.transformResponse
+	      ),
+	      // IE sends 1223 instead of 204 (https://github.com/mzabriskie/axios/issues/201)
+	      status: request.status === 1223 ? 204 : request.status,
+	      statusText: request.status === 1223 ? 'No Content' : request.statusText,
+	      headers: responseHeaders,
+	      config: config
+	    };
+
+	    // Resolve or reject the Promise based on the status
+	    ((response.status >= 200 && response.status < 300) ||
+	     (!('status' in request) && response.responseText) ?
+	      resolve :
+	      reject)(response);
+
+	    // Clean up request
+	    request = null;
+	  };
+
+	  // Handle low level network errors
+	  request.onerror = function handleError() {
+	    // Real errors are hidden from us by the browser
+	    // onerror should only fire if it's a network error
+	    reject(new Error('Network Error'));
+
+	    // Clean up request
+	    request = null;
+	  };
+
+	  // Add xsrf header
+	  // This is only done if running in a standard browser environment.
+	  // Specifically not if we're in a web worker, or react-native.
+	  if (utils.isStandardBrowserEnv()) {
+	    var cookies = __webpack_require__(198);
+
+	    // Add xsrf header
+	    var xsrfValue = config.withCredentials || isURLSameOrigin(config.url) ?
+	        cookies.read(config.xsrfCookieName) :
+	        undefined;
+
+	    if (xsrfValue) {
+	      requestHeaders[config.xsrfHeaderName] = xsrfValue;
+	    }
+	  }
+
+	  // Add headers to the request
+	  if ('setRequestHeader' in request) {
+	    utils.forEach(requestHeaders, function setRequestHeader(val, key) {
+	      if (typeof requestData === 'undefined' && key.toLowerCase() === 'content-type') {
+	        // Remove Content-Type if data is undefined
+	        delete requestHeaders[key];
+	      } else {
+	        // Otherwise add header to the request
+	        request.setRequestHeader(key, val);
+	      }
+	    });
+	  }
+
+	  // Add withCredentials to request if needed
+	  if (config.withCredentials) {
+	    request.withCredentials = true;
+	  }
+
+	  // Add responseType to request if needed
+	  if (config.responseType) {
+	    try {
+	      request.responseType = config.responseType;
+	    } catch (e) {
+	      if (request.responseType !== 'json') {
+	        throw e;
+	      }
+	    }
+	  }
+
+	  if (utils.isArrayBuffer(requestData)) {
+	    requestData = new DataView(requestData);
+	  }
+
+	  // Send the request
+	  request.send(requestData);
+	};
+
+
+/***/ },
+/* 193 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var utils = __webpack_require__(190);
+
+	function encode(val) {
+	  return encodeURIComponent(val).
+	    replace(/%40/gi, '@').
+	    replace(/%3A/gi, ':').
+	    replace(/%24/g, '$').
+	    replace(/%2C/gi, ',').
+	    replace(/%20/g, '+').
+	    replace(/%5B/gi, '[').
+	    replace(/%5D/gi, ']');
+	}
+
+	/**
+	 * Build a URL by appending params to the end
+	 *
+	 * @param {string} url The base of the url (e.g., http://www.google.com)
+	 * @param {object} [params] The params to be appended
+	 * @returns {string} The formatted url
+	 */
+	module.exports = function buildURL(url, params, paramsSerializer) {
+	  /*eslint no-param-reassign:0*/
+	  if (!params) {
+	    return url;
+	  }
+
+	  var serializedParams;
+	  if (paramsSerializer) {
+	    serializedParams = paramsSerializer(params);
+	  } else {
+	    var parts = [];
+
+	    utils.forEach(params, function serialize(val, key) {
+	      if (val === null || typeof val === 'undefined') {
+	        return;
+	      }
+
+	      if (utils.isArray(val)) {
+	        key = key + '[]';
+	      }
+
+	      if (!utils.isArray(val)) {
+	        val = [val];
+	      }
+
+	      utils.forEach(val, function parseValue(v) {
+	        if (utils.isDate(v)) {
+	          v = v.toISOString();
+	        } else if (utils.isObject(v)) {
+	          v = JSON.stringify(v);
+	        }
+	        parts.push(encode(key) + '=' + encode(v));
+	      });
+	    });
+
+	    serializedParams = parts.join('&');
+	  }
+
+	  if (serializedParams) {
+	    url += (url.indexOf('?') === -1 ? '?' : '&') + serializedParams;
+	  }
+
+	  return url;
+	};
+
+
+
+/***/ },
+/* 194 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var utils = __webpack_require__(190);
+
+	/**
+	 * Parse headers into an object
+	 *
+	 * ```
+	 * Date: Wed, 27 Aug 2014 08:58:49 GMT
+	 * Content-Type: application/json
+	 * Connection: keep-alive
+	 * Transfer-Encoding: chunked
+	 * ```
+	 *
+	 * @param {String} headers Headers needing to be parsed
+	 * @returns {Object} Headers parsed into an object
+	 */
+	module.exports = function parseHeaders(headers) {
+	  var parsed = {};
+	  var key;
+	  var val;
+	  var i;
+
+	  if (!headers) { return parsed; }
+
+	  utils.forEach(headers.split('\n'), function parser(line) {
+	    i = line.indexOf(':');
+	    key = utils.trim(line.substr(0, i)).toLowerCase();
+	    val = utils.trim(line.substr(i + 1));
+
+	    if (key) {
+	      parsed[key] = parsed[key] ? parsed[key] + ', ' + val : val;
+	    }
+	  });
+
+	  return parsed;
+	};
+
+
+/***/ },
+/* 195 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var utils = __webpack_require__(190);
+
+	/**
+	 * Transform the data for a request or a response
+	 *
+	 * @param {Object|String} data The data to be transformed
+	 * @param {Array} headers The headers for the request or response
+	 * @param {Array|Function} fns A single function or Array of functions
+	 * @returns {*} The resulting transformed data
+	 */
+	module.exports = function transformData(data, headers, fns) {
+	  /*eslint no-param-reassign:0*/
+	  utils.forEach(fns, function transform(fn) {
+	    data = fn(data, headers);
+	  });
+
+	  return data;
+	};
+
+
+/***/ },
+/* 196 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var utils = __webpack_require__(190);
+
+	module.exports = (
+	  utils.isStandardBrowserEnv() ?
+
+	  // Standard browser envs have full support of the APIs needed to test
+	  // whether the request URL is of the same origin as current location.
+	  (function standardBrowserEnv() {
+	    var msie = /(msie|trident)/i.test(navigator.userAgent);
+	    var urlParsingNode = document.createElement('a');
+	    var originURL;
+
+	    /**
+	    * Parse a URL to discover it's components
+	    *
+	    * @param {String} url The URL to be parsed
+	    * @returns {Object}
+	    */
+	    function resolveURL(url) {
+	      var href = url;
+
+	      if (msie) {
+	        // IE needs attribute set twice to normalize properties
+	        urlParsingNode.setAttribute('href', href);
+	        href = urlParsingNode.href;
+	      }
+
+	      urlParsingNode.setAttribute('href', href);
+
+	      // urlParsingNode provides the UrlUtils interface - http://url.spec.whatwg.org/#urlutils
+	      return {
+	        href: urlParsingNode.href,
+	        protocol: urlParsingNode.protocol ? urlParsingNode.protocol.replace(/:$/, '') : '',
+	        host: urlParsingNode.host,
+	        search: urlParsingNode.search ? urlParsingNode.search.replace(/^\?/, '') : '',
+	        hash: urlParsingNode.hash ? urlParsingNode.hash.replace(/^#/, '') : '',
+	        hostname: urlParsingNode.hostname,
+	        port: urlParsingNode.port,
+	        pathname: (urlParsingNode.pathname.charAt(0) === '/') ?
+	                  urlParsingNode.pathname :
+	                  '/' + urlParsingNode.pathname
+	      };
+	    }
+
+	    originURL = resolveURL(window.location.href);
+
+	    /**
+	    * Determine if a URL shares the same origin as the current location
+	    *
+	    * @param {String} requestURL The URL to test
+	    * @returns {boolean} True if URL shares the same origin, otherwise false
+	    */
+	    return function isURLSameOrigin(requestURL) {
+	      var parsed = (utils.isString(requestURL)) ? resolveURL(requestURL) : requestURL;
+	      return (parsed.protocol === originURL.protocol &&
+	            parsed.host === originURL.host);
+	    };
+	  })() :
+
+	  // Non standard browser envs (web workers, react-native) lack needed support.
+	  (function nonStandardBrowserEnv() {
+	    return function isURLSameOrigin() {
+	      return true;
+	    };
+	  })()
+	);
+
+
+/***/ },
+/* 197 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	// btoa polyfill for IE<10 courtesy https://github.com/davidchambers/Base64.js
+
+	var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+
+	function InvalidCharacterError(message) {
+	  this.message = message;
+	}
+	InvalidCharacterError.prototype = new Error;
+	InvalidCharacterError.prototype.code = 5;
+	InvalidCharacterError.prototype.name = 'InvalidCharacterError';
+
+	function btoa(input) {
+	  var str = String(input);
+	  var output = '';
+	  for (
+	    // initialize result and counter
+	    var block, charCode, idx = 0, map = chars;
+	    // if the next str index does not exist:
+	    //   change the mapping table to "="
+	    //   check if d has no fractional digits
+	    str.charAt(idx | 0) || (map = '=', idx % 1);
+	    // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
+	    output += map.charAt(63 & block >> 8 - idx % 1 * 8)
+	  ) {
+	    charCode = str.charCodeAt(idx += 3 / 4);
+	    if (charCode > 0xFF) {
+	      throw new InvalidCharacterError('INVALID_CHARACTER_ERR: DOM Exception 5');
+	    }
+	    block = block << 8 | charCode;
+	  }
+	  return output;
+	}
+
+	module.exports = btoa;
+
+
+/***/ },
+/* 198 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var utils = __webpack_require__(190);
+
+	module.exports = (
+	  utils.isStandardBrowserEnv() ?
+
+	  // Standard browser envs support document.cookie
+	  (function standardBrowserEnv() {
+	    return {
+	      write: function write(name, value, expires, path, domain, secure) {
+	        var cookie = [];
+	        cookie.push(name + '=' + encodeURIComponent(value));
+
+	        if (utils.isNumber(expires)) {
+	          cookie.push('expires=' + new Date(expires).toGMTString());
+	        }
+
+	        if (utils.isString(path)) {
+	          cookie.push('path=' + path);
+	        }
+
+	        if (utils.isString(domain)) {
+	          cookie.push('domain=' + domain);
+	        }
+
+	        if (secure === true) {
+	          cookie.push('secure');
+	        }
+
+	        document.cookie = cookie.join('; ');
+	      },
+
+	      read: function read(name) {
+	        var match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
+	        return (match ? decodeURIComponent(match[3]) : null);
+	      },
+
+	      remove: function remove(name) {
+	        this.write(name, '', Date.now() - 86400000);
+	      }
+	    };
+	  })() :
+
+	  // Non standard browser env (web workers, react-native) lack needed support.
+	  (function nonStandardBrowserEnv() {
+	    return {
+	      write: function write() {},
+	      read: function read() { return null; },
+	      remove: function remove() {}
+	    };
+	  })()
+	);
+
+
+/***/ },
+/* 199 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var utils = __webpack_require__(190);
+
+	function InterceptorManager() {
+	  this.handlers = [];
+	}
+
+	/**
+	 * Add a new interceptor to the stack
+	 *
+	 * @param {Function} fulfilled The function to handle `then` for a `Promise`
+	 * @param {Function} rejected The function to handle `reject` for a `Promise`
+	 *
+	 * @return {Number} An ID used to remove interceptor later
+	 */
+	InterceptorManager.prototype.use = function use(fulfilled, rejected) {
+	  this.handlers.push({
+	    fulfilled: fulfilled,
+	    rejected: rejected
+	  });
+	  return this.handlers.length - 1;
+	};
+
+	/**
+	 * Remove an interceptor from the stack
+	 *
+	 * @param {Number} id The ID that was returned by `use`
+	 */
+	InterceptorManager.prototype.eject = function eject(id) {
+	  if (this.handlers[id]) {
+	    this.handlers[id] = null;
+	  }
+	};
+
+	/**
+	 * Iterate over all the registered interceptors
+	 *
+	 * This method is particularly useful for skipping over any
+	 * interceptors that may have become `null` calling `eject`.
+	 *
+	 * @param {Function} fn The function to call for each interceptor
+	 */
+	InterceptorManager.prototype.forEach = function forEach(fn) {
+	  utils.forEach(this.handlers, function forEachHandler(h) {
+	    if (h !== null) {
+	      fn(h);
+	    }
+	  });
+	};
+
+	module.exports = InterceptorManager;
+
+
+/***/ },
+/* 200 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	/**
+	 * Determines whether the specified URL is absolute
+	 *
+	 * @param {string} url The URL to test
+	 * @returns {boolean} True if the specified URL is absolute, otherwise false
+	 */
+	module.exports = function isAbsoluteURL(url) {
+	  // A URL is considered absolute if it begins with "<scheme>://" or "//" (protocol-relative URL).
+	  // RFC 3986 defines scheme name as a sequence of characters beginning with a letter and followed
+	  // by any combination of letters, digits, plus, period, or hyphen.
+	  return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
+	};
+
+
+/***/ },
+/* 201 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	/**
+	 * Creates a new URL by combining the specified URLs
+	 *
+	 * @param {string} baseURL The base URL
+	 * @param {string} relativeURL The relative URL
+	 * @returns {string} The combined URL
+	 */
+	module.exports = function combineURLs(baseURL, relativeURL) {
+	  return baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '');
+	};
+
+
+/***/ },
+/* 202 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	module.exports = function bind(fn, thisArg) {
+	  return function wrap() {
+	    var args = new Array(arguments.length);
+	    for (var i = 0; i < args.length; i++) {
+	      args[i] = arguments[i];
+	    }
+	    return fn.apply(thisArg, args);
+	  };
+	};
+
+
+/***/ },
+/* 203 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	/**
+	 * Syntactic sugar for invoking a function and expanding an array for arguments.
+	 *
+	 * Common use case would be to use `Function.prototype.apply`.
+	 *
+	 *  ```js
+	 *  function f(x, y, z) {}
+	 *  var args = [1, 2, 3];
+	 *  f.apply(null, args);
+	 *  ```
+	 *
+	 * With `spread` this example can be re-written.
+	 *
+	 *  ```js
+	 *  spread(function(x, y, z) {})([1, 2, 3]);
+	 *  ```
+	 *
+	 * @param {Function} callback
+	 * @returns {Function}
+	 */
+	module.exports = function spread(callback) {
+	  return function wrap(arr) {
+	    return callback.apply(null, arr);
+	  };
+	};
+
+
+/***/ },
+/* 204 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _lodash = __webpack_require__(162);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
+	var _axios = __webpack_require__(187);
+
+	var _axios2 = _interopRequireDefault(_axios);
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _Service = __webpack_require__(205);
+
+	var _Service2 = _interopRequireDefault(_Service);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function sortServices(services) {
+	  var active = _lodash2.default.filter(services, function (s) {
+	    return !_lodash2.default.isUndefined(s.config) && !_lodash2.default.isUndefined(s.tasks);
+	  }).sort(function (a, b) {
+	    return a.id < b.id ? -1 : 1;
+	  });
+	  var undeployed = _lodash2.default.filter(services, function (s) {
+	    return !_lodash2.default.isUndefined(s.config) && _lodash2.default.isUndefined(s.tasks);
+	  }).sort(function (a, b) {
+	    return a.id < b.id ? -1 : 1;
+	  });
+	  var unconfigured = _lodash2.default.filter(services, function (s) {
+	    return _lodash2.default.isUndefined(s.config) && !_lodash2.default.isUndefined(s.tasks);
+	  }).sort(function (a, b) {
+	    return a.id < b.id ? -1 : 1;
+	  });
+
+	  return [].concat(active, undeployed, unconfigured);
+	}
+
+	exports.default = _react2.default.createClass({
+	  displayName: 'ServiceList',
+	  getInitialState: function getInitialState() {
+	    return { services: [] };
+	  },
+	  loadStateFromAPI: function loadStateFromAPI() {
+	    var _this = this;
+
+	    _axios2.default.get('/api/state').then(function (res) {
+	      var byId = {};
+	      _lodash2.default.forEach(res.data.Services, function (s) {
+	        byId[s.Id] = { id: s.Id, config: s.Config };
+	      });
+	      _lodash2.default.forEach(res.data.Apps, function (a) {
+	        if (_lodash2.default.isUndefined(byId[a.Id])) {
+	          byId[a.Id] = { id: a.Id };
+	        }
+	        byId[a.Id].tasks = a.Tasks;
+	      });
+
+	      var services = sortServices(_lodash2.default.values(byId));
+
+	      _this.setState({ services: services });
+	    });
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.loadStateFromAPI();
+	    setInterval(this.loadStateFromAPI, this.props.pollInterval);
+	  },
+	  handleServiceUpdate: function handleServiceUpdate() {
+	    this.loadStateFromAPI();
+	  },
+	  headerRow: function headerRow() {
+	    return _react2.default.createElement(
+	      'div',
+	      { className: 'row service-list-title' },
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'col-xs-4' },
+	        'Marathon ID'
+	      ),
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'col-xs-4' },
+	        'Configuration'
+	      ),
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'col-xs-1' },
+	        'Instances'
+	      ),
+	      _react2.default.createElement('div', { className: 'col-xs-3' })
+	    );
+	  },
+	  render: function render() {
+	    var _this2 = this;
+
+	    var services = _lodash2.default.map(this.state.services, function (s) {
+	      return _react2.default.createElement(_Service2.default, { key: s.id, id: s.id, config: s.config, tasks: s.tasks,
+	        onUpdate: _this2.handleServiceUpdate });
+	    });
+
+	    return _react2.default.createElement(
+	      'div',
+	      { className: 'container-fluid service-list' },
+	      this.headerRow(),
+	      services
+	    );
+	  }
+	});
+
+/***/ },
+/* 205 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _lodash = __webpack_require__(162);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _classnames = __webpack_require__(186);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	var _constants = __webpack_require__(184);
+
+	var _EditButton = __webpack_require__(161);
+
+	var _EditButton2 = _interopRequireDefault(_EditButton);
+
+	var _DeleteButton = __webpack_require__(206);
+
+	var _DeleteButton2 = _interopRequireDefault(_DeleteButton);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var actionTypes = {
+	  UNCONFIGURED: 'service',
+	  UNDEPLOYED: 'marathon',
+	  ACTIVE: 'default'
+	};
+
+	exports.default = _react2.default.createClass({
+	  displayName: 'Service',
+	  status: function status() {
+	    if (_lodash2.default.isUndefined(this.props.tasks)) {
+	      return _constants.UNDEPLOYED;
+	    }
+	    if (_lodash2.default.isUndefined(this.props.config)) {
+	      return _constants.UNCONFIGURED;
+	    }
+	    return _constants.ACTIVE;
+	  },
+	  actions: function actions() {
+	    if (this.status() === _constants.UNDEPLOYED) {
+	      return _react2.default.createElement(
+	        'span',
+	        { className: 'item-actions-group' },
+	        _react2.default.createElement(
+	          'i',
+	          { className: 'message' },
+	          'Missing app in Marathon'
+	        ),
+	        _react2.default.createElement(_EditButton2.default, _extends({ mode: _constants.EDIT
+	        }, this.props)),
+	        _react2.default.createElement(_DeleteButton2.default, this.props)
+	      );
+	    }
+	    if (this.status() === _constants.UNCONFIGURED) {
+	      return _react2.default.createElement(
+	        'span',
+	        { className: 'item-actions-group' },
+	        _react2.default.createElement(
+	          'i',
+	          { className: 'message' },
+	          'Using default proxy rule'
+	        ),
+	        _react2.default.createElement(_EditButton2.default, _extends({ mode: _constants.NEW }, this.props))
+	      );
+	    }
+	    if (this.status() === _constants.ACTIVE) {
+	      return _react2.default.createElement(
+	        'span',
+	        { className: 'item-actions-group' },
+	        _react2.default.createElement(_EditButton2.default, _extends({ mode: _constants.EDIT
+	        }, this.props)),
+	        _react2.default.createElement(_DeleteButton2.default, this.props)
+	      );
+	    }
+	  },
+	  render: function render() {
+	    var config = undefined;
+	    if (this.status() === _constants.UNCONFIGURED) {
+	      config = "";
+	    } else {
+	      config = _lodash2.default.map(_lodash2.default.toPairs(this.props.config), function (_ref) {
+	        var _ref2 = _slicedToArray(_ref, 2);
+
+	        var k = _ref2[0];
+	        var v = _ref2[1];
+	        return k + ' = ' + v;
+	      }).join(', ');
+	    }
+	    var taskCount = this.status() == _constants.UNDEPLOYED ? '-' : this.props.tasks.length;
+	    var rowClasses = (0, _classnames2.default)('row', 'service-item', 'service-action-type-' + actionTypes[this.status()]);
+
+	    return _react2.default.createElement(
+	      'div',
+	      { className: rowClasses },
+	      _react2.default.createElement(
+	        'span',
+	        { className: 'col-xs-4' },
+	        this.props.id
+	      ),
+	      _react2.default.createElement(
+	        'span',
+	        { className: 'col-xs-4' },
+	        config
+	      ),
+	      _react2.default.createElement(
+	        'span',
+	        { className: 'col-xs-1 col-instance-count' },
+	        taskCount
+	      ),
+	      _react2.default.createElement(
+	        'span',
+	        { className: 'col-xs-3 item-actions' },
+	        this.actions()
+	      )
+	    );
+	  }
+	});
+
+/***/ },
 /* 206 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _axios = __webpack_require__(187);
+
+	var _axios2 = _interopRequireDefault(_axios);
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactModal = __webpack_require__(164);
+
+	var _reactModal2 = _interopRequireDefault(_reactModal);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _react2.default.createClass({
+	  displayName: 'DeleteButton',
+	  getInitialState: function getInitialState() {
+	    return { isWarningOpen: false };
+	  },
+	  performDeletion: function performDeletion() {
+	    _axios2.default.delete('/api/services/' + this.props.id);
+	  },
+	  openWarning: function openWarning() {
+	    this.setState({ isWarningOpen: true });
+	  },
+	  closeWarning: function closeWarning() {
+	    this.setState({ isWarningOpen: false });
+	  },
+	  acceptWarning: function acceptWarning() {
+	    this.closeWarning();
+	    this.performDeletion();
+	    this.props.onUpdate();
+	  },
+	  warningModal: function warningModal() {
+	    // The default modal stylings are rather... opinionated
+	    var modalStyle = {
+	      overlay: {
+	        backgroundColor: 'rgba(0, 0, 0, 0.5)'
+	      },
+	      content: {
+	        position: 'absolute',
+	        top: '0px',
+	        left: '0px',
+	        right: '0px',
+	        bottom: 'auto',
+	        border: '0px solid #ccc',
+	        borderRadius: '0px',
+	        outline: 'none',
+	        padding: '0px'
+	      }
+	    };
+
+	    return _react2.default.createElement(
+	      _reactModal2.default,
+	      {
+	        style: modalStyle,
+	        className: 'Modal__Bootstrap modal-dialog',
+	        isOpen: this.state.isWarningOpen,
+	        onRequestClose: this.closeWarning },
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'modal-content' },
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'modal-header' },
+	          _react2.default.createElement(
+	            'button',
+	            { type: 'button', className: 'close', onClick: this.closeWarning },
+	            'x'
+	          ),
+	          _react2.default.createElement(
+	            'h4',
+	            { className: 'modal-title' },
+	            'Are you sure?'
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'modal-body' },
+	          'Delete Marathon ID ',
+	          this.props.id
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'modal-footer' },
+	          _react2.default.createElement(
+	            'button',
+	            { type: 'button', className: 'btn btn-default', onClick: this.closeWarning },
+	            'Close'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { type: 'button', className: 'btn btn-primary', onClick: this.acceptWarning },
+	            'Delete it'
+	          )
+	        )
+	      )
+	    );
+	  },
+	  render: function render() {
+	    return _react2.default.createElement(
+	      'button',
+	      { className: 'btn btn-danger', onClick: this.openWarning },
+	      _react2.default.createElement('i', { className: 'icon ion-android-trash' }),
+	      this.warningModal()
+	    );
+	  }
+	});
+
+/***/ },
+/* 207 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(207);
+	var content = __webpack_require__(208);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(213)(content, {});
+	var update = __webpack_require__(214)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -38503,21 +38554,21 @@
 	}
 
 /***/ },
-/* 207 */
+/* 208 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(208)();
+	exports = module.exports = __webpack_require__(209)();
 	// imports
 
 
 	// module
-	exports.push([module.id, "@charset \"UTF-8\";\n/*!\n  Ionicons, v1.5.2\n  Created by Ben Sperry for the Ionic Framework, http://ionicons.com/\n  https://twitter.com/benjsperry  https://twitter.com/ionicframework\n  MIT License: https://github.com/driftyco/ionicons\n*/\n@font-face {\n  font-family: \"Ionicons\";\n  src: url(" + __webpack_require__(209) + ");\n  src: url(" + __webpack_require__(209) + "#iefix) format(\"embedded-opentype\"), url(" + __webpack_require__(210) + ") format(\"truetype\"), url(" + __webpack_require__(211) + ") format(\"woff\"), url(" + __webpack_require__(212) + "#Ionicons) format(\"svg\");\n  font-weight: normal;\n  font-style: normal; }\n\n.ion, .ion-loading-a,\n.ion-loading-b,\n.ion-loading-c,\n.ion-loading-d,\n.ion-looping,\n.ion-refreshing,\n.ion-ios7-reloading, .ionicons,\n.ion-alert:before,\n.ion-alert-circled:before,\n.ion-android-add:before,\n.ion-android-add-contact:before,\n.ion-android-alarm:before,\n.ion-android-archive:before,\n.ion-android-arrow-back:before,\n.ion-android-arrow-down-left:before,\n.ion-android-arrow-down-right:before,\n.ion-android-arrow-forward:before,\n.ion-android-arrow-up-left:before,\n.ion-android-arrow-up-right:before,\n.ion-android-battery:before,\n.ion-android-book:before,\n.ion-android-calendar:before,\n.ion-android-call:before,\n.ion-android-camera:before,\n.ion-android-chat:before,\n.ion-android-checkmark:before,\n.ion-android-clock:before,\n.ion-android-close:before,\n.ion-android-contact:before,\n.ion-android-contacts:before,\n.ion-android-data:before,\n.ion-android-developer:before,\n.ion-android-display:before,\n.ion-android-download:before,\n.ion-android-drawer:before,\n.ion-android-dropdown:before,\n.ion-android-earth:before,\n.ion-android-folder:before,\n.ion-android-forums:before,\n.ion-android-friends:before,\n.ion-android-hand:before,\n.ion-android-image:before,\n.ion-android-inbox:before,\n.ion-android-information:before,\n.ion-android-keypad:before,\n.ion-android-lightbulb:before,\n.ion-android-locate:before,\n.ion-android-location:before,\n.ion-android-mail:before,\n.ion-android-microphone:before,\n.ion-android-mixer:before,\n.ion-android-more:before,\n.ion-android-note:before,\n.ion-android-playstore:before,\n.ion-android-printer:before,\n.ion-android-promotion:before,\n.ion-android-reminder:before,\n.ion-android-remove:before,\n.ion-android-search:before,\n.ion-android-send:before,\n.ion-android-settings:before,\n.ion-android-share:before,\n.ion-android-social:before,\n.ion-android-social-user:before,\n.ion-android-sort:before,\n.ion-android-stair-drawer:before,\n.ion-android-star:before,\n.ion-android-stopwatch:before,\n.ion-android-storage:before,\n.ion-android-system-back:before,\n.ion-android-system-home:before,\n.ion-android-system-windows:before,\n.ion-android-timer:before,\n.ion-android-trash:before,\n.ion-android-user-menu:before,\n.ion-android-volume:before,\n.ion-android-wifi:before,\n.ion-aperture:before,\n.ion-archive:before,\n.ion-arrow-down-a:before,\n.ion-arrow-down-b:before,\n.ion-arrow-down-c:before,\n.ion-arrow-expand:before,\n.ion-arrow-graph-down-left:before,\n.ion-arrow-graph-down-right:before,\n.ion-arrow-graph-up-left:before,\n.ion-arrow-graph-up-right:before,\n.ion-arrow-left-a:before,\n.ion-arrow-left-b:before,\n.ion-arrow-left-c:before,\n.ion-arrow-move:before,\n.ion-arrow-resize:before,\n.ion-arrow-return-left:before,\n.ion-arrow-return-right:before,\n.ion-arrow-right-a:before,\n.ion-arrow-right-b:before,\n.ion-arrow-right-c:before,\n.ion-arrow-shrink:before,\n.ion-arrow-swap:before,\n.ion-arrow-up-a:before,\n.ion-arrow-up-b:before,\n.ion-arrow-up-c:before,\n.ion-asterisk:before,\n.ion-at:before,\n.ion-bag:before,\n.ion-battery-charging:before,\n.ion-battery-empty:before,\n.ion-battery-full:before,\n.ion-battery-half:before,\n.ion-battery-low:before,\n.ion-beaker:before,\n.ion-beer:before,\n.ion-bluetooth:before,\n.ion-bonfire:before,\n.ion-bookmark:before,\n.ion-briefcase:before,\n.ion-bug:before,\n.ion-calculator:before,\n.ion-calendar:before,\n.ion-camera:before,\n.ion-card:before,\n.ion-cash:before,\n.ion-chatbox:before,\n.ion-chatbox-working:before,\n.ion-chatboxes:before,\n.ion-chatbubble:before,\n.ion-chatbubble-working:before,\n.ion-chatbubbles:before,\n.ion-checkmark:before,\n.ion-checkmark-circled:before,\n.ion-checkmark-round:before,\n.ion-chevron-down:before,\n.ion-chevron-left:before,\n.ion-chevron-right:before,\n.ion-chevron-up:before,\n.ion-clipboard:before,\n.ion-clock:before,\n.ion-close:before,\n.ion-close-circled:before,\n.ion-close-round:before,\n.ion-closed-captioning:before,\n.ion-cloud:before,\n.ion-code:before,\n.ion-code-download:before,\n.ion-code-working:before,\n.ion-coffee:before,\n.ion-compass:before,\n.ion-compose:before,\n.ion-connection-bars:before,\n.ion-contrast:before,\n.ion-cube:before,\n.ion-disc:before,\n.ion-document:before,\n.ion-document-text:before,\n.ion-drag:before,\n.ion-earth:before,\n.ion-edit:before,\n.ion-egg:before,\n.ion-eject:before,\n.ion-email:before,\n.ion-eye:before,\n.ion-eye-disabled:before,\n.ion-female:before,\n.ion-filing:before,\n.ion-film-marker:before,\n.ion-fireball:before,\n.ion-flag:before,\n.ion-flame:before,\n.ion-flash:before,\n.ion-flash-off:before,\n.ion-flask:before,\n.ion-folder:before,\n.ion-fork:before,\n.ion-fork-repo:before,\n.ion-forward:before,\n.ion-funnel:before,\n.ion-game-controller-a:before,\n.ion-game-controller-b:before,\n.ion-gear-a:before,\n.ion-gear-b:before,\n.ion-grid:before,\n.ion-hammer:before,\n.ion-happy:before,\n.ion-headphone:before,\n.ion-heart:before,\n.ion-heart-broken:before,\n.ion-help:before,\n.ion-help-buoy:before,\n.ion-help-circled:before,\n.ion-home:before,\n.ion-icecream:before,\n.ion-icon-social-google-plus:before,\n.ion-icon-social-google-plus-outline:before,\n.ion-image:before,\n.ion-images:before,\n.ion-information:before,\n.ion-information-circled:before,\n.ion-ionic:before,\n.ion-ios7-alarm:before,\n.ion-ios7-alarm-outline:before,\n.ion-ios7-albums:before,\n.ion-ios7-albums-outline:before,\n.ion-ios7-americanfootball:before,\n.ion-ios7-americanfootball-outline:before,\n.ion-ios7-analytics:before,\n.ion-ios7-analytics-outline:before,\n.ion-ios7-arrow-back:before,\n.ion-ios7-arrow-down:before,\n.ion-ios7-arrow-forward:before,\n.ion-ios7-arrow-left:before,\n.ion-ios7-arrow-right:before,\n.ion-ios7-arrow-thin-down:before,\n.ion-ios7-arrow-thin-left:before,\n.ion-ios7-arrow-thin-right:before,\n.ion-ios7-arrow-thin-up:before,\n.ion-ios7-arrow-up:before,\n.ion-ios7-at:before,\n.ion-ios7-at-outline:before,\n.ion-ios7-barcode:before,\n.ion-ios7-barcode-outline:before,\n.ion-ios7-baseball:before,\n.ion-ios7-baseball-outline:before,\n.ion-ios7-basketball:before,\n.ion-ios7-basketball-outline:before,\n.ion-ios7-bell:before,\n.ion-ios7-bell-outline:before,\n.ion-ios7-bolt:before,\n.ion-ios7-bolt-outline:before,\n.ion-ios7-bookmarks:before,\n.ion-ios7-bookmarks-outline:before,\n.ion-ios7-box:before,\n.ion-ios7-box-outline:before,\n.ion-ios7-briefcase:before,\n.ion-ios7-briefcase-outline:before,\n.ion-ios7-browsers:before,\n.ion-ios7-browsers-outline:before,\n.ion-ios7-calculator:before,\n.ion-ios7-calculator-outline:before,\n.ion-ios7-calendar:before,\n.ion-ios7-calendar-outline:before,\n.ion-ios7-camera:before,\n.ion-ios7-camera-outline:before,\n.ion-ios7-cart:before,\n.ion-ios7-cart-outline:before,\n.ion-ios7-chatboxes:before,\n.ion-ios7-chatboxes-outline:before,\n.ion-ios7-chatbubble:before,\n.ion-ios7-chatbubble-outline:before,\n.ion-ios7-checkmark:before,\n.ion-ios7-checkmark-empty:before,\n.ion-ios7-checkmark-outline:before,\n.ion-ios7-circle-filled:before,\n.ion-ios7-circle-outline:before,\n.ion-ios7-clock:before,\n.ion-ios7-clock-outline:before,\n.ion-ios7-close:before,\n.ion-ios7-close-empty:before,\n.ion-ios7-close-outline:before,\n.ion-ios7-cloud:before,\n.ion-ios7-cloud-download:before,\n.ion-ios7-cloud-download-outline:before,\n.ion-ios7-cloud-outline:before,\n.ion-ios7-cloud-upload:before,\n.ion-ios7-cloud-upload-outline:before,\n.ion-ios7-cloudy:before,\n.ion-ios7-cloudy-night:before,\n.ion-ios7-cloudy-night-outline:before,\n.ion-ios7-cloudy-outline:before,\n.ion-ios7-cog:before,\n.ion-ios7-cog-outline:before,\n.ion-ios7-compose:before,\n.ion-ios7-compose-outline:before,\n.ion-ios7-contact:before,\n.ion-ios7-contact-outline:before,\n.ion-ios7-copy:before,\n.ion-ios7-copy-outline:before,\n.ion-ios7-download:before,\n.ion-ios7-download-outline:before,\n.ion-ios7-drag:before,\n.ion-ios7-email:before,\n.ion-ios7-email-outline:before,\n.ion-ios7-expand:before,\n.ion-ios7-eye:before,\n.ion-ios7-eye-outline:before,\n.ion-ios7-fastforward:before,\n.ion-ios7-fastforward-outline:before,\n.ion-ios7-filing:before,\n.ion-ios7-filing-outline:before,\n.ion-ios7-film:before,\n.ion-ios7-film-outline:before,\n.ion-ios7-flag:before,\n.ion-ios7-flag-outline:before,\n.ion-ios7-folder:before,\n.ion-ios7-folder-outline:before,\n.ion-ios7-football:before,\n.ion-ios7-football-outline:before,\n.ion-ios7-gear:before,\n.ion-ios7-gear-outline:before,\n.ion-ios7-glasses:before,\n.ion-ios7-glasses-outline:before,\n.ion-ios7-heart:before,\n.ion-ios7-heart-outline:before,\n.ion-ios7-help:before,\n.ion-ios7-help-empty:before,\n.ion-ios7-help-outline:before,\n.ion-ios7-home:before,\n.ion-ios7-home-outline:before,\n.ion-ios7-infinite:before,\n.ion-ios7-infinite-outline:before,\n.ion-ios7-information:before,\n.ion-ios7-information-empty:before,\n.ion-ios7-information-outline:before,\n.ion-ios7-ionic-outline:before,\n.ion-ios7-keypad:before,\n.ion-ios7-keypad-outline:before,\n.ion-ios7-lightbulb:before,\n.ion-ios7-lightbulb-outline:before,\n.ion-ios7-location:before,\n.ion-ios7-location-outline:before,\n.ion-ios7-locked:before,\n.ion-ios7-locked-outline:before,\n.ion-ios7-loop:before,\n.ion-ios7-loop-strong:before,\n.ion-ios7-medkit:before,\n.ion-ios7-medkit-outline:before,\n.ion-ios7-mic:before,\n.ion-ios7-mic-off:before,\n.ion-ios7-mic-outline:before,\n.ion-ios7-minus:before,\n.ion-ios7-minus-empty:before,\n.ion-ios7-minus-outline:before,\n.ion-ios7-monitor:before,\n.ion-ios7-monitor-outline:before,\n.ion-ios7-moon:before,\n.ion-ios7-moon-outline:before,\n.ion-ios7-more:before,\n.ion-ios7-more-outline:before,\n.ion-ios7-musical-note:before,\n.ion-ios7-musical-notes:before,\n.ion-ios7-navigate:before,\n.ion-ios7-navigate-outline:before,\n.ion-ios7-paper:before,\n.ion-ios7-paper-outline:before,\n.ion-ios7-paperplane:before,\n.ion-ios7-paperplane-outline:before,\n.ion-ios7-partlysunny:before,\n.ion-ios7-partlysunny-outline:before,\n.ion-ios7-pause:before,\n.ion-ios7-pause-outline:before,\n.ion-ios7-paw:before,\n.ion-ios7-paw-outline:before,\n.ion-ios7-people:before,\n.ion-ios7-people-outline:before,\n.ion-ios7-person:before,\n.ion-ios7-person-outline:before,\n.ion-ios7-personadd:before,\n.ion-ios7-personadd-outline:before,\n.ion-ios7-photos:before,\n.ion-ios7-photos-outline:before,\n.ion-ios7-pie:before,\n.ion-ios7-pie-outline:before,\n.ion-ios7-play:before,\n.ion-ios7-play-outline:before,\n.ion-ios7-plus:before,\n.ion-ios7-plus-empty:before,\n.ion-ios7-plus-outline:before,\n.ion-ios7-pricetag:before,\n.ion-ios7-pricetag-outline:before,\n.ion-ios7-pricetags:before,\n.ion-ios7-pricetags-outline:before,\n.ion-ios7-printer:before,\n.ion-ios7-printer-outline:before,\n.ion-ios7-pulse:before,\n.ion-ios7-pulse-strong:before,\n.ion-ios7-rainy:before,\n.ion-ios7-rainy-outline:before,\n.ion-ios7-recording:before,\n.ion-ios7-recording-outline:before,\n.ion-ios7-redo:before,\n.ion-ios7-redo-outline:before,\n.ion-ios7-refresh:before,\n.ion-ios7-refresh-empty:before,\n.ion-ios7-refresh-outline:before,\n.ion-ios7-reload:before, .ion-ios7-reloading:before,\n.ion-ios7-reverse-camera:before,\n.ion-ios7-reverse-camera-outline:before,\n.ion-ios7-rewind:before,\n.ion-ios7-rewind-outline:before,\n.ion-ios7-search:before,\n.ion-ios7-search-strong:before,\n.ion-ios7-settings:before,\n.ion-ios7-settings-strong:before,\n.ion-ios7-shrink:before,\n.ion-ios7-skipbackward:before,\n.ion-ios7-skipbackward-outline:before,\n.ion-ios7-skipforward:before,\n.ion-ios7-skipforward-outline:before,\n.ion-ios7-snowy:before,\n.ion-ios7-speedometer:before,\n.ion-ios7-speedometer-outline:before,\n.ion-ios7-star:before,\n.ion-ios7-star-half:before,\n.ion-ios7-star-outline:before,\n.ion-ios7-stopwatch:before,\n.ion-ios7-stopwatch-outline:before,\n.ion-ios7-sunny:before,\n.ion-ios7-sunny-outline:before,\n.ion-ios7-telephone:before,\n.ion-ios7-telephone-outline:before,\n.ion-ios7-tennisball:before,\n.ion-ios7-tennisball-outline:before,\n.ion-ios7-thunderstorm:before,\n.ion-ios7-thunderstorm-outline:before,\n.ion-ios7-time:before,\n.ion-ios7-time-outline:before,\n.ion-ios7-timer:before,\n.ion-ios7-timer-outline:before,\n.ion-ios7-toggle:before,\n.ion-ios7-toggle-outline:before,\n.ion-ios7-trash:before,\n.ion-ios7-trash-outline:before,\n.ion-ios7-undo:before,\n.ion-ios7-undo-outline:before,\n.ion-ios7-unlocked:before,\n.ion-ios7-unlocked-outline:before,\n.ion-ios7-upload:before,\n.ion-ios7-upload-outline:before,\n.ion-ios7-videocam:before,\n.ion-ios7-videocam-outline:before,\n.ion-ios7-volume-high:before,\n.ion-ios7-volume-low:before,\n.ion-ios7-wineglass:before,\n.ion-ios7-wineglass-outline:before,\n.ion-ios7-world:before,\n.ion-ios7-world-outline:before,\n.ion-ipad:before,\n.ion-iphone:before,\n.ion-ipod:before,\n.ion-jet:before,\n.ion-key:before,\n.ion-knife:before,\n.ion-laptop:before,\n.ion-leaf:before,\n.ion-levels:before,\n.ion-lightbulb:before,\n.ion-link:before,\n.ion-load-a:before, .ion-loading-a:before,\n.ion-load-b:before, .ion-loading-b:before,\n.ion-load-c:before, .ion-loading-c:before,\n.ion-load-d:before, .ion-loading-d:before,\n.ion-location:before,\n.ion-locked:before,\n.ion-log-in:before,\n.ion-log-out:before,\n.ion-loop:before, .ion-looping:before,\n.ion-magnet:before,\n.ion-male:before,\n.ion-man:before,\n.ion-map:before,\n.ion-medkit:before,\n.ion-merge:before,\n.ion-mic-a:before,\n.ion-mic-b:before,\n.ion-mic-c:before,\n.ion-minus:before,\n.ion-minus-circled:before,\n.ion-minus-round:before,\n.ion-model-s:before,\n.ion-monitor:before,\n.ion-more:before,\n.ion-mouse:before,\n.ion-music-note:before,\n.ion-navicon:before,\n.ion-navicon-round:before,\n.ion-navigate:before,\n.ion-network:before,\n.ion-no-smoking:before,\n.ion-nuclear:before,\n.ion-outlet:before,\n.ion-paper-airplane:before,\n.ion-paperclip:before,\n.ion-pause:before,\n.ion-person:before,\n.ion-person-add:before,\n.ion-person-stalker:before,\n.ion-pie-graph:before,\n.ion-pin:before,\n.ion-pinpoint:before,\n.ion-pizza:before,\n.ion-plane:before,\n.ion-planet:before,\n.ion-play:before,\n.ion-playstation:before,\n.ion-plus:before,\n.ion-plus-circled:before,\n.ion-plus-round:before,\n.ion-podium:before,\n.ion-pound:before,\n.ion-power:before,\n.ion-pricetag:before,\n.ion-pricetags:before,\n.ion-printer:before,\n.ion-pull-request:before,\n.ion-qr-scanner:before,\n.ion-quote:before,\n.ion-radio-waves:before,\n.ion-record:before,\n.ion-refresh:before, .ion-refreshing:before,\n.ion-reply:before,\n.ion-reply-all:before,\n.ion-ribbon-a:before,\n.ion-ribbon-b:before,\n.ion-sad:before,\n.ion-scissors:before,\n.ion-search:before,\n.ion-settings:before,\n.ion-share:before,\n.ion-shuffle:before,\n.ion-skip-backward:before,\n.ion-skip-forward:before,\n.ion-social-android:before,\n.ion-social-android-outline:before,\n.ion-social-apple:before,\n.ion-social-apple-outline:before,\n.ion-social-bitcoin:before,\n.ion-social-bitcoin-outline:before,\n.ion-social-buffer:before,\n.ion-social-buffer-outline:before,\n.ion-social-designernews:before,\n.ion-social-designernews-outline:before,\n.ion-social-dribbble:before,\n.ion-social-dribbble-outline:before,\n.ion-social-dropbox:before,\n.ion-social-dropbox-outline:before,\n.ion-social-facebook:before,\n.ion-social-facebook-outline:before,\n.ion-social-foursquare:before,\n.ion-social-foursquare-outline:before,\n.ion-social-freebsd-devil:before,\n.ion-social-github:before,\n.ion-social-github-outline:before,\n.ion-social-google:before,\n.ion-social-google-outline:before,\n.ion-social-googleplus:before,\n.ion-social-googleplus-outline:before,\n.ion-social-hackernews:before,\n.ion-social-hackernews-outline:before,\n.ion-social-instagram:before,\n.ion-social-instagram-outline:before,\n.ion-social-linkedin:before,\n.ion-social-linkedin-outline:before,\n.ion-social-pinterest:before,\n.ion-social-pinterest-outline:before,\n.ion-social-reddit:before,\n.ion-social-reddit-outline:before,\n.ion-social-rss:before,\n.ion-social-rss-outline:before,\n.ion-social-skype:before,\n.ion-social-skype-outline:before,\n.ion-social-tumblr:before,\n.ion-social-tumblr-outline:before,\n.ion-social-tux:before,\n.ion-social-twitter:before,\n.ion-social-twitter-outline:before,\n.ion-social-usd:before,\n.ion-social-usd-outline:before,\n.ion-social-vimeo:before,\n.ion-social-vimeo-outline:before,\n.ion-social-windows:before,\n.ion-social-windows-outline:before,\n.ion-social-wordpress:before,\n.ion-social-wordpress-outline:before,\n.ion-social-yahoo:before,\n.ion-social-yahoo-outline:before,\n.ion-social-youtube:before,\n.ion-social-youtube-outline:before,\n.ion-speakerphone:before,\n.ion-speedometer:before,\n.ion-spoon:before,\n.ion-star:before,\n.ion-stats-bars:before,\n.ion-steam:before,\n.ion-stop:before,\n.ion-thermometer:before,\n.ion-thumbsdown:before,\n.ion-thumbsup:before,\n.ion-toggle:before,\n.ion-toggle-filled:before,\n.ion-trash-a:before,\n.ion-trash-b:before,\n.ion-trophy:before,\n.ion-umbrella:before,\n.ion-university:before,\n.ion-unlocked:before,\n.ion-upload:before,\n.ion-usb:before,\n.ion-videocamera:before,\n.ion-volume-high:before,\n.ion-volume-low:before,\n.ion-volume-medium:before,\n.ion-volume-mute:before,\n.ion-wand:before,\n.ion-waterdrop:before,\n.ion-wifi:before,\n.ion-wineglass:before,\n.ion-woman:before,\n.ion-wrench:before,\n.ion-xbox:before {\n  display: inline-block;\n  font-family: \"Ionicons\";\n  speak: none;\n  font-style: normal;\n  font-weight: normal;\n  font-variant: normal;\n  text-transform: none;\n  text-rendering: auto;\n  line-height: 1;\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale; }\n\n.ion-spin, .ion-loading-a,\n.ion-loading-b,\n.ion-loading-c,\n.ion-loading-d,\n.ion-looping,\n.ion-refreshing,\n.ion-ios7-reloading {\n  -webkit-animation: spin 1s infinite linear;\n  -moz-animation: spin 1s infinite linear;\n  -o-animation: spin 1s infinite linear;\n  animation: spin 1s infinite linear; }\n\n@-moz-keyframes spin {\n  0% {\n    -moz-transform: rotate(0deg); }\n  100% {\n    -moz-transform: rotate(359deg); } }\n\n@-webkit-keyframes spin {\n  0% {\n    -webkit-transform: rotate(0deg); }\n  100% {\n    -webkit-transform: rotate(359deg); } }\n\n@-o-keyframes spin {\n  0% {\n    -o-transform: rotate(0deg); }\n  100% {\n    -o-transform: rotate(359deg); } }\n\n@-ms-keyframes spin {\n  0% {\n    -ms-transform: rotate(0deg); }\n  100% {\n    -ms-transform: rotate(359deg); } }\n\n@keyframes spin {\n  0% {\n    transform: rotate(0deg); }\n  100% {\n    transform: rotate(359deg); } }\n\n.ion-loading-a {\n  -webkit-animation-timing-function: steps(8, start);\n  -moz-animation-timing-function: steps(8, start);\n  animation-timing-function: steps(8, start); }\n\n.ion-alert:before {\n  content: \"\\F101\"; }\n\n.ion-alert-circled:before {\n  content: \"\\F100\"; }\n\n.ion-android-add:before {\n  content: \"\\F2C7\"; }\n\n.ion-android-add-contact:before {\n  content: \"\\F2C6\"; }\n\n.ion-android-alarm:before {\n  content: \"\\F2C8\"; }\n\n.ion-android-archive:before {\n  content: \"\\F2C9\"; }\n\n.ion-android-arrow-back:before {\n  content: \"\\F2CA\"; }\n\n.ion-android-arrow-down-left:before {\n  content: \"\\F2CB\"; }\n\n.ion-android-arrow-down-right:before {\n  content: \"\\F2CC\"; }\n\n.ion-android-arrow-forward:before {\n  content: \"\\F30F\"; }\n\n.ion-android-arrow-up-left:before {\n  content: \"\\F2CD\"; }\n\n.ion-android-arrow-up-right:before {\n  content: \"\\F2CE\"; }\n\n.ion-android-battery:before {\n  content: \"\\F2CF\"; }\n\n.ion-android-book:before {\n  content: \"\\F2D0\"; }\n\n.ion-android-calendar:before {\n  content: \"\\F2D1\"; }\n\n.ion-android-call:before {\n  content: \"\\F2D2\"; }\n\n.ion-android-camera:before {\n  content: \"\\F2D3\"; }\n\n.ion-android-chat:before {\n  content: \"\\F2D4\"; }\n\n.ion-android-checkmark:before {\n  content: \"\\F2D5\"; }\n\n.ion-android-clock:before {\n  content: \"\\F2D6\"; }\n\n.ion-android-close:before {\n  content: \"\\F2D7\"; }\n\n.ion-android-contact:before {\n  content: \"\\F2D8\"; }\n\n.ion-android-contacts:before {\n  content: \"\\F2D9\"; }\n\n.ion-android-data:before {\n  content: \"\\F2DA\"; }\n\n.ion-android-developer:before {\n  content: \"\\F2DB\"; }\n\n.ion-android-display:before {\n  content: \"\\F2DC\"; }\n\n.ion-android-download:before {\n  content: \"\\F2DD\"; }\n\n.ion-android-drawer:before {\n  content: \"\\F310\"; }\n\n.ion-android-dropdown:before {\n  content: \"\\F2DE\"; }\n\n.ion-android-earth:before {\n  content: \"\\F2DF\"; }\n\n.ion-android-folder:before {\n  content: \"\\F2E0\"; }\n\n.ion-android-forums:before {\n  content: \"\\F2E1\"; }\n\n.ion-android-friends:before {\n  content: \"\\F2E2\"; }\n\n.ion-android-hand:before {\n  content: \"\\F2E3\"; }\n\n.ion-android-image:before {\n  content: \"\\F2E4\"; }\n\n.ion-android-inbox:before {\n  content: \"\\F2E5\"; }\n\n.ion-android-information:before {\n  content: \"\\F2E6\"; }\n\n.ion-android-keypad:before {\n  content: \"\\F2E7\"; }\n\n.ion-android-lightbulb:before {\n  content: \"\\F2E8\"; }\n\n.ion-android-locate:before {\n  content: \"\\F2E9\"; }\n\n.ion-android-location:before {\n  content: \"\\F2EA\"; }\n\n.ion-android-mail:before {\n  content: \"\\F2EB\"; }\n\n.ion-android-microphone:before {\n  content: \"\\F2EC\"; }\n\n.ion-android-mixer:before {\n  content: \"\\F2ED\"; }\n\n.ion-android-more:before {\n  content: \"\\F2EE\"; }\n\n.ion-android-note:before {\n  content: \"\\F2EF\"; }\n\n.ion-android-playstore:before {\n  content: \"\\F2F0\"; }\n\n.ion-android-printer:before {\n  content: \"\\F2F1\"; }\n\n.ion-android-promotion:before {\n  content: \"\\F2F2\"; }\n\n.ion-android-reminder:before {\n  content: \"\\F2F3\"; }\n\n.ion-android-remove:before {\n  content: \"\\F2F4\"; }\n\n.ion-android-search:before {\n  content: \"\\F2F5\"; }\n\n.ion-android-send:before {\n  content: \"\\F2F6\"; }\n\n.ion-android-settings:before {\n  content: \"\\F2F7\"; }\n\n.ion-android-share:before {\n  content: \"\\F2F8\"; }\n\n.ion-android-social:before {\n  content: \"\\F2FA\"; }\n\n.ion-android-social-user:before {\n  content: \"\\F2F9\"; }\n\n.ion-android-sort:before {\n  content: \"\\F2FB\"; }\n\n.ion-android-stair-drawer:before {\n  content: \"\\F311\"; }\n\n.ion-android-star:before {\n  content: \"\\F2FC\"; }\n\n.ion-android-stopwatch:before {\n  content: \"\\F2FD\"; }\n\n.ion-android-storage:before {\n  content: \"\\F2FE\"; }\n\n.ion-android-system-back:before {\n  content: \"\\F2FF\"; }\n\n.ion-android-system-home:before {\n  content: \"\\F300\"; }\n\n.ion-android-system-windows:before {\n  content: \"\\F301\"; }\n\n.ion-android-timer:before {\n  content: \"\\F302\"; }\n\n.ion-android-trash:before {\n  content: \"\\F303\"; }\n\n.ion-android-user-menu:before {\n  content: \"\\F312\"; }\n\n.ion-android-volume:before {\n  content: \"\\F304\"; }\n\n.ion-android-wifi:before {\n  content: \"\\F305\"; }\n\n.ion-aperture:before {\n  content: \"\\F313\"; }\n\n.ion-archive:before {\n  content: \"\\F102\"; }\n\n.ion-arrow-down-a:before {\n  content: \"\\F103\"; }\n\n.ion-arrow-down-b:before {\n  content: \"\\F104\"; }\n\n.ion-arrow-down-c:before {\n  content: \"\\F105\"; }\n\n.ion-arrow-expand:before {\n  content: \"\\F25E\"; }\n\n.ion-arrow-graph-down-left:before {\n  content: \"\\F25F\"; }\n\n.ion-arrow-graph-down-right:before {\n  content: \"\\F260\"; }\n\n.ion-arrow-graph-up-left:before {\n  content: \"\\F261\"; }\n\n.ion-arrow-graph-up-right:before {\n  content: \"\\F262\"; }\n\n.ion-arrow-left-a:before {\n  content: \"\\F106\"; }\n\n.ion-arrow-left-b:before {\n  content: \"\\F107\"; }\n\n.ion-arrow-left-c:before {\n  content: \"\\F108\"; }\n\n.ion-arrow-move:before {\n  content: \"\\F263\"; }\n\n.ion-arrow-resize:before {\n  content: \"\\F264\"; }\n\n.ion-arrow-return-left:before {\n  content: \"\\F265\"; }\n\n.ion-arrow-return-right:before {\n  content: \"\\F266\"; }\n\n.ion-arrow-right-a:before {\n  content: \"\\F109\"; }\n\n.ion-arrow-right-b:before {\n  content: \"\\F10A\"; }\n\n.ion-arrow-right-c:before {\n  content: \"\\F10B\"; }\n\n.ion-arrow-shrink:before {\n  content: \"\\F267\"; }\n\n.ion-arrow-swap:before {\n  content: \"\\F268\"; }\n\n.ion-arrow-up-a:before {\n  content: \"\\F10C\"; }\n\n.ion-arrow-up-b:before {\n  content: \"\\F10D\"; }\n\n.ion-arrow-up-c:before {\n  content: \"\\F10E\"; }\n\n.ion-asterisk:before {\n  content: \"\\F314\"; }\n\n.ion-at:before {\n  content: \"\\F10F\"; }\n\n.ion-bag:before {\n  content: \"\\F110\"; }\n\n.ion-battery-charging:before {\n  content: \"\\F111\"; }\n\n.ion-battery-empty:before {\n  content: \"\\F112\"; }\n\n.ion-battery-full:before {\n  content: \"\\F113\"; }\n\n.ion-battery-half:before {\n  content: \"\\F114\"; }\n\n.ion-battery-low:before {\n  content: \"\\F115\"; }\n\n.ion-beaker:before {\n  content: \"\\F269\"; }\n\n.ion-beer:before {\n  content: \"\\F26A\"; }\n\n.ion-bluetooth:before {\n  content: \"\\F116\"; }\n\n.ion-bonfire:before {\n  content: \"\\F315\"; }\n\n.ion-bookmark:before {\n  content: \"\\F26B\"; }\n\n.ion-briefcase:before {\n  content: \"\\F26C\"; }\n\n.ion-bug:before {\n  content: \"\\F2BE\"; }\n\n.ion-calculator:before {\n  content: \"\\F26D\"; }\n\n.ion-calendar:before {\n  content: \"\\F117\"; }\n\n.ion-camera:before {\n  content: \"\\F118\"; }\n\n.ion-card:before {\n  content: \"\\F119\"; }\n\n.ion-cash:before {\n  content: \"\\F316\"; }\n\n.ion-chatbox:before {\n  content: \"\\F11B\"; }\n\n.ion-chatbox-working:before {\n  content: \"\\F11A\"; }\n\n.ion-chatboxes:before {\n  content: \"\\F11C\"; }\n\n.ion-chatbubble:before {\n  content: \"\\F11E\"; }\n\n.ion-chatbubble-working:before {\n  content: \"\\F11D\"; }\n\n.ion-chatbubbles:before {\n  content: \"\\F11F\"; }\n\n.ion-checkmark:before {\n  content: \"\\F122\"; }\n\n.ion-checkmark-circled:before {\n  content: \"\\F120\"; }\n\n.ion-checkmark-round:before {\n  content: \"\\F121\"; }\n\n.ion-chevron-down:before {\n  content: \"\\F123\"; }\n\n.ion-chevron-left:before {\n  content: \"\\F124\"; }\n\n.ion-chevron-right:before {\n  content: \"\\F125\"; }\n\n.ion-chevron-up:before {\n  content: \"\\F126\"; }\n\n.ion-clipboard:before {\n  content: \"\\F127\"; }\n\n.ion-clock:before {\n  content: \"\\F26E\"; }\n\n.ion-close:before {\n  content: \"\\F12A\"; }\n\n.ion-close-circled:before {\n  content: \"\\F128\"; }\n\n.ion-close-round:before {\n  content: \"\\F129\"; }\n\n.ion-closed-captioning:before {\n  content: \"\\F317\"; }\n\n.ion-cloud:before {\n  content: \"\\F12B\"; }\n\n.ion-code:before {\n  content: \"\\F271\"; }\n\n.ion-code-download:before {\n  content: \"\\F26F\"; }\n\n.ion-code-working:before {\n  content: \"\\F270\"; }\n\n.ion-coffee:before {\n  content: \"\\F272\"; }\n\n.ion-compass:before {\n  content: \"\\F273\"; }\n\n.ion-compose:before {\n  content: \"\\F12C\"; }\n\n.ion-connection-bars:before {\n  content: \"\\F274\"; }\n\n.ion-contrast:before {\n  content: \"\\F275\"; }\n\n.ion-cube:before {\n  content: \"\\F318\"; }\n\n.ion-disc:before {\n  content: \"\\F12D\"; }\n\n.ion-document:before {\n  content: \"\\F12F\"; }\n\n.ion-document-text:before {\n  content: \"\\F12E\"; }\n\n.ion-drag:before {\n  content: \"\\F130\"; }\n\n.ion-earth:before {\n  content: \"\\F276\"; }\n\n.ion-edit:before {\n  content: \"\\F2BF\"; }\n\n.ion-egg:before {\n  content: \"\\F277\"; }\n\n.ion-eject:before {\n  content: \"\\F131\"; }\n\n.ion-email:before {\n  content: \"\\F132\"; }\n\n.ion-eye:before {\n  content: \"\\F133\"; }\n\n.ion-eye-disabled:before {\n  content: \"\\F306\"; }\n\n.ion-female:before {\n  content: \"\\F278\"; }\n\n.ion-filing:before {\n  content: \"\\F134\"; }\n\n.ion-film-marker:before {\n  content: \"\\F135\"; }\n\n.ion-fireball:before {\n  content: \"\\F319\"; }\n\n.ion-flag:before {\n  content: \"\\F279\"; }\n\n.ion-flame:before {\n  content: \"\\F31A\"; }\n\n.ion-flash:before {\n  content: \"\\F137\"; }\n\n.ion-flash-off:before {\n  content: \"\\F136\"; }\n\n.ion-flask:before {\n  content: \"\\F138\"; }\n\n.ion-folder:before {\n  content: \"\\F139\"; }\n\n.ion-fork:before {\n  content: \"\\F27A\"; }\n\n.ion-fork-repo:before {\n  content: \"\\F2C0\"; }\n\n.ion-forward:before {\n  content: \"\\F13A\"; }\n\n.ion-funnel:before {\n  content: \"\\F31B\"; }\n\n.ion-game-controller-a:before {\n  content: \"\\F13B\"; }\n\n.ion-game-controller-b:before {\n  content: \"\\F13C\"; }\n\n.ion-gear-a:before {\n  content: \"\\F13D\"; }\n\n.ion-gear-b:before {\n  content: \"\\F13E\"; }\n\n.ion-grid:before {\n  content: \"\\F13F\"; }\n\n.ion-hammer:before {\n  content: \"\\F27B\"; }\n\n.ion-happy:before {\n  content: \"\\F31C\"; }\n\n.ion-headphone:before {\n  content: \"\\F140\"; }\n\n.ion-heart:before {\n  content: \"\\F141\"; }\n\n.ion-heart-broken:before {\n  content: \"\\F31D\"; }\n\n.ion-help:before {\n  content: \"\\F143\"; }\n\n.ion-help-buoy:before {\n  content: \"\\F27C\"; }\n\n.ion-help-circled:before {\n  content: \"\\F142\"; }\n\n.ion-home:before {\n  content: \"\\F144\"; }\n\n.ion-icecream:before {\n  content: \"\\F27D\"; }\n\n.ion-icon-social-google-plus:before {\n  content: \"\\F146\"; }\n\n.ion-icon-social-google-plus-outline:before {\n  content: \"\\F145\"; }\n\n.ion-image:before {\n  content: \"\\F147\"; }\n\n.ion-images:before {\n  content: \"\\F148\"; }\n\n.ion-information:before {\n  content: \"\\F14A\"; }\n\n.ion-information-circled:before {\n  content: \"\\F149\"; }\n\n.ion-ionic:before {\n  content: \"\\F14B\"; }\n\n.ion-ios7-alarm:before {\n  content: \"\\F14D\"; }\n\n.ion-ios7-alarm-outline:before {\n  content: \"\\F14C\"; }\n\n.ion-ios7-albums:before {\n  content: \"\\F14F\"; }\n\n.ion-ios7-albums-outline:before {\n  content: \"\\F14E\"; }\n\n.ion-ios7-americanfootball:before {\n  content: \"\\F31F\"; }\n\n.ion-ios7-americanfootball-outline:before {\n  content: \"\\F31E\"; }\n\n.ion-ios7-analytics:before {\n  content: \"\\F321\"; }\n\n.ion-ios7-analytics-outline:before {\n  content: \"\\F320\"; }\n\n.ion-ios7-arrow-back:before {\n  content: \"\\F150\"; }\n\n.ion-ios7-arrow-down:before {\n  content: \"\\F151\"; }\n\n.ion-ios7-arrow-forward:before {\n  content: \"\\F152\"; }\n\n.ion-ios7-arrow-left:before {\n  content: \"\\F153\"; }\n\n.ion-ios7-arrow-right:before {\n  content: \"\\F154\"; }\n\n.ion-ios7-arrow-thin-down:before {\n  content: \"\\F27E\"; }\n\n.ion-ios7-arrow-thin-left:before {\n  content: \"\\F27F\"; }\n\n.ion-ios7-arrow-thin-right:before {\n  content: \"\\F280\"; }\n\n.ion-ios7-arrow-thin-up:before {\n  content: \"\\F281\"; }\n\n.ion-ios7-arrow-up:before {\n  content: \"\\F155\"; }\n\n.ion-ios7-at:before {\n  content: \"\\F157\"; }\n\n.ion-ios7-at-outline:before {\n  content: \"\\F156\"; }\n\n.ion-ios7-barcode:before {\n  content: \"\\F323\"; }\n\n.ion-ios7-barcode-outline:before {\n  content: \"\\F322\"; }\n\n.ion-ios7-baseball:before {\n  content: \"\\F325\"; }\n\n.ion-ios7-baseball-outline:before {\n  content: \"\\F324\"; }\n\n.ion-ios7-basketball:before {\n  content: \"\\F327\"; }\n\n.ion-ios7-basketball-outline:before {\n  content: \"\\F326\"; }\n\n.ion-ios7-bell:before {\n  content: \"\\F159\"; }\n\n.ion-ios7-bell-outline:before {\n  content: \"\\F158\"; }\n\n.ion-ios7-bolt:before {\n  content: \"\\F15B\"; }\n\n.ion-ios7-bolt-outline:before {\n  content: \"\\F15A\"; }\n\n.ion-ios7-bookmarks:before {\n  content: \"\\F15D\"; }\n\n.ion-ios7-bookmarks-outline:before {\n  content: \"\\F15C\"; }\n\n.ion-ios7-box:before {\n  content: \"\\F15F\"; }\n\n.ion-ios7-box-outline:before {\n  content: \"\\F15E\"; }\n\n.ion-ios7-briefcase:before {\n  content: \"\\F283\"; }\n\n.ion-ios7-briefcase-outline:before {\n  content: \"\\F282\"; }\n\n.ion-ios7-browsers:before {\n  content: \"\\F161\"; }\n\n.ion-ios7-browsers-outline:before {\n  content: \"\\F160\"; }\n\n.ion-ios7-calculator:before {\n  content: \"\\F285\"; }\n\n.ion-ios7-calculator-outline:before {\n  content: \"\\F284\"; }\n\n.ion-ios7-calendar:before {\n  content: \"\\F163\"; }\n\n.ion-ios7-calendar-outline:before {\n  content: \"\\F162\"; }\n\n.ion-ios7-camera:before {\n  content: \"\\F165\"; }\n\n.ion-ios7-camera-outline:before {\n  content: \"\\F164\"; }\n\n.ion-ios7-cart:before {\n  content: \"\\F167\"; }\n\n.ion-ios7-cart-outline:before {\n  content: \"\\F166\"; }\n\n.ion-ios7-chatboxes:before {\n  content: \"\\F169\"; }\n\n.ion-ios7-chatboxes-outline:before {\n  content: \"\\F168\"; }\n\n.ion-ios7-chatbubble:before {\n  content: \"\\F16B\"; }\n\n.ion-ios7-chatbubble-outline:before {\n  content: \"\\F16A\"; }\n\n.ion-ios7-checkmark:before {\n  content: \"\\F16E\"; }\n\n.ion-ios7-checkmark-empty:before {\n  content: \"\\F16C\"; }\n\n.ion-ios7-checkmark-outline:before {\n  content: \"\\F16D\"; }\n\n.ion-ios7-circle-filled:before {\n  content: \"\\F16F\"; }\n\n.ion-ios7-circle-outline:before {\n  content: \"\\F170\"; }\n\n.ion-ios7-clock:before {\n  content: \"\\F172\"; }\n\n.ion-ios7-clock-outline:before {\n  content: \"\\F171\"; }\n\n.ion-ios7-close:before {\n  content: \"\\F2BC\"; }\n\n.ion-ios7-close-empty:before {\n  content: \"\\F2BD\"; }\n\n.ion-ios7-close-outline:before {\n  content: \"\\F2BB\"; }\n\n.ion-ios7-cloud:before {\n  content: \"\\F178\"; }\n\n.ion-ios7-cloud-download:before {\n  content: \"\\F174\"; }\n\n.ion-ios7-cloud-download-outline:before {\n  content: \"\\F173\"; }\n\n.ion-ios7-cloud-outline:before {\n  content: \"\\F175\"; }\n\n.ion-ios7-cloud-upload:before {\n  content: \"\\F177\"; }\n\n.ion-ios7-cloud-upload-outline:before {\n  content: \"\\F176\"; }\n\n.ion-ios7-cloudy:before {\n  content: \"\\F17A\"; }\n\n.ion-ios7-cloudy-night:before {\n  content: \"\\F308\"; }\n\n.ion-ios7-cloudy-night-outline:before {\n  content: \"\\F307\"; }\n\n.ion-ios7-cloudy-outline:before {\n  content: \"\\F179\"; }\n\n.ion-ios7-cog:before {\n  content: \"\\F17C\"; }\n\n.ion-ios7-cog-outline:before {\n  content: \"\\F17B\"; }\n\n.ion-ios7-compose:before {\n  content: \"\\F17E\"; }\n\n.ion-ios7-compose-outline:before {\n  content: \"\\F17D\"; }\n\n.ion-ios7-contact:before {\n  content: \"\\F180\"; }\n\n.ion-ios7-contact-outline:before {\n  content: \"\\F17F\"; }\n\n.ion-ios7-copy:before {\n  content: \"\\F182\"; }\n\n.ion-ios7-copy-outline:before {\n  content: \"\\F181\"; }\n\n.ion-ios7-download:before {\n  content: \"\\F184\"; }\n\n.ion-ios7-download-outline:before {\n  content: \"\\F183\"; }\n\n.ion-ios7-drag:before {\n  content: \"\\F185\"; }\n\n.ion-ios7-email:before {\n  content: \"\\F187\"; }\n\n.ion-ios7-email-outline:before {\n  content: \"\\F186\"; }\n\n.ion-ios7-expand:before {\n  content: \"\\F30D\"; }\n\n.ion-ios7-eye:before {\n  content: \"\\F189\"; }\n\n.ion-ios7-eye-outline:before {\n  content: \"\\F188\"; }\n\n.ion-ios7-fastforward:before {\n  content: \"\\F18B\"; }\n\n.ion-ios7-fastforward-outline:before {\n  content: \"\\F18A\"; }\n\n.ion-ios7-filing:before {\n  content: \"\\F18D\"; }\n\n.ion-ios7-filing-outline:before {\n  content: \"\\F18C\"; }\n\n.ion-ios7-film:before {\n  content: \"\\F18F\"; }\n\n.ion-ios7-film-outline:before {\n  content: \"\\F18E\"; }\n\n.ion-ios7-flag:before {\n  content: \"\\F191\"; }\n\n.ion-ios7-flag-outline:before {\n  content: \"\\F190\"; }\n\n.ion-ios7-folder:before {\n  content: \"\\F193\"; }\n\n.ion-ios7-folder-outline:before {\n  content: \"\\F192\"; }\n\n.ion-ios7-football:before {\n  content: \"\\F329\"; }\n\n.ion-ios7-football-outline:before {\n  content: \"\\F328\"; }\n\n.ion-ios7-gear:before {\n  content: \"\\F195\"; }\n\n.ion-ios7-gear-outline:before {\n  content: \"\\F194\"; }\n\n.ion-ios7-glasses:before {\n  content: \"\\F197\"; }\n\n.ion-ios7-glasses-outline:before {\n  content: \"\\F196\"; }\n\n.ion-ios7-heart:before {\n  content: \"\\F199\"; }\n\n.ion-ios7-heart-outline:before {\n  content: \"\\F198\"; }\n\n.ion-ios7-help:before {\n  content: \"\\F19C\"; }\n\n.ion-ios7-help-empty:before {\n  content: \"\\F19A\"; }\n\n.ion-ios7-help-outline:before {\n  content: \"\\F19B\"; }\n\n.ion-ios7-home:before {\n  content: \"\\F32B\"; }\n\n.ion-ios7-home-outline:before {\n  content: \"\\F32A\"; }\n\n.ion-ios7-infinite:before {\n  content: \"\\F19E\"; }\n\n.ion-ios7-infinite-outline:before {\n  content: \"\\F19D\"; }\n\n.ion-ios7-information:before {\n  content: \"\\F1A1\"; }\n\n.ion-ios7-information-empty:before {\n  content: \"\\F19F\"; }\n\n.ion-ios7-information-outline:before {\n  content: \"\\F1A0\"; }\n\n.ion-ios7-ionic-outline:before {\n  content: \"\\F1A2\"; }\n\n.ion-ios7-keypad:before {\n  content: \"\\F1A4\"; }\n\n.ion-ios7-keypad-outline:before {\n  content: \"\\F1A3\"; }\n\n.ion-ios7-lightbulb:before {\n  content: \"\\F287\"; }\n\n.ion-ios7-lightbulb-outline:before {\n  content: \"\\F286\"; }\n\n.ion-ios7-location:before {\n  content: \"\\F1A6\"; }\n\n.ion-ios7-location-outline:before {\n  content: \"\\F1A5\"; }\n\n.ion-ios7-locked:before {\n  content: \"\\F1A8\"; }\n\n.ion-ios7-locked-outline:before {\n  content: \"\\F1A7\"; }\n\n.ion-ios7-loop:before {\n  content: \"\\F32D\"; }\n\n.ion-ios7-loop-strong:before {\n  content: \"\\F32C\"; }\n\n.ion-ios7-medkit:before {\n  content: \"\\F289\"; }\n\n.ion-ios7-medkit-outline:before {\n  content: \"\\F288\"; }\n\n.ion-ios7-mic:before {\n  content: \"\\F1AB\"; }\n\n.ion-ios7-mic-off:before {\n  content: \"\\F1A9\"; }\n\n.ion-ios7-mic-outline:before {\n  content: \"\\F1AA\"; }\n\n.ion-ios7-minus:before {\n  content: \"\\F1AE\"; }\n\n.ion-ios7-minus-empty:before {\n  content: \"\\F1AC\"; }\n\n.ion-ios7-minus-outline:before {\n  content: \"\\F1AD\"; }\n\n.ion-ios7-monitor:before {\n  content: \"\\F1B0\"; }\n\n.ion-ios7-monitor-outline:before {\n  content: \"\\F1AF\"; }\n\n.ion-ios7-moon:before {\n  content: \"\\F1B2\"; }\n\n.ion-ios7-moon-outline:before {\n  content: \"\\F1B1\"; }\n\n.ion-ios7-more:before {\n  content: \"\\F1B4\"; }\n\n.ion-ios7-more-outline:before {\n  content: \"\\F1B3\"; }\n\n.ion-ios7-musical-note:before {\n  content: \"\\F1B5\"; }\n\n.ion-ios7-musical-notes:before {\n  content: \"\\F1B6\"; }\n\n.ion-ios7-navigate:before {\n  content: \"\\F1B8\"; }\n\n.ion-ios7-navigate-outline:before {\n  content: \"\\F1B7\"; }\n\n.ion-ios7-paper:before {\n  content: \"\\F32F\"; }\n\n.ion-ios7-paper-outline:before {\n  content: \"\\F32E\"; }\n\n.ion-ios7-paperplane:before {\n  content: \"\\F1BA\"; }\n\n.ion-ios7-paperplane-outline:before {\n  content: \"\\F1B9\"; }\n\n.ion-ios7-partlysunny:before {\n  content: \"\\F1BC\"; }\n\n.ion-ios7-partlysunny-outline:before {\n  content: \"\\F1BB\"; }\n\n.ion-ios7-pause:before {\n  content: \"\\F1BE\"; }\n\n.ion-ios7-pause-outline:before {\n  content: \"\\F1BD\"; }\n\n.ion-ios7-paw:before {\n  content: \"\\F331\"; }\n\n.ion-ios7-paw-outline:before {\n  content: \"\\F330\"; }\n\n.ion-ios7-people:before {\n  content: \"\\F1C0\"; }\n\n.ion-ios7-people-outline:before {\n  content: \"\\F1BF\"; }\n\n.ion-ios7-person:before {\n  content: \"\\F1C2\"; }\n\n.ion-ios7-person-outline:before {\n  content: \"\\F1C1\"; }\n\n.ion-ios7-personadd:before {\n  content: \"\\F1C4\"; }\n\n.ion-ios7-personadd-outline:before {\n  content: \"\\F1C3\"; }\n\n.ion-ios7-photos:before {\n  content: \"\\F1C6\"; }\n\n.ion-ios7-photos-outline:before {\n  content: \"\\F1C5\"; }\n\n.ion-ios7-pie:before {\n  content: \"\\F28B\"; }\n\n.ion-ios7-pie-outline:before {\n  content: \"\\F28A\"; }\n\n.ion-ios7-play:before {\n  content: \"\\F1C8\"; }\n\n.ion-ios7-play-outline:before {\n  content: \"\\F1C7\"; }\n\n.ion-ios7-plus:before {\n  content: \"\\F1CB\"; }\n\n.ion-ios7-plus-empty:before {\n  content: \"\\F1C9\"; }\n\n.ion-ios7-plus-outline:before {\n  content: \"\\F1CA\"; }\n\n.ion-ios7-pricetag:before {\n  content: \"\\F28D\"; }\n\n.ion-ios7-pricetag-outline:before {\n  content: \"\\F28C\"; }\n\n.ion-ios7-pricetags:before {\n  content: \"\\F333\"; }\n\n.ion-ios7-pricetags-outline:before {\n  content: \"\\F332\"; }\n\n.ion-ios7-printer:before {\n  content: \"\\F1CD\"; }\n\n.ion-ios7-printer-outline:before {\n  content: \"\\F1CC\"; }\n\n.ion-ios7-pulse:before {\n  content: \"\\F335\"; }\n\n.ion-ios7-pulse-strong:before {\n  content: \"\\F334\"; }\n\n.ion-ios7-rainy:before {\n  content: \"\\F1CF\"; }\n\n.ion-ios7-rainy-outline:before {\n  content: \"\\F1CE\"; }\n\n.ion-ios7-recording:before {\n  content: \"\\F1D1\"; }\n\n.ion-ios7-recording-outline:before {\n  content: \"\\F1D0\"; }\n\n.ion-ios7-redo:before {\n  content: \"\\F1D3\"; }\n\n.ion-ios7-redo-outline:before {\n  content: \"\\F1D2\"; }\n\n.ion-ios7-refresh:before {\n  content: \"\\F1D6\"; }\n\n.ion-ios7-refresh-empty:before {\n  content: \"\\F1D4\"; }\n\n.ion-ios7-refresh-outline:before {\n  content: \"\\F1D5\"; }\n\n.ion-ios7-reload:before, .ion-ios7-reloading:before {\n  content: \"\\F28E\"; }\n\n.ion-ios7-reverse-camera:before {\n  content: \"\\F337\"; }\n\n.ion-ios7-reverse-camera-outline:before {\n  content: \"\\F336\"; }\n\n.ion-ios7-rewind:before {\n  content: \"\\F1D8\"; }\n\n.ion-ios7-rewind-outline:before {\n  content: \"\\F1D7\"; }\n\n.ion-ios7-search:before {\n  content: \"\\F1DA\"; }\n\n.ion-ios7-search-strong:before {\n  content: \"\\F1D9\"; }\n\n.ion-ios7-settings:before {\n  content: \"\\F339\"; }\n\n.ion-ios7-settings-strong:before {\n  content: \"\\F338\"; }\n\n.ion-ios7-shrink:before {\n  content: \"\\F30E\"; }\n\n.ion-ios7-skipbackward:before {\n  content: \"\\F1DC\"; }\n\n.ion-ios7-skipbackward-outline:before {\n  content: \"\\F1DB\"; }\n\n.ion-ios7-skipforward:before {\n  content: \"\\F1DE\"; }\n\n.ion-ios7-skipforward-outline:before {\n  content: \"\\F1DD\"; }\n\n.ion-ios7-snowy:before {\n  content: \"\\F309\"; }\n\n.ion-ios7-speedometer:before {\n  content: \"\\F290\"; }\n\n.ion-ios7-speedometer-outline:before {\n  content: \"\\F28F\"; }\n\n.ion-ios7-star:before {\n  content: \"\\F1E0\"; }\n\n.ion-ios7-star-half:before {\n  content: \"\\F33A\"; }\n\n.ion-ios7-star-outline:before {\n  content: \"\\F1DF\"; }\n\n.ion-ios7-stopwatch:before {\n  content: \"\\F1E2\"; }\n\n.ion-ios7-stopwatch-outline:before {\n  content: \"\\F1E1\"; }\n\n.ion-ios7-sunny:before {\n  content: \"\\F1E4\"; }\n\n.ion-ios7-sunny-outline:before {\n  content: \"\\F1E3\"; }\n\n.ion-ios7-telephone:before {\n  content: \"\\F1E6\"; }\n\n.ion-ios7-telephone-outline:before {\n  content: \"\\F1E5\"; }\n\n.ion-ios7-tennisball:before {\n  content: \"\\F33C\"; }\n\n.ion-ios7-tennisball-outline:before {\n  content: \"\\F33B\"; }\n\n.ion-ios7-thunderstorm:before {\n  content: \"\\F1E8\"; }\n\n.ion-ios7-thunderstorm-outline:before {\n  content: \"\\F1E7\"; }\n\n.ion-ios7-time:before {\n  content: \"\\F292\"; }\n\n.ion-ios7-time-outline:before {\n  content: \"\\F291\"; }\n\n.ion-ios7-timer:before {\n  content: \"\\F1EA\"; }\n\n.ion-ios7-timer-outline:before {\n  content: \"\\F1E9\"; }\n\n.ion-ios7-toggle:before {\n  content: \"\\F33E\"; }\n\n.ion-ios7-toggle-outline:before {\n  content: \"\\F33D\"; }\n\n.ion-ios7-trash:before {\n  content: \"\\F1EC\"; }\n\n.ion-ios7-trash-outline:before {\n  content: \"\\F1EB\"; }\n\n.ion-ios7-undo:before {\n  content: \"\\F1EE\"; }\n\n.ion-ios7-undo-outline:before {\n  content: \"\\F1ED\"; }\n\n.ion-ios7-unlocked:before {\n  content: \"\\F1F0\"; }\n\n.ion-ios7-unlocked-outline:before {\n  content: \"\\F1EF\"; }\n\n.ion-ios7-upload:before {\n  content: \"\\F1F2\"; }\n\n.ion-ios7-upload-outline:before {\n  content: \"\\F1F1\"; }\n\n.ion-ios7-videocam:before {\n  content: \"\\F1F4\"; }\n\n.ion-ios7-videocam-outline:before {\n  content: \"\\F1F3\"; }\n\n.ion-ios7-volume-high:before {\n  content: \"\\F1F5\"; }\n\n.ion-ios7-volume-low:before {\n  content: \"\\F1F6\"; }\n\n.ion-ios7-wineglass:before {\n  content: \"\\F294\"; }\n\n.ion-ios7-wineglass-outline:before {\n  content: \"\\F293\"; }\n\n.ion-ios7-world:before {\n  content: \"\\F1F8\"; }\n\n.ion-ios7-world-outline:before {\n  content: \"\\F1F7\"; }\n\n.ion-ipad:before {\n  content: \"\\F1F9\"; }\n\n.ion-iphone:before {\n  content: \"\\F1FA\"; }\n\n.ion-ipod:before {\n  content: \"\\F1FB\"; }\n\n.ion-jet:before {\n  content: \"\\F295\"; }\n\n.ion-key:before {\n  content: \"\\F296\"; }\n\n.ion-knife:before {\n  content: \"\\F297\"; }\n\n.ion-laptop:before {\n  content: \"\\F1FC\"; }\n\n.ion-leaf:before {\n  content: \"\\F1FD\"; }\n\n.ion-levels:before {\n  content: \"\\F298\"; }\n\n.ion-lightbulb:before {\n  content: \"\\F299\"; }\n\n.ion-link:before {\n  content: \"\\F1FE\"; }\n\n.ion-load-a:before, .ion-loading-a:before {\n  content: \"\\F29A\"; }\n\n.ion-load-b:before, .ion-loading-b:before {\n  content: \"\\F29B\"; }\n\n.ion-load-c:before, .ion-loading-c:before {\n  content: \"\\F29C\"; }\n\n.ion-load-d:before, .ion-loading-d:before {\n  content: \"\\F29D\"; }\n\n.ion-location:before {\n  content: \"\\F1FF\"; }\n\n.ion-locked:before {\n  content: \"\\F200\"; }\n\n.ion-log-in:before {\n  content: \"\\F29E\"; }\n\n.ion-log-out:before {\n  content: \"\\F29F\"; }\n\n.ion-loop:before, .ion-looping:before {\n  content: \"\\F201\"; }\n\n.ion-magnet:before {\n  content: \"\\F2A0\"; }\n\n.ion-male:before {\n  content: \"\\F2A1\"; }\n\n.ion-man:before {\n  content: \"\\F202\"; }\n\n.ion-map:before {\n  content: \"\\F203\"; }\n\n.ion-medkit:before {\n  content: \"\\F2A2\"; }\n\n.ion-merge:before {\n  content: \"\\F33F\"; }\n\n.ion-mic-a:before {\n  content: \"\\F204\"; }\n\n.ion-mic-b:before {\n  content: \"\\F205\"; }\n\n.ion-mic-c:before {\n  content: \"\\F206\"; }\n\n.ion-minus:before {\n  content: \"\\F209\"; }\n\n.ion-minus-circled:before {\n  content: \"\\F207\"; }\n\n.ion-minus-round:before {\n  content: \"\\F208\"; }\n\n.ion-model-s:before {\n  content: \"\\F2C1\"; }\n\n.ion-monitor:before {\n  content: \"\\F20A\"; }\n\n.ion-more:before {\n  content: \"\\F20B\"; }\n\n.ion-mouse:before {\n  content: \"\\F340\"; }\n\n.ion-music-note:before {\n  content: \"\\F20C\"; }\n\n.ion-navicon:before {\n  content: \"\\F20E\"; }\n\n.ion-navicon-round:before {\n  content: \"\\F20D\"; }\n\n.ion-navigate:before {\n  content: \"\\F2A3\"; }\n\n.ion-network:before {\n  content: \"\\F341\"; }\n\n.ion-no-smoking:before {\n  content: \"\\F2C2\"; }\n\n.ion-nuclear:before {\n  content: \"\\F2A4\"; }\n\n.ion-outlet:before {\n  content: \"\\F342\"; }\n\n.ion-paper-airplane:before {\n  content: \"\\F2C3\"; }\n\n.ion-paperclip:before {\n  content: \"\\F20F\"; }\n\n.ion-pause:before {\n  content: \"\\F210\"; }\n\n.ion-person:before {\n  content: \"\\F213\"; }\n\n.ion-person-add:before {\n  content: \"\\F211\"; }\n\n.ion-person-stalker:before {\n  content: \"\\F212\"; }\n\n.ion-pie-graph:before {\n  content: \"\\F2A5\"; }\n\n.ion-pin:before {\n  content: \"\\F2A6\"; }\n\n.ion-pinpoint:before {\n  content: \"\\F2A7\"; }\n\n.ion-pizza:before {\n  content: \"\\F2A8\"; }\n\n.ion-plane:before {\n  content: \"\\F214\"; }\n\n.ion-planet:before {\n  content: \"\\F343\"; }\n\n.ion-play:before {\n  content: \"\\F215\"; }\n\n.ion-playstation:before {\n  content: \"\\F30A\"; }\n\n.ion-plus:before {\n  content: \"\\F218\"; }\n\n.ion-plus-circled:before {\n  content: \"\\F216\"; }\n\n.ion-plus-round:before {\n  content: \"\\F217\"; }\n\n.ion-podium:before {\n  content: \"\\F344\"; }\n\n.ion-pound:before {\n  content: \"\\F219\"; }\n\n.ion-power:before {\n  content: \"\\F2A9\"; }\n\n.ion-pricetag:before {\n  content: \"\\F2AA\"; }\n\n.ion-pricetags:before {\n  content: \"\\F2AB\"; }\n\n.ion-printer:before {\n  content: \"\\F21A\"; }\n\n.ion-pull-request:before {\n  content: \"\\F345\"; }\n\n.ion-qr-scanner:before {\n  content: \"\\F346\"; }\n\n.ion-quote:before {\n  content: \"\\F347\"; }\n\n.ion-radio-waves:before {\n  content: \"\\F2AC\"; }\n\n.ion-record:before {\n  content: \"\\F21B\"; }\n\n.ion-refresh:before, .ion-refreshing:before {\n  content: \"\\F21C\"; }\n\n.ion-reply:before {\n  content: \"\\F21E\"; }\n\n.ion-reply-all:before {\n  content: \"\\F21D\"; }\n\n.ion-ribbon-a:before {\n  content: \"\\F348\"; }\n\n.ion-ribbon-b:before {\n  content: \"\\F349\"; }\n\n.ion-sad:before {\n  content: \"\\F34A\"; }\n\n.ion-scissors:before {\n  content: \"\\F34B\"; }\n\n.ion-search:before {\n  content: \"\\F21F\"; }\n\n.ion-settings:before {\n  content: \"\\F2AD\"; }\n\n.ion-share:before {\n  content: \"\\F220\"; }\n\n.ion-shuffle:before {\n  content: \"\\F221\"; }\n\n.ion-skip-backward:before {\n  content: \"\\F222\"; }\n\n.ion-skip-forward:before {\n  content: \"\\F223\"; }\n\n.ion-social-android:before {\n  content: \"\\F225\"; }\n\n.ion-social-android-outline:before {\n  content: \"\\F224\"; }\n\n.ion-social-apple:before {\n  content: \"\\F227\"; }\n\n.ion-social-apple-outline:before {\n  content: \"\\F226\"; }\n\n.ion-social-bitcoin:before {\n  content: \"\\F2AF\"; }\n\n.ion-social-bitcoin-outline:before {\n  content: \"\\F2AE\"; }\n\n.ion-social-buffer:before {\n  content: \"\\F229\"; }\n\n.ion-social-buffer-outline:before {\n  content: \"\\F228\"; }\n\n.ion-social-designernews:before {\n  content: \"\\F22B\"; }\n\n.ion-social-designernews-outline:before {\n  content: \"\\F22A\"; }\n\n.ion-social-dribbble:before {\n  content: \"\\F22D\"; }\n\n.ion-social-dribbble-outline:before {\n  content: \"\\F22C\"; }\n\n.ion-social-dropbox:before {\n  content: \"\\F22F\"; }\n\n.ion-social-dropbox-outline:before {\n  content: \"\\F22E\"; }\n\n.ion-social-facebook:before {\n  content: \"\\F231\"; }\n\n.ion-social-facebook-outline:before {\n  content: \"\\F230\"; }\n\n.ion-social-foursquare:before {\n  content: \"\\F34D\"; }\n\n.ion-social-foursquare-outline:before {\n  content: \"\\F34C\"; }\n\n.ion-social-freebsd-devil:before {\n  content: \"\\F2C4\"; }\n\n.ion-social-github:before {\n  content: \"\\F233\"; }\n\n.ion-social-github-outline:before {\n  content: \"\\F232\"; }\n\n.ion-social-google:before {\n  content: \"\\F34F\"; }\n\n.ion-social-google-outline:before {\n  content: \"\\F34E\"; }\n\n.ion-social-googleplus:before {\n  content: \"\\F235\"; }\n\n.ion-social-googleplus-outline:before {\n  content: \"\\F234\"; }\n\n.ion-social-hackernews:before {\n  content: \"\\F237\"; }\n\n.ion-social-hackernews-outline:before {\n  content: \"\\F236\"; }\n\n.ion-social-instagram:before {\n  content: \"\\F351\"; }\n\n.ion-social-instagram-outline:before {\n  content: \"\\F350\"; }\n\n.ion-social-linkedin:before {\n  content: \"\\F239\"; }\n\n.ion-social-linkedin-outline:before {\n  content: \"\\F238\"; }\n\n.ion-social-pinterest:before {\n  content: \"\\F2B1\"; }\n\n.ion-social-pinterest-outline:before {\n  content: \"\\F2B0\"; }\n\n.ion-social-reddit:before {\n  content: \"\\F23B\"; }\n\n.ion-social-reddit-outline:before {\n  content: \"\\F23A\"; }\n\n.ion-social-rss:before {\n  content: \"\\F23D\"; }\n\n.ion-social-rss-outline:before {\n  content: \"\\F23C\"; }\n\n.ion-social-skype:before {\n  content: \"\\F23F\"; }\n\n.ion-social-skype-outline:before {\n  content: \"\\F23E\"; }\n\n.ion-social-tumblr:before {\n  content: \"\\F241\"; }\n\n.ion-social-tumblr-outline:before {\n  content: \"\\F240\"; }\n\n.ion-social-tux:before {\n  content: \"\\F2C5\"; }\n\n.ion-social-twitter:before {\n  content: \"\\F243\"; }\n\n.ion-social-twitter-outline:before {\n  content: \"\\F242\"; }\n\n.ion-social-usd:before {\n  content: \"\\F353\"; }\n\n.ion-social-usd-outline:before {\n  content: \"\\F352\"; }\n\n.ion-social-vimeo:before {\n  content: \"\\F245\"; }\n\n.ion-social-vimeo-outline:before {\n  content: \"\\F244\"; }\n\n.ion-social-windows:before {\n  content: \"\\F247\"; }\n\n.ion-social-windows-outline:before {\n  content: \"\\F246\"; }\n\n.ion-social-wordpress:before {\n  content: \"\\F249\"; }\n\n.ion-social-wordpress-outline:before {\n  content: \"\\F248\"; }\n\n.ion-social-yahoo:before {\n  content: \"\\F24B\"; }\n\n.ion-social-yahoo-outline:before {\n  content: \"\\F24A\"; }\n\n.ion-social-youtube:before {\n  content: \"\\F24D\"; }\n\n.ion-social-youtube-outline:before {\n  content: \"\\F24C\"; }\n\n.ion-speakerphone:before {\n  content: \"\\F2B2\"; }\n\n.ion-speedometer:before {\n  content: \"\\F2B3\"; }\n\n.ion-spoon:before {\n  content: \"\\F2B4\"; }\n\n.ion-star:before {\n  content: \"\\F24E\"; }\n\n.ion-stats-bars:before {\n  content: \"\\F2B5\"; }\n\n.ion-steam:before {\n  content: \"\\F30B\"; }\n\n.ion-stop:before {\n  content: \"\\F24F\"; }\n\n.ion-thermometer:before {\n  content: \"\\F2B6\"; }\n\n.ion-thumbsdown:before {\n  content: \"\\F250\"; }\n\n.ion-thumbsup:before {\n  content: \"\\F251\"; }\n\n.ion-toggle:before {\n  content: \"\\F355\"; }\n\n.ion-toggle-filled:before {\n  content: \"\\F354\"; }\n\n.ion-trash-a:before {\n  content: \"\\F252\"; }\n\n.ion-trash-b:before {\n  content: \"\\F253\"; }\n\n.ion-trophy:before {\n  content: \"\\F356\"; }\n\n.ion-umbrella:before {\n  content: \"\\F2B7\"; }\n\n.ion-university:before {\n  content: \"\\F357\"; }\n\n.ion-unlocked:before {\n  content: \"\\F254\"; }\n\n.ion-upload:before {\n  content: \"\\F255\"; }\n\n.ion-usb:before {\n  content: \"\\F2B8\"; }\n\n.ion-videocamera:before {\n  content: \"\\F256\"; }\n\n.ion-volume-high:before {\n  content: \"\\F257\"; }\n\n.ion-volume-low:before {\n  content: \"\\F258\"; }\n\n.ion-volume-medium:before {\n  content: \"\\F259\"; }\n\n.ion-volume-mute:before {\n  content: \"\\F25A\"; }\n\n.ion-wand:before {\n  content: \"\\F358\"; }\n\n.ion-waterdrop:before {\n  content: \"\\F25B\"; }\n\n.ion-wifi:before {\n  content: \"\\F25C\"; }\n\n.ion-wineglass:before {\n  content: \"\\F2B9\"; }\n\n.ion-woman:before {\n  content: \"\\F25D\"; }\n\n.ion-wrench:before {\n  content: \"\\F2BA\"; }\n\n.ion-xbox:before {\n  content: \"\\F30C\"; }\n\n.modal-backdrop.am-fade {\n  opacity: .5;\n  transition: opacity .15s linear; }\n  .modal-backdrop.am-fade.ng-enter {\n    opacity: 0; }\n    .modal-backdrop.am-fade.ng-enter.ng-enter-active {\n      opacity: .5; }\n  .modal-backdrop.am-fade.ng-leave {\n    opacity: .5; }\n    .modal-backdrop.am-fade.ng-leave.ng-leave-active {\n      opacity: 0; }\n\n.modal-content {\n  border: none;\n  border-radius: 0px;\n  color: #222; }\n\n.modal-header {\n  background: #E9E9E9;\n  box-shadow: 0px 0px 1px #222; }\n\n.edit-form-body {\n  max-height: 900px;\n  overflow-y: auto; }\n\n@media (min-height: 500px) {\n  .edit-form-body {\n    height: 400px; } }\n\n@media (min-height: 800px) {\n  .edit-form-body {\n    height: 700px; } }\n\n.btn-primary {\n  background: #4C8654;\n  border-color: #38663F; }\n  .btn-primary:hover, .btn-primary.active, .btn-primary:focus {\n    background: #3d7345;\n    border-color: #295230; }\n\nbody {\n  background: #EEF3F4;\n  color: #556568; }\n\n.navbar-bamboo {\n  background: #253133;\n  border-radius: 0px; }\n  .navbar-bamboo .navbar-brand {\n    color: white; }\n  .navbar-bamboo .btn-create-service {\n    float: right;\n    margin-top: 7px; }\n\n.service-list {\n  background: white; }\n  .service-list .service-list-title {\n    padding: 5px 0px;\n    font-weight: bold;\n    vertical-align: text-bottom;\n    background: #EEF3F4;\n    border-bottom: 2px solid #CCC; }\n    .service-list .service-list-title span {\n      display: table-cell;\n      vertical-align: middle;\n      line-height: 30px; }\n  .service-list .service-item {\n    vertical-align: text-bottom;\n    border-bottom: 1px solid #CCC;\n    padding: 5px 0px; }\n    .service-list .service-item.service-action-type-marathon {\n      color: rgba(0, 0, 0, 0.5); }\n    .service-list .service-item.service-action-type-service {\n      color: rgba(0, 0, 0, 0.5); }\n    .service-list .service-item.service-action-type-default {\n      background: rgba(103, 164, 111, 0.3); }\n    .service-list .service-item .item-actions {\n      text-align: right; }\n      .service-list .service-item .item-actions .item-actions-group {\n        float: right; }\n    .service-list .service-item i.message {\n      font-size: 11px;\n      font-style: normal; }\n    .service-list .service-item .btn.btn-danger, .service-list .service-item .btn.btn-create-service, .service-list .service-item .btn.btn-default {\n      margin-left: 10px; }\n    .service-list .service-item span {\n      display: table-cell;\n      vertical-align: middle;\n      line-height: 30px; }\n", ""]);
+	exports.push([module.id, "@charset \"UTF-8\";\n/*!\n  Ionicons, v1.5.2\n  Created by Ben Sperry for the Ionic Framework, http://ionicons.com/\n  https://twitter.com/benjsperry  https://twitter.com/ionicframework\n  MIT License: https://github.com/driftyco/ionicons\n*/\n@font-face {\n  font-family: \"Ionicons\";\n  src: url(" + __webpack_require__(210) + ");\n  src: url(" + __webpack_require__(210) + "#iefix) format(\"embedded-opentype\"), url(" + __webpack_require__(211) + ") format(\"truetype\"), url(" + __webpack_require__(212) + ") format(\"woff\"), url(" + __webpack_require__(213) + "#Ionicons) format(\"svg\");\n  font-weight: normal;\n  font-style: normal; }\n\n.ion, .ion-loading-a,\n.ion-loading-b,\n.ion-loading-c,\n.ion-loading-d,\n.ion-looping,\n.ion-refreshing,\n.ion-ios7-reloading, .ionicons,\n.ion-alert:before,\n.ion-alert-circled:before,\n.ion-android-add:before,\n.ion-android-add-contact:before,\n.ion-android-alarm:before,\n.ion-android-archive:before,\n.ion-android-arrow-back:before,\n.ion-android-arrow-down-left:before,\n.ion-android-arrow-down-right:before,\n.ion-android-arrow-forward:before,\n.ion-android-arrow-up-left:before,\n.ion-android-arrow-up-right:before,\n.ion-android-battery:before,\n.ion-android-book:before,\n.ion-android-calendar:before,\n.ion-android-call:before,\n.ion-android-camera:before,\n.ion-android-chat:before,\n.ion-android-checkmark:before,\n.ion-android-clock:before,\n.ion-android-close:before,\n.ion-android-contact:before,\n.ion-android-contacts:before,\n.ion-android-data:before,\n.ion-android-developer:before,\n.ion-android-display:before,\n.ion-android-download:before,\n.ion-android-drawer:before,\n.ion-android-dropdown:before,\n.ion-android-earth:before,\n.ion-android-folder:before,\n.ion-android-forums:before,\n.ion-android-friends:before,\n.ion-android-hand:before,\n.ion-android-image:before,\n.ion-android-inbox:before,\n.ion-android-information:before,\n.ion-android-keypad:before,\n.ion-android-lightbulb:before,\n.ion-android-locate:before,\n.ion-android-location:before,\n.ion-android-mail:before,\n.ion-android-microphone:before,\n.ion-android-mixer:before,\n.ion-android-more:before,\n.ion-android-note:before,\n.ion-android-playstore:before,\n.ion-android-printer:before,\n.ion-android-promotion:before,\n.ion-android-reminder:before,\n.ion-android-remove:before,\n.ion-android-search:before,\n.ion-android-send:before,\n.ion-android-settings:before,\n.ion-android-share:before,\n.ion-android-social:before,\n.ion-android-social-user:before,\n.ion-android-sort:before,\n.ion-android-stair-drawer:before,\n.ion-android-star:before,\n.ion-android-stopwatch:before,\n.ion-android-storage:before,\n.ion-android-system-back:before,\n.ion-android-system-home:before,\n.ion-android-system-windows:before,\n.ion-android-timer:before,\n.ion-android-trash:before,\n.ion-android-user-menu:before,\n.ion-android-volume:before,\n.ion-android-wifi:before,\n.ion-aperture:before,\n.ion-archive:before,\n.ion-arrow-down-a:before,\n.ion-arrow-down-b:before,\n.ion-arrow-down-c:before,\n.ion-arrow-expand:before,\n.ion-arrow-graph-down-left:before,\n.ion-arrow-graph-down-right:before,\n.ion-arrow-graph-up-left:before,\n.ion-arrow-graph-up-right:before,\n.ion-arrow-left-a:before,\n.ion-arrow-left-b:before,\n.ion-arrow-left-c:before,\n.ion-arrow-move:before,\n.ion-arrow-resize:before,\n.ion-arrow-return-left:before,\n.ion-arrow-return-right:before,\n.ion-arrow-right-a:before,\n.ion-arrow-right-b:before,\n.ion-arrow-right-c:before,\n.ion-arrow-shrink:before,\n.ion-arrow-swap:before,\n.ion-arrow-up-a:before,\n.ion-arrow-up-b:before,\n.ion-arrow-up-c:before,\n.ion-asterisk:before,\n.ion-at:before,\n.ion-bag:before,\n.ion-battery-charging:before,\n.ion-battery-empty:before,\n.ion-battery-full:before,\n.ion-battery-half:before,\n.ion-battery-low:before,\n.ion-beaker:before,\n.ion-beer:before,\n.ion-bluetooth:before,\n.ion-bonfire:before,\n.ion-bookmark:before,\n.ion-briefcase:before,\n.ion-bug:before,\n.ion-calculator:before,\n.ion-calendar:before,\n.ion-camera:before,\n.ion-card:before,\n.ion-cash:before,\n.ion-chatbox:before,\n.ion-chatbox-working:before,\n.ion-chatboxes:before,\n.ion-chatbubble:before,\n.ion-chatbubble-working:before,\n.ion-chatbubbles:before,\n.ion-checkmark:before,\n.ion-checkmark-circled:before,\n.ion-checkmark-round:before,\n.ion-chevron-down:before,\n.ion-chevron-left:before,\n.ion-chevron-right:before,\n.ion-chevron-up:before,\n.ion-clipboard:before,\n.ion-clock:before,\n.ion-close:before,\n.ion-close-circled:before,\n.ion-close-round:before,\n.ion-closed-captioning:before,\n.ion-cloud:before,\n.ion-code:before,\n.ion-code-download:before,\n.ion-code-working:before,\n.ion-coffee:before,\n.ion-compass:before,\n.ion-compose:before,\n.ion-connection-bars:before,\n.ion-contrast:before,\n.ion-cube:before,\n.ion-disc:before,\n.ion-document:before,\n.ion-document-text:before,\n.ion-drag:before,\n.ion-earth:before,\n.ion-edit:before,\n.ion-egg:before,\n.ion-eject:before,\n.ion-email:before,\n.ion-eye:before,\n.ion-eye-disabled:before,\n.ion-female:before,\n.ion-filing:before,\n.ion-film-marker:before,\n.ion-fireball:before,\n.ion-flag:before,\n.ion-flame:before,\n.ion-flash:before,\n.ion-flash-off:before,\n.ion-flask:before,\n.ion-folder:before,\n.ion-fork:before,\n.ion-fork-repo:before,\n.ion-forward:before,\n.ion-funnel:before,\n.ion-game-controller-a:before,\n.ion-game-controller-b:before,\n.ion-gear-a:before,\n.ion-gear-b:before,\n.ion-grid:before,\n.ion-hammer:before,\n.ion-happy:before,\n.ion-headphone:before,\n.ion-heart:before,\n.ion-heart-broken:before,\n.ion-help:before,\n.ion-help-buoy:before,\n.ion-help-circled:before,\n.ion-home:before,\n.ion-icecream:before,\n.ion-icon-social-google-plus:before,\n.ion-icon-social-google-plus-outline:before,\n.ion-image:before,\n.ion-images:before,\n.ion-information:before,\n.ion-information-circled:before,\n.ion-ionic:before,\n.ion-ios7-alarm:before,\n.ion-ios7-alarm-outline:before,\n.ion-ios7-albums:before,\n.ion-ios7-albums-outline:before,\n.ion-ios7-americanfootball:before,\n.ion-ios7-americanfootball-outline:before,\n.ion-ios7-analytics:before,\n.ion-ios7-analytics-outline:before,\n.ion-ios7-arrow-back:before,\n.ion-ios7-arrow-down:before,\n.ion-ios7-arrow-forward:before,\n.ion-ios7-arrow-left:before,\n.ion-ios7-arrow-right:before,\n.ion-ios7-arrow-thin-down:before,\n.ion-ios7-arrow-thin-left:before,\n.ion-ios7-arrow-thin-right:before,\n.ion-ios7-arrow-thin-up:before,\n.ion-ios7-arrow-up:before,\n.ion-ios7-at:before,\n.ion-ios7-at-outline:before,\n.ion-ios7-barcode:before,\n.ion-ios7-barcode-outline:before,\n.ion-ios7-baseball:before,\n.ion-ios7-baseball-outline:before,\n.ion-ios7-basketball:before,\n.ion-ios7-basketball-outline:before,\n.ion-ios7-bell:before,\n.ion-ios7-bell-outline:before,\n.ion-ios7-bolt:before,\n.ion-ios7-bolt-outline:before,\n.ion-ios7-bookmarks:before,\n.ion-ios7-bookmarks-outline:before,\n.ion-ios7-box:before,\n.ion-ios7-box-outline:before,\n.ion-ios7-briefcase:before,\n.ion-ios7-briefcase-outline:before,\n.ion-ios7-browsers:before,\n.ion-ios7-browsers-outline:before,\n.ion-ios7-calculator:before,\n.ion-ios7-calculator-outline:before,\n.ion-ios7-calendar:before,\n.ion-ios7-calendar-outline:before,\n.ion-ios7-camera:before,\n.ion-ios7-camera-outline:before,\n.ion-ios7-cart:before,\n.ion-ios7-cart-outline:before,\n.ion-ios7-chatboxes:before,\n.ion-ios7-chatboxes-outline:before,\n.ion-ios7-chatbubble:before,\n.ion-ios7-chatbubble-outline:before,\n.ion-ios7-checkmark:before,\n.ion-ios7-checkmark-empty:before,\n.ion-ios7-checkmark-outline:before,\n.ion-ios7-circle-filled:before,\n.ion-ios7-circle-outline:before,\n.ion-ios7-clock:before,\n.ion-ios7-clock-outline:before,\n.ion-ios7-close:before,\n.ion-ios7-close-empty:before,\n.ion-ios7-close-outline:before,\n.ion-ios7-cloud:before,\n.ion-ios7-cloud-download:before,\n.ion-ios7-cloud-download-outline:before,\n.ion-ios7-cloud-outline:before,\n.ion-ios7-cloud-upload:before,\n.ion-ios7-cloud-upload-outline:before,\n.ion-ios7-cloudy:before,\n.ion-ios7-cloudy-night:before,\n.ion-ios7-cloudy-night-outline:before,\n.ion-ios7-cloudy-outline:before,\n.ion-ios7-cog:before,\n.ion-ios7-cog-outline:before,\n.ion-ios7-compose:before,\n.ion-ios7-compose-outline:before,\n.ion-ios7-contact:before,\n.ion-ios7-contact-outline:before,\n.ion-ios7-copy:before,\n.ion-ios7-copy-outline:before,\n.ion-ios7-download:before,\n.ion-ios7-download-outline:before,\n.ion-ios7-drag:before,\n.ion-ios7-email:before,\n.ion-ios7-email-outline:before,\n.ion-ios7-expand:before,\n.ion-ios7-eye:before,\n.ion-ios7-eye-outline:before,\n.ion-ios7-fastforward:before,\n.ion-ios7-fastforward-outline:before,\n.ion-ios7-filing:before,\n.ion-ios7-filing-outline:before,\n.ion-ios7-film:before,\n.ion-ios7-film-outline:before,\n.ion-ios7-flag:before,\n.ion-ios7-flag-outline:before,\n.ion-ios7-folder:before,\n.ion-ios7-folder-outline:before,\n.ion-ios7-football:before,\n.ion-ios7-football-outline:before,\n.ion-ios7-gear:before,\n.ion-ios7-gear-outline:before,\n.ion-ios7-glasses:before,\n.ion-ios7-glasses-outline:before,\n.ion-ios7-heart:before,\n.ion-ios7-heart-outline:before,\n.ion-ios7-help:before,\n.ion-ios7-help-empty:before,\n.ion-ios7-help-outline:before,\n.ion-ios7-home:before,\n.ion-ios7-home-outline:before,\n.ion-ios7-infinite:before,\n.ion-ios7-infinite-outline:before,\n.ion-ios7-information:before,\n.ion-ios7-information-empty:before,\n.ion-ios7-information-outline:before,\n.ion-ios7-ionic-outline:before,\n.ion-ios7-keypad:before,\n.ion-ios7-keypad-outline:before,\n.ion-ios7-lightbulb:before,\n.ion-ios7-lightbulb-outline:before,\n.ion-ios7-location:before,\n.ion-ios7-location-outline:before,\n.ion-ios7-locked:before,\n.ion-ios7-locked-outline:before,\n.ion-ios7-loop:before,\n.ion-ios7-loop-strong:before,\n.ion-ios7-medkit:before,\n.ion-ios7-medkit-outline:before,\n.ion-ios7-mic:before,\n.ion-ios7-mic-off:before,\n.ion-ios7-mic-outline:before,\n.ion-ios7-minus:before,\n.ion-ios7-minus-empty:before,\n.ion-ios7-minus-outline:before,\n.ion-ios7-monitor:before,\n.ion-ios7-monitor-outline:before,\n.ion-ios7-moon:before,\n.ion-ios7-moon-outline:before,\n.ion-ios7-more:before,\n.ion-ios7-more-outline:before,\n.ion-ios7-musical-note:before,\n.ion-ios7-musical-notes:before,\n.ion-ios7-navigate:before,\n.ion-ios7-navigate-outline:before,\n.ion-ios7-paper:before,\n.ion-ios7-paper-outline:before,\n.ion-ios7-paperplane:before,\n.ion-ios7-paperplane-outline:before,\n.ion-ios7-partlysunny:before,\n.ion-ios7-partlysunny-outline:before,\n.ion-ios7-pause:before,\n.ion-ios7-pause-outline:before,\n.ion-ios7-paw:before,\n.ion-ios7-paw-outline:before,\n.ion-ios7-people:before,\n.ion-ios7-people-outline:before,\n.ion-ios7-person:before,\n.ion-ios7-person-outline:before,\n.ion-ios7-personadd:before,\n.ion-ios7-personadd-outline:before,\n.ion-ios7-photos:before,\n.ion-ios7-photos-outline:before,\n.ion-ios7-pie:before,\n.ion-ios7-pie-outline:before,\n.ion-ios7-play:before,\n.ion-ios7-play-outline:before,\n.ion-ios7-plus:before,\n.ion-ios7-plus-empty:before,\n.ion-ios7-plus-outline:before,\n.ion-ios7-pricetag:before,\n.ion-ios7-pricetag-outline:before,\n.ion-ios7-pricetags:before,\n.ion-ios7-pricetags-outline:before,\n.ion-ios7-printer:before,\n.ion-ios7-printer-outline:before,\n.ion-ios7-pulse:before,\n.ion-ios7-pulse-strong:before,\n.ion-ios7-rainy:before,\n.ion-ios7-rainy-outline:before,\n.ion-ios7-recording:before,\n.ion-ios7-recording-outline:before,\n.ion-ios7-redo:before,\n.ion-ios7-redo-outline:before,\n.ion-ios7-refresh:before,\n.ion-ios7-refresh-empty:before,\n.ion-ios7-refresh-outline:before,\n.ion-ios7-reload:before, .ion-ios7-reloading:before,\n.ion-ios7-reverse-camera:before,\n.ion-ios7-reverse-camera-outline:before,\n.ion-ios7-rewind:before,\n.ion-ios7-rewind-outline:before,\n.ion-ios7-search:before,\n.ion-ios7-search-strong:before,\n.ion-ios7-settings:before,\n.ion-ios7-settings-strong:before,\n.ion-ios7-shrink:before,\n.ion-ios7-skipbackward:before,\n.ion-ios7-skipbackward-outline:before,\n.ion-ios7-skipforward:before,\n.ion-ios7-skipforward-outline:before,\n.ion-ios7-snowy:before,\n.ion-ios7-speedometer:before,\n.ion-ios7-speedometer-outline:before,\n.ion-ios7-star:before,\n.ion-ios7-star-half:before,\n.ion-ios7-star-outline:before,\n.ion-ios7-stopwatch:before,\n.ion-ios7-stopwatch-outline:before,\n.ion-ios7-sunny:before,\n.ion-ios7-sunny-outline:before,\n.ion-ios7-telephone:before,\n.ion-ios7-telephone-outline:before,\n.ion-ios7-tennisball:before,\n.ion-ios7-tennisball-outline:before,\n.ion-ios7-thunderstorm:before,\n.ion-ios7-thunderstorm-outline:before,\n.ion-ios7-time:before,\n.ion-ios7-time-outline:before,\n.ion-ios7-timer:before,\n.ion-ios7-timer-outline:before,\n.ion-ios7-toggle:before,\n.ion-ios7-toggle-outline:before,\n.ion-ios7-trash:before,\n.ion-ios7-trash-outline:before,\n.ion-ios7-undo:before,\n.ion-ios7-undo-outline:before,\n.ion-ios7-unlocked:before,\n.ion-ios7-unlocked-outline:before,\n.ion-ios7-upload:before,\n.ion-ios7-upload-outline:before,\n.ion-ios7-videocam:before,\n.ion-ios7-videocam-outline:before,\n.ion-ios7-volume-high:before,\n.ion-ios7-volume-low:before,\n.ion-ios7-wineglass:before,\n.ion-ios7-wineglass-outline:before,\n.ion-ios7-world:before,\n.ion-ios7-world-outline:before,\n.ion-ipad:before,\n.ion-iphone:before,\n.ion-ipod:before,\n.ion-jet:before,\n.ion-key:before,\n.ion-knife:before,\n.ion-laptop:before,\n.ion-leaf:before,\n.ion-levels:before,\n.ion-lightbulb:before,\n.ion-link:before,\n.ion-load-a:before, .ion-loading-a:before,\n.ion-load-b:before, .ion-loading-b:before,\n.ion-load-c:before, .ion-loading-c:before,\n.ion-load-d:before, .ion-loading-d:before,\n.ion-location:before,\n.ion-locked:before,\n.ion-log-in:before,\n.ion-log-out:before,\n.ion-loop:before, .ion-looping:before,\n.ion-magnet:before,\n.ion-male:before,\n.ion-man:before,\n.ion-map:before,\n.ion-medkit:before,\n.ion-merge:before,\n.ion-mic-a:before,\n.ion-mic-b:before,\n.ion-mic-c:before,\n.ion-minus:before,\n.ion-minus-circled:before,\n.ion-minus-round:before,\n.ion-model-s:before,\n.ion-monitor:before,\n.ion-more:before,\n.ion-mouse:before,\n.ion-music-note:before,\n.ion-navicon:before,\n.ion-navicon-round:before,\n.ion-navigate:before,\n.ion-network:before,\n.ion-no-smoking:before,\n.ion-nuclear:before,\n.ion-outlet:before,\n.ion-paper-airplane:before,\n.ion-paperclip:before,\n.ion-pause:before,\n.ion-person:before,\n.ion-person-add:before,\n.ion-person-stalker:before,\n.ion-pie-graph:before,\n.ion-pin:before,\n.ion-pinpoint:before,\n.ion-pizza:before,\n.ion-plane:before,\n.ion-planet:before,\n.ion-play:before,\n.ion-playstation:before,\n.ion-plus:before,\n.ion-plus-circled:before,\n.ion-plus-round:before,\n.ion-podium:before,\n.ion-pound:before,\n.ion-power:before,\n.ion-pricetag:before,\n.ion-pricetags:before,\n.ion-printer:before,\n.ion-pull-request:before,\n.ion-qr-scanner:before,\n.ion-quote:before,\n.ion-radio-waves:before,\n.ion-record:before,\n.ion-refresh:before, .ion-refreshing:before,\n.ion-reply:before,\n.ion-reply-all:before,\n.ion-ribbon-a:before,\n.ion-ribbon-b:before,\n.ion-sad:before,\n.ion-scissors:before,\n.ion-search:before,\n.ion-settings:before,\n.ion-share:before,\n.ion-shuffle:before,\n.ion-skip-backward:before,\n.ion-skip-forward:before,\n.ion-social-android:before,\n.ion-social-android-outline:before,\n.ion-social-apple:before,\n.ion-social-apple-outline:before,\n.ion-social-bitcoin:before,\n.ion-social-bitcoin-outline:before,\n.ion-social-buffer:before,\n.ion-social-buffer-outline:before,\n.ion-social-designernews:before,\n.ion-social-designernews-outline:before,\n.ion-social-dribbble:before,\n.ion-social-dribbble-outline:before,\n.ion-social-dropbox:before,\n.ion-social-dropbox-outline:before,\n.ion-social-facebook:before,\n.ion-social-facebook-outline:before,\n.ion-social-foursquare:before,\n.ion-social-foursquare-outline:before,\n.ion-social-freebsd-devil:before,\n.ion-social-github:before,\n.ion-social-github-outline:before,\n.ion-social-google:before,\n.ion-social-google-outline:before,\n.ion-social-googleplus:before,\n.ion-social-googleplus-outline:before,\n.ion-social-hackernews:before,\n.ion-social-hackernews-outline:before,\n.ion-social-instagram:before,\n.ion-social-instagram-outline:before,\n.ion-social-linkedin:before,\n.ion-social-linkedin-outline:before,\n.ion-social-pinterest:before,\n.ion-social-pinterest-outline:before,\n.ion-social-reddit:before,\n.ion-social-reddit-outline:before,\n.ion-social-rss:before,\n.ion-social-rss-outline:before,\n.ion-social-skype:before,\n.ion-social-skype-outline:before,\n.ion-social-tumblr:before,\n.ion-social-tumblr-outline:before,\n.ion-social-tux:before,\n.ion-social-twitter:before,\n.ion-social-twitter-outline:before,\n.ion-social-usd:before,\n.ion-social-usd-outline:before,\n.ion-social-vimeo:before,\n.ion-social-vimeo-outline:before,\n.ion-social-windows:before,\n.ion-social-windows-outline:before,\n.ion-social-wordpress:before,\n.ion-social-wordpress-outline:before,\n.ion-social-yahoo:before,\n.ion-social-yahoo-outline:before,\n.ion-social-youtube:before,\n.ion-social-youtube-outline:before,\n.ion-speakerphone:before,\n.ion-speedometer:before,\n.ion-spoon:before,\n.ion-star:before,\n.ion-stats-bars:before,\n.ion-steam:before,\n.ion-stop:before,\n.ion-thermometer:before,\n.ion-thumbsdown:before,\n.ion-thumbsup:before,\n.ion-toggle:before,\n.ion-toggle-filled:before,\n.ion-trash-a:before,\n.ion-trash-b:before,\n.ion-trophy:before,\n.ion-umbrella:before,\n.ion-university:before,\n.ion-unlocked:before,\n.ion-upload:before,\n.ion-usb:before,\n.ion-videocamera:before,\n.ion-volume-high:before,\n.ion-volume-low:before,\n.ion-volume-medium:before,\n.ion-volume-mute:before,\n.ion-wand:before,\n.ion-waterdrop:before,\n.ion-wifi:before,\n.ion-wineglass:before,\n.ion-woman:before,\n.ion-wrench:before,\n.ion-xbox:before {\n  display: inline-block;\n  font-family: \"Ionicons\";\n  speak: none;\n  font-style: normal;\n  font-weight: normal;\n  font-variant: normal;\n  text-transform: none;\n  text-rendering: auto;\n  line-height: 1;\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale; }\n\n.ion-spin, .ion-loading-a,\n.ion-loading-b,\n.ion-loading-c,\n.ion-loading-d,\n.ion-looping,\n.ion-refreshing,\n.ion-ios7-reloading {\n  -webkit-animation: spin 1s infinite linear;\n  -moz-animation: spin 1s infinite linear;\n  -o-animation: spin 1s infinite linear;\n  animation: spin 1s infinite linear; }\n\n@-moz-keyframes spin {\n  0% {\n    -moz-transform: rotate(0deg); }\n  100% {\n    -moz-transform: rotate(359deg); } }\n\n@-webkit-keyframes spin {\n  0% {\n    -webkit-transform: rotate(0deg); }\n  100% {\n    -webkit-transform: rotate(359deg); } }\n\n@-o-keyframes spin {\n  0% {\n    -o-transform: rotate(0deg); }\n  100% {\n    -o-transform: rotate(359deg); } }\n\n@-ms-keyframes spin {\n  0% {\n    -ms-transform: rotate(0deg); }\n  100% {\n    -ms-transform: rotate(359deg); } }\n\n@keyframes spin {\n  0% {\n    transform: rotate(0deg); }\n  100% {\n    transform: rotate(359deg); } }\n\n.ion-loading-a {\n  -webkit-animation-timing-function: steps(8, start);\n  -moz-animation-timing-function: steps(8, start);\n  animation-timing-function: steps(8, start); }\n\n.ion-alert:before {\n  content: \"\\F101\"; }\n\n.ion-alert-circled:before {\n  content: \"\\F100\"; }\n\n.ion-android-add:before {\n  content: \"\\F2C7\"; }\n\n.ion-android-add-contact:before {\n  content: \"\\F2C6\"; }\n\n.ion-android-alarm:before {\n  content: \"\\F2C8\"; }\n\n.ion-android-archive:before {\n  content: \"\\F2C9\"; }\n\n.ion-android-arrow-back:before {\n  content: \"\\F2CA\"; }\n\n.ion-android-arrow-down-left:before {\n  content: \"\\F2CB\"; }\n\n.ion-android-arrow-down-right:before {\n  content: \"\\F2CC\"; }\n\n.ion-android-arrow-forward:before {\n  content: \"\\F30F\"; }\n\n.ion-android-arrow-up-left:before {\n  content: \"\\F2CD\"; }\n\n.ion-android-arrow-up-right:before {\n  content: \"\\F2CE\"; }\n\n.ion-android-battery:before {\n  content: \"\\F2CF\"; }\n\n.ion-android-book:before {\n  content: \"\\F2D0\"; }\n\n.ion-android-calendar:before {\n  content: \"\\F2D1\"; }\n\n.ion-android-call:before {\n  content: \"\\F2D2\"; }\n\n.ion-android-camera:before {\n  content: \"\\F2D3\"; }\n\n.ion-android-chat:before {\n  content: \"\\F2D4\"; }\n\n.ion-android-checkmark:before {\n  content: \"\\F2D5\"; }\n\n.ion-android-clock:before {\n  content: \"\\F2D6\"; }\n\n.ion-android-close:before {\n  content: \"\\F2D7\"; }\n\n.ion-android-contact:before {\n  content: \"\\F2D8\"; }\n\n.ion-android-contacts:before {\n  content: \"\\F2D9\"; }\n\n.ion-android-data:before {\n  content: \"\\F2DA\"; }\n\n.ion-android-developer:before {\n  content: \"\\F2DB\"; }\n\n.ion-android-display:before {\n  content: \"\\F2DC\"; }\n\n.ion-android-download:before {\n  content: \"\\F2DD\"; }\n\n.ion-android-drawer:before {\n  content: \"\\F310\"; }\n\n.ion-android-dropdown:before {\n  content: \"\\F2DE\"; }\n\n.ion-android-earth:before {\n  content: \"\\F2DF\"; }\n\n.ion-android-folder:before {\n  content: \"\\F2E0\"; }\n\n.ion-android-forums:before {\n  content: \"\\F2E1\"; }\n\n.ion-android-friends:before {\n  content: \"\\F2E2\"; }\n\n.ion-android-hand:before {\n  content: \"\\F2E3\"; }\n\n.ion-android-image:before {\n  content: \"\\F2E4\"; }\n\n.ion-android-inbox:before {\n  content: \"\\F2E5\"; }\n\n.ion-android-information:before {\n  content: \"\\F2E6\"; }\n\n.ion-android-keypad:before {\n  content: \"\\F2E7\"; }\n\n.ion-android-lightbulb:before {\n  content: \"\\F2E8\"; }\n\n.ion-android-locate:before {\n  content: \"\\F2E9\"; }\n\n.ion-android-location:before {\n  content: \"\\F2EA\"; }\n\n.ion-android-mail:before {\n  content: \"\\F2EB\"; }\n\n.ion-android-microphone:before {\n  content: \"\\F2EC\"; }\n\n.ion-android-mixer:before {\n  content: \"\\F2ED\"; }\n\n.ion-android-more:before {\n  content: \"\\F2EE\"; }\n\n.ion-android-note:before {\n  content: \"\\F2EF\"; }\n\n.ion-android-playstore:before {\n  content: \"\\F2F0\"; }\n\n.ion-android-printer:before {\n  content: \"\\F2F1\"; }\n\n.ion-android-promotion:before {\n  content: \"\\F2F2\"; }\n\n.ion-android-reminder:before {\n  content: \"\\F2F3\"; }\n\n.ion-android-remove:before {\n  content: \"\\F2F4\"; }\n\n.ion-android-search:before {\n  content: \"\\F2F5\"; }\n\n.ion-android-send:before {\n  content: \"\\F2F6\"; }\n\n.ion-android-settings:before {\n  content: \"\\F2F7\"; }\n\n.ion-android-share:before {\n  content: \"\\F2F8\"; }\n\n.ion-android-social:before {\n  content: \"\\F2FA\"; }\n\n.ion-android-social-user:before {\n  content: \"\\F2F9\"; }\n\n.ion-android-sort:before {\n  content: \"\\F2FB\"; }\n\n.ion-android-stair-drawer:before {\n  content: \"\\F311\"; }\n\n.ion-android-star:before {\n  content: \"\\F2FC\"; }\n\n.ion-android-stopwatch:before {\n  content: \"\\F2FD\"; }\n\n.ion-android-storage:before {\n  content: \"\\F2FE\"; }\n\n.ion-android-system-back:before {\n  content: \"\\F2FF\"; }\n\n.ion-android-system-home:before {\n  content: \"\\F300\"; }\n\n.ion-android-system-windows:before {\n  content: \"\\F301\"; }\n\n.ion-android-timer:before {\n  content: \"\\F302\"; }\n\n.ion-android-trash:before {\n  content: \"\\F303\"; }\n\n.ion-android-user-menu:before {\n  content: \"\\F312\"; }\n\n.ion-android-volume:before {\n  content: \"\\F304\"; }\n\n.ion-android-wifi:before {\n  content: \"\\F305\"; }\n\n.ion-aperture:before {\n  content: \"\\F313\"; }\n\n.ion-archive:before {\n  content: \"\\F102\"; }\n\n.ion-arrow-down-a:before {\n  content: \"\\F103\"; }\n\n.ion-arrow-down-b:before {\n  content: \"\\F104\"; }\n\n.ion-arrow-down-c:before {\n  content: \"\\F105\"; }\n\n.ion-arrow-expand:before {\n  content: \"\\F25E\"; }\n\n.ion-arrow-graph-down-left:before {\n  content: \"\\F25F\"; }\n\n.ion-arrow-graph-down-right:before {\n  content: \"\\F260\"; }\n\n.ion-arrow-graph-up-left:before {\n  content: \"\\F261\"; }\n\n.ion-arrow-graph-up-right:before {\n  content: \"\\F262\"; }\n\n.ion-arrow-left-a:before {\n  content: \"\\F106\"; }\n\n.ion-arrow-left-b:before {\n  content: \"\\F107\"; }\n\n.ion-arrow-left-c:before {\n  content: \"\\F108\"; }\n\n.ion-arrow-move:before {\n  content: \"\\F263\"; }\n\n.ion-arrow-resize:before {\n  content: \"\\F264\"; }\n\n.ion-arrow-return-left:before {\n  content: \"\\F265\"; }\n\n.ion-arrow-return-right:before {\n  content: \"\\F266\"; }\n\n.ion-arrow-right-a:before {\n  content: \"\\F109\"; }\n\n.ion-arrow-right-b:before {\n  content: \"\\F10A\"; }\n\n.ion-arrow-right-c:before {\n  content: \"\\F10B\"; }\n\n.ion-arrow-shrink:before {\n  content: \"\\F267\"; }\n\n.ion-arrow-swap:before {\n  content: \"\\F268\"; }\n\n.ion-arrow-up-a:before {\n  content: \"\\F10C\"; }\n\n.ion-arrow-up-b:before {\n  content: \"\\F10D\"; }\n\n.ion-arrow-up-c:before {\n  content: \"\\F10E\"; }\n\n.ion-asterisk:before {\n  content: \"\\F314\"; }\n\n.ion-at:before {\n  content: \"\\F10F\"; }\n\n.ion-bag:before {\n  content: \"\\F110\"; }\n\n.ion-battery-charging:before {\n  content: \"\\F111\"; }\n\n.ion-battery-empty:before {\n  content: \"\\F112\"; }\n\n.ion-battery-full:before {\n  content: \"\\F113\"; }\n\n.ion-battery-half:before {\n  content: \"\\F114\"; }\n\n.ion-battery-low:before {\n  content: \"\\F115\"; }\n\n.ion-beaker:before {\n  content: \"\\F269\"; }\n\n.ion-beer:before {\n  content: \"\\F26A\"; }\n\n.ion-bluetooth:before {\n  content: \"\\F116\"; }\n\n.ion-bonfire:before {\n  content: \"\\F315\"; }\n\n.ion-bookmark:before {\n  content: \"\\F26B\"; }\n\n.ion-briefcase:before {\n  content: \"\\F26C\"; }\n\n.ion-bug:before {\n  content: \"\\F2BE\"; }\n\n.ion-calculator:before {\n  content: \"\\F26D\"; }\n\n.ion-calendar:before {\n  content: \"\\F117\"; }\n\n.ion-camera:before {\n  content: \"\\F118\"; }\n\n.ion-card:before {\n  content: \"\\F119\"; }\n\n.ion-cash:before {\n  content: \"\\F316\"; }\n\n.ion-chatbox:before {\n  content: \"\\F11B\"; }\n\n.ion-chatbox-working:before {\n  content: \"\\F11A\"; }\n\n.ion-chatboxes:before {\n  content: \"\\F11C\"; }\n\n.ion-chatbubble:before {\n  content: \"\\F11E\"; }\n\n.ion-chatbubble-working:before {\n  content: \"\\F11D\"; }\n\n.ion-chatbubbles:before {\n  content: \"\\F11F\"; }\n\n.ion-checkmark:before {\n  content: \"\\F122\"; }\n\n.ion-checkmark-circled:before {\n  content: \"\\F120\"; }\n\n.ion-checkmark-round:before {\n  content: \"\\F121\"; }\n\n.ion-chevron-down:before {\n  content: \"\\F123\"; }\n\n.ion-chevron-left:before {\n  content: \"\\F124\"; }\n\n.ion-chevron-right:before {\n  content: \"\\F125\"; }\n\n.ion-chevron-up:before {\n  content: \"\\F126\"; }\n\n.ion-clipboard:before {\n  content: \"\\F127\"; }\n\n.ion-clock:before {\n  content: \"\\F26E\"; }\n\n.ion-close:before {\n  content: \"\\F12A\"; }\n\n.ion-close-circled:before {\n  content: \"\\F128\"; }\n\n.ion-close-round:before {\n  content: \"\\F129\"; }\n\n.ion-closed-captioning:before {\n  content: \"\\F317\"; }\n\n.ion-cloud:before {\n  content: \"\\F12B\"; }\n\n.ion-code:before {\n  content: \"\\F271\"; }\n\n.ion-code-download:before {\n  content: \"\\F26F\"; }\n\n.ion-code-working:before {\n  content: \"\\F270\"; }\n\n.ion-coffee:before {\n  content: \"\\F272\"; }\n\n.ion-compass:before {\n  content: \"\\F273\"; }\n\n.ion-compose:before {\n  content: \"\\F12C\"; }\n\n.ion-connection-bars:before {\n  content: \"\\F274\"; }\n\n.ion-contrast:before {\n  content: \"\\F275\"; }\n\n.ion-cube:before {\n  content: \"\\F318\"; }\n\n.ion-disc:before {\n  content: \"\\F12D\"; }\n\n.ion-document:before {\n  content: \"\\F12F\"; }\n\n.ion-document-text:before {\n  content: \"\\F12E\"; }\n\n.ion-drag:before {\n  content: \"\\F130\"; }\n\n.ion-earth:before {\n  content: \"\\F276\"; }\n\n.ion-edit:before {\n  content: \"\\F2BF\"; }\n\n.ion-egg:before {\n  content: \"\\F277\"; }\n\n.ion-eject:before {\n  content: \"\\F131\"; }\n\n.ion-email:before {\n  content: \"\\F132\"; }\n\n.ion-eye:before {\n  content: \"\\F133\"; }\n\n.ion-eye-disabled:before {\n  content: \"\\F306\"; }\n\n.ion-female:before {\n  content: \"\\F278\"; }\n\n.ion-filing:before {\n  content: \"\\F134\"; }\n\n.ion-film-marker:before {\n  content: \"\\F135\"; }\n\n.ion-fireball:before {\n  content: \"\\F319\"; }\n\n.ion-flag:before {\n  content: \"\\F279\"; }\n\n.ion-flame:before {\n  content: \"\\F31A\"; }\n\n.ion-flash:before {\n  content: \"\\F137\"; }\n\n.ion-flash-off:before {\n  content: \"\\F136\"; }\n\n.ion-flask:before {\n  content: \"\\F138\"; }\n\n.ion-folder:before {\n  content: \"\\F139\"; }\n\n.ion-fork:before {\n  content: \"\\F27A\"; }\n\n.ion-fork-repo:before {\n  content: \"\\F2C0\"; }\n\n.ion-forward:before {\n  content: \"\\F13A\"; }\n\n.ion-funnel:before {\n  content: \"\\F31B\"; }\n\n.ion-game-controller-a:before {\n  content: \"\\F13B\"; }\n\n.ion-game-controller-b:before {\n  content: \"\\F13C\"; }\n\n.ion-gear-a:before {\n  content: \"\\F13D\"; }\n\n.ion-gear-b:before {\n  content: \"\\F13E\"; }\n\n.ion-grid:before {\n  content: \"\\F13F\"; }\n\n.ion-hammer:before {\n  content: \"\\F27B\"; }\n\n.ion-happy:before {\n  content: \"\\F31C\"; }\n\n.ion-headphone:before {\n  content: \"\\F140\"; }\n\n.ion-heart:before {\n  content: \"\\F141\"; }\n\n.ion-heart-broken:before {\n  content: \"\\F31D\"; }\n\n.ion-help:before {\n  content: \"\\F143\"; }\n\n.ion-help-buoy:before {\n  content: \"\\F27C\"; }\n\n.ion-help-circled:before {\n  content: \"\\F142\"; }\n\n.ion-home:before {\n  content: \"\\F144\"; }\n\n.ion-icecream:before {\n  content: \"\\F27D\"; }\n\n.ion-icon-social-google-plus:before {\n  content: \"\\F146\"; }\n\n.ion-icon-social-google-plus-outline:before {\n  content: \"\\F145\"; }\n\n.ion-image:before {\n  content: \"\\F147\"; }\n\n.ion-images:before {\n  content: \"\\F148\"; }\n\n.ion-information:before {\n  content: \"\\F14A\"; }\n\n.ion-information-circled:before {\n  content: \"\\F149\"; }\n\n.ion-ionic:before {\n  content: \"\\F14B\"; }\n\n.ion-ios7-alarm:before {\n  content: \"\\F14D\"; }\n\n.ion-ios7-alarm-outline:before {\n  content: \"\\F14C\"; }\n\n.ion-ios7-albums:before {\n  content: \"\\F14F\"; }\n\n.ion-ios7-albums-outline:before {\n  content: \"\\F14E\"; }\n\n.ion-ios7-americanfootball:before {\n  content: \"\\F31F\"; }\n\n.ion-ios7-americanfootball-outline:before {\n  content: \"\\F31E\"; }\n\n.ion-ios7-analytics:before {\n  content: \"\\F321\"; }\n\n.ion-ios7-analytics-outline:before {\n  content: \"\\F320\"; }\n\n.ion-ios7-arrow-back:before {\n  content: \"\\F150\"; }\n\n.ion-ios7-arrow-down:before {\n  content: \"\\F151\"; }\n\n.ion-ios7-arrow-forward:before {\n  content: \"\\F152\"; }\n\n.ion-ios7-arrow-left:before {\n  content: \"\\F153\"; }\n\n.ion-ios7-arrow-right:before {\n  content: \"\\F154\"; }\n\n.ion-ios7-arrow-thin-down:before {\n  content: \"\\F27E\"; }\n\n.ion-ios7-arrow-thin-left:before {\n  content: \"\\F27F\"; }\n\n.ion-ios7-arrow-thin-right:before {\n  content: \"\\F280\"; }\n\n.ion-ios7-arrow-thin-up:before {\n  content: \"\\F281\"; }\n\n.ion-ios7-arrow-up:before {\n  content: \"\\F155\"; }\n\n.ion-ios7-at:before {\n  content: \"\\F157\"; }\n\n.ion-ios7-at-outline:before {\n  content: \"\\F156\"; }\n\n.ion-ios7-barcode:before {\n  content: \"\\F323\"; }\n\n.ion-ios7-barcode-outline:before {\n  content: \"\\F322\"; }\n\n.ion-ios7-baseball:before {\n  content: \"\\F325\"; }\n\n.ion-ios7-baseball-outline:before {\n  content: \"\\F324\"; }\n\n.ion-ios7-basketball:before {\n  content: \"\\F327\"; }\n\n.ion-ios7-basketball-outline:before {\n  content: \"\\F326\"; }\n\n.ion-ios7-bell:before {\n  content: \"\\F159\"; }\n\n.ion-ios7-bell-outline:before {\n  content: \"\\F158\"; }\n\n.ion-ios7-bolt:before {\n  content: \"\\F15B\"; }\n\n.ion-ios7-bolt-outline:before {\n  content: \"\\F15A\"; }\n\n.ion-ios7-bookmarks:before {\n  content: \"\\F15D\"; }\n\n.ion-ios7-bookmarks-outline:before {\n  content: \"\\F15C\"; }\n\n.ion-ios7-box:before {\n  content: \"\\F15F\"; }\n\n.ion-ios7-box-outline:before {\n  content: \"\\F15E\"; }\n\n.ion-ios7-briefcase:before {\n  content: \"\\F283\"; }\n\n.ion-ios7-briefcase-outline:before {\n  content: \"\\F282\"; }\n\n.ion-ios7-browsers:before {\n  content: \"\\F161\"; }\n\n.ion-ios7-browsers-outline:before {\n  content: \"\\F160\"; }\n\n.ion-ios7-calculator:before {\n  content: \"\\F285\"; }\n\n.ion-ios7-calculator-outline:before {\n  content: \"\\F284\"; }\n\n.ion-ios7-calendar:before {\n  content: \"\\F163\"; }\n\n.ion-ios7-calendar-outline:before {\n  content: \"\\F162\"; }\n\n.ion-ios7-camera:before {\n  content: \"\\F165\"; }\n\n.ion-ios7-camera-outline:before {\n  content: \"\\F164\"; }\n\n.ion-ios7-cart:before {\n  content: \"\\F167\"; }\n\n.ion-ios7-cart-outline:before {\n  content: \"\\F166\"; }\n\n.ion-ios7-chatboxes:before {\n  content: \"\\F169\"; }\n\n.ion-ios7-chatboxes-outline:before {\n  content: \"\\F168\"; }\n\n.ion-ios7-chatbubble:before {\n  content: \"\\F16B\"; }\n\n.ion-ios7-chatbubble-outline:before {\n  content: \"\\F16A\"; }\n\n.ion-ios7-checkmark:before {\n  content: \"\\F16E\"; }\n\n.ion-ios7-checkmark-empty:before {\n  content: \"\\F16C\"; }\n\n.ion-ios7-checkmark-outline:before {\n  content: \"\\F16D\"; }\n\n.ion-ios7-circle-filled:before {\n  content: \"\\F16F\"; }\n\n.ion-ios7-circle-outline:before {\n  content: \"\\F170\"; }\n\n.ion-ios7-clock:before {\n  content: \"\\F172\"; }\n\n.ion-ios7-clock-outline:before {\n  content: \"\\F171\"; }\n\n.ion-ios7-close:before {\n  content: \"\\F2BC\"; }\n\n.ion-ios7-close-empty:before {\n  content: \"\\F2BD\"; }\n\n.ion-ios7-close-outline:before {\n  content: \"\\F2BB\"; }\n\n.ion-ios7-cloud:before {\n  content: \"\\F178\"; }\n\n.ion-ios7-cloud-download:before {\n  content: \"\\F174\"; }\n\n.ion-ios7-cloud-download-outline:before {\n  content: \"\\F173\"; }\n\n.ion-ios7-cloud-outline:before {\n  content: \"\\F175\"; }\n\n.ion-ios7-cloud-upload:before {\n  content: \"\\F177\"; }\n\n.ion-ios7-cloud-upload-outline:before {\n  content: \"\\F176\"; }\n\n.ion-ios7-cloudy:before {\n  content: \"\\F17A\"; }\n\n.ion-ios7-cloudy-night:before {\n  content: \"\\F308\"; }\n\n.ion-ios7-cloudy-night-outline:before {\n  content: \"\\F307\"; }\n\n.ion-ios7-cloudy-outline:before {\n  content: \"\\F179\"; }\n\n.ion-ios7-cog:before {\n  content: \"\\F17C\"; }\n\n.ion-ios7-cog-outline:before {\n  content: \"\\F17B\"; }\n\n.ion-ios7-compose:before {\n  content: \"\\F17E\"; }\n\n.ion-ios7-compose-outline:before {\n  content: \"\\F17D\"; }\n\n.ion-ios7-contact:before {\n  content: \"\\F180\"; }\n\n.ion-ios7-contact-outline:before {\n  content: \"\\F17F\"; }\n\n.ion-ios7-copy:before {\n  content: \"\\F182\"; }\n\n.ion-ios7-copy-outline:before {\n  content: \"\\F181\"; }\n\n.ion-ios7-download:before {\n  content: \"\\F184\"; }\n\n.ion-ios7-download-outline:before {\n  content: \"\\F183\"; }\n\n.ion-ios7-drag:before {\n  content: \"\\F185\"; }\n\n.ion-ios7-email:before {\n  content: \"\\F187\"; }\n\n.ion-ios7-email-outline:before {\n  content: \"\\F186\"; }\n\n.ion-ios7-expand:before {\n  content: \"\\F30D\"; }\n\n.ion-ios7-eye:before {\n  content: \"\\F189\"; }\n\n.ion-ios7-eye-outline:before {\n  content: \"\\F188\"; }\n\n.ion-ios7-fastforward:before {\n  content: \"\\F18B\"; }\n\n.ion-ios7-fastforward-outline:before {\n  content: \"\\F18A\"; }\n\n.ion-ios7-filing:before {\n  content: \"\\F18D\"; }\n\n.ion-ios7-filing-outline:before {\n  content: \"\\F18C\"; }\n\n.ion-ios7-film:before {\n  content: \"\\F18F\"; }\n\n.ion-ios7-film-outline:before {\n  content: \"\\F18E\"; }\n\n.ion-ios7-flag:before {\n  content: \"\\F191\"; }\n\n.ion-ios7-flag-outline:before {\n  content: \"\\F190\"; }\n\n.ion-ios7-folder:before {\n  content: \"\\F193\"; }\n\n.ion-ios7-folder-outline:before {\n  content: \"\\F192\"; }\n\n.ion-ios7-football:before {\n  content: \"\\F329\"; }\n\n.ion-ios7-football-outline:before {\n  content: \"\\F328\"; }\n\n.ion-ios7-gear:before {\n  content: \"\\F195\"; }\n\n.ion-ios7-gear-outline:before {\n  content: \"\\F194\"; }\n\n.ion-ios7-glasses:before {\n  content: \"\\F197\"; }\n\n.ion-ios7-glasses-outline:before {\n  content: \"\\F196\"; }\n\n.ion-ios7-heart:before {\n  content: \"\\F199\"; }\n\n.ion-ios7-heart-outline:before {\n  content: \"\\F198\"; }\n\n.ion-ios7-help:before {\n  content: \"\\F19C\"; }\n\n.ion-ios7-help-empty:before {\n  content: \"\\F19A\"; }\n\n.ion-ios7-help-outline:before {\n  content: \"\\F19B\"; }\n\n.ion-ios7-home:before {\n  content: \"\\F32B\"; }\n\n.ion-ios7-home-outline:before {\n  content: \"\\F32A\"; }\n\n.ion-ios7-infinite:before {\n  content: \"\\F19E\"; }\n\n.ion-ios7-infinite-outline:before {\n  content: \"\\F19D\"; }\n\n.ion-ios7-information:before {\n  content: \"\\F1A1\"; }\n\n.ion-ios7-information-empty:before {\n  content: \"\\F19F\"; }\n\n.ion-ios7-information-outline:before {\n  content: \"\\F1A0\"; }\n\n.ion-ios7-ionic-outline:before {\n  content: \"\\F1A2\"; }\n\n.ion-ios7-keypad:before {\n  content: \"\\F1A4\"; }\n\n.ion-ios7-keypad-outline:before {\n  content: \"\\F1A3\"; }\n\n.ion-ios7-lightbulb:before {\n  content: \"\\F287\"; }\n\n.ion-ios7-lightbulb-outline:before {\n  content: \"\\F286\"; }\n\n.ion-ios7-location:before {\n  content: \"\\F1A6\"; }\n\n.ion-ios7-location-outline:before {\n  content: \"\\F1A5\"; }\n\n.ion-ios7-locked:before {\n  content: \"\\F1A8\"; }\n\n.ion-ios7-locked-outline:before {\n  content: \"\\F1A7\"; }\n\n.ion-ios7-loop:before {\n  content: \"\\F32D\"; }\n\n.ion-ios7-loop-strong:before {\n  content: \"\\F32C\"; }\n\n.ion-ios7-medkit:before {\n  content: \"\\F289\"; }\n\n.ion-ios7-medkit-outline:before {\n  content: \"\\F288\"; }\n\n.ion-ios7-mic:before {\n  content: \"\\F1AB\"; }\n\n.ion-ios7-mic-off:before {\n  content: \"\\F1A9\"; }\n\n.ion-ios7-mic-outline:before {\n  content: \"\\F1AA\"; }\n\n.ion-ios7-minus:before {\n  content: \"\\F1AE\"; }\n\n.ion-ios7-minus-empty:before {\n  content: \"\\F1AC\"; }\n\n.ion-ios7-minus-outline:before {\n  content: \"\\F1AD\"; }\n\n.ion-ios7-monitor:before {\n  content: \"\\F1B0\"; }\n\n.ion-ios7-monitor-outline:before {\n  content: \"\\F1AF\"; }\n\n.ion-ios7-moon:before {\n  content: \"\\F1B2\"; }\n\n.ion-ios7-moon-outline:before {\n  content: \"\\F1B1\"; }\n\n.ion-ios7-more:before {\n  content: \"\\F1B4\"; }\n\n.ion-ios7-more-outline:before {\n  content: \"\\F1B3\"; }\n\n.ion-ios7-musical-note:before {\n  content: \"\\F1B5\"; }\n\n.ion-ios7-musical-notes:before {\n  content: \"\\F1B6\"; }\n\n.ion-ios7-navigate:before {\n  content: \"\\F1B8\"; }\n\n.ion-ios7-navigate-outline:before {\n  content: \"\\F1B7\"; }\n\n.ion-ios7-paper:before {\n  content: \"\\F32F\"; }\n\n.ion-ios7-paper-outline:before {\n  content: \"\\F32E\"; }\n\n.ion-ios7-paperplane:before {\n  content: \"\\F1BA\"; }\n\n.ion-ios7-paperplane-outline:before {\n  content: \"\\F1B9\"; }\n\n.ion-ios7-partlysunny:before {\n  content: \"\\F1BC\"; }\n\n.ion-ios7-partlysunny-outline:before {\n  content: \"\\F1BB\"; }\n\n.ion-ios7-pause:before {\n  content: \"\\F1BE\"; }\n\n.ion-ios7-pause-outline:before {\n  content: \"\\F1BD\"; }\n\n.ion-ios7-paw:before {\n  content: \"\\F331\"; }\n\n.ion-ios7-paw-outline:before {\n  content: \"\\F330\"; }\n\n.ion-ios7-people:before {\n  content: \"\\F1C0\"; }\n\n.ion-ios7-people-outline:before {\n  content: \"\\F1BF\"; }\n\n.ion-ios7-person:before {\n  content: \"\\F1C2\"; }\n\n.ion-ios7-person-outline:before {\n  content: \"\\F1C1\"; }\n\n.ion-ios7-personadd:before {\n  content: \"\\F1C4\"; }\n\n.ion-ios7-personadd-outline:before {\n  content: \"\\F1C3\"; }\n\n.ion-ios7-photos:before {\n  content: \"\\F1C6\"; }\n\n.ion-ios7-photos-outline:before {\n  content: \"\\F1C5\"; }\n\n.ion-ios7-pie:before {\n  content: \"\\F28B\"; }\n\n.ion-ios7-pie-outline:before {\n  content: \"\\F28A\"; }\n\n.ion-ios7-play:before {\n  content: \"\\F1C8\"; }\n\n.ion-ios7-play-outline:before {\n  content: \"\\F1C7\"; }\n\n.ion-ios7-plus:before {\n  content: \"\\F1CB\"; }\n\n.ion-ios7-plus-empty:before {\n  content: \"\\F1C9\"; }\n\n.ion-ios7-plus-outline:before {\n  content: \"\\F1CA\"; }\n\n.ion-ios7-pricetag:before {\n  content: \"\\F28D\"; }\n\n.ion-ios7-pricetag-outline:before {\n  content: \"\\F28C\"; }\n\n.ion-ios7-pricetags:before {\n  content: \"\\F333\"; }\n\n.ion-ios7-pricetags-outline:before {\n  content: \"\\F332\"; }\n\n.ion-ios7-printer:before {\n  content: \"\\F1CD\"; }\n\n.ion-ios7-printer-outline:before {\n  content: \"\\F1CC\"; }\n\n.ion-ios7-pulse:before {\n  content: \"\\F335\"; }\n\n.ion-ios7-pulse-strong:before {\n  content: \"\\F334\"; }\n\n.ion-ios7-rainy:before {\n  content: \"\\F1CF\"; }\n\n.ion-ios7-rainy-outline:before {\n  content: \"\\F1CE\"; }\n\n.ion-ios7-recording:before {\n  content: \"\\F1D1\"; }\n\n.ion-ios7-recording-outline:before {\n  content: \"\\F1D0\"; }\n\n.ion-ios7-redo:before {\n  content: \"\\F1D3\"; }\n\n.ion-ios7-redo-outline:before {\n  content: \"\\F1D2\"; }\n\n.ion-ios7-refresh:before {\n  content: \"\\F1D6\"; }\n\n.ion-ios7-refresh-empty:before {\n  content: \"\\F1D4\"; }\n\n.ion-ios7-refresh-outline:before {\n  content: \"\\F1D5\"; }\n\n.ion-ios7-reload:before, .ion-ios7-reloading:before {\n  content: \"\\F28E\"; }\n\n.ion-ios7-reverse-camera:before {\n  content: \"\\F337\"; }\n\n.ion-ios7-reverse-camera-outline:before {\n  content: \"\\F336\"; }\n\n.ion-ios7-rewind:before {\n  content: \"\\F1D8\"; }\n\n.ion-ios7-rewind-outline:before {\n  content: \"\\F1D7\"; }\n\n.ion-ios7-search:before {\n  content: \"\\F1DA\"; }\n\n.ion-ios7-search-strong:before {\n  content: \"\\F1D9\"; }\n\n.ion-ios7-settings:before {\n  content: \"\\F339\"; }\n\n.ion-ios7-settings-strong:before {\n  content: \"\\F338\"; }\n\n.ion-ios7-shrink:before {\n  content: \"\\F30E\"; }\n\n.ion-ios7-skipbackward:before {\n  content: \"\\F1DC\"; }\n\n.ion-ios7-skipbackward-outline:before {\n  content: \"\\F1DB\"; }\n\n.ion-ios7-skipforward:before {\n  content: \"\\F1DE\"; }\n\n.ion-ios7-skipforward-outline:before {\n  content: \"\\F1DD\"; }\n\n.ion-ios7-snowy:before {\n  content: \"\\F309\"; }\n\n.ion-ios7-speedometer:before {\n  content: \"\\F290\"; }\n\n.ion-ios7-speedometer-outline:before {\n  content: \"\\F28F\"; }\n\n.ion-ios7-star:before {\n  content: \"\\F1E0\"; }\n\n.ion-ios7-star-half:before {\n  content: \"\\F33A\"; }\n\n.ion-ios7-star-outline:before {\n  content: \"\\F1DF\"; }\n\n.ion-ios7-stopwatch:before {\n  content: \"\\F1E2\"; }\n\n.ion-ios7-stopwatch-outline:before {\n  content: \"\\F1E1\"; }\n\n.ion-ios7-sunny:before {\n  content: \"\\F1E4\"; }\n\n.ion-ios7-sunny-outline:before {\n  content: \"\\F1E3\"; }\n\n.ion-ios7-telephone:before {\n  content: \"\\F1E6\"; }\n\n.ion-ios7-telephone-outline:before {\n  content: \"\\F1E5\"; }\n\n.ion-ios7-tennisball:before {\n  content: \"\\F33C\"; }\n\n.ion-ios7-tennisball-outline:before {\n  content: \"\\F33B\"; }\n\n.ion-ios7-thunderstorm:before {\n  content: \"\\F1E8\"; }\n\n.ion-ios7-thunderstorm-outline:before {\n  content: \"\\F1E7\"; }\n\n.ion-ios7-time:before {\n  content: \"\\F292\"; }\n\n.ion-ios7-time-outline:before {\n  content: \"\\F291\"; }\n\n.ion-ios7-timer:before {\n  content: \"\\F1EA\"; }\n\n.ion-ios7-timer-outline:before {\n  content: \"\\F1E9\"; }\n\n.ion-ios7-toggle:before {\n  content: \"\\F33E\"; }\n\n.ion-ios7-toggle-outline:before {\n  content: \"\\F33D\"; }\n\n.ion-ios7-trash:before {\n  content: \"\\F1EC\"; }\n\n.ion-ios7-trash-outline:before {\n  content: \"\\F1EB\"; }\n\n.ion-ios7-undo:before {\n  content: \"\\F1EE\"; }\n\n.ion-ios7-undo-outline:before {\n  content: \"\\F1ED\"; }\n\n.ion-ios7-unlocked:before {\n  content: \"\\F1F0\"; }\n\n.ion-ios7-unlocked-outline:before {\n  content: \"\\F1EF\"; }\n\n.ion-ios7-upload:before {\n  content: \"\\F1F2\"; }\n\n.ion-ios7-upload-outline:before {\n  content: \"\\F1F1\"; }\n\n.ion-ios7-videocam:before {\n  content: \"\\F1F4\"; }\n\n.ion-ios7-videocam-outline:before {\n  content: \"\\F1F3\"; }\n\n.ion-ios7-volume-high:before {\n  content: \"\\F1F5\"; }\n\n.ion-ios7-volume-low:before {\n  content: \"\\F1F6\"; }\n\n.ion-ios7-wineglass:before {\n  content: \"\\F294\"; }\n\n.ion-ios7-wineglass-outline:before {\n  content: \"\\F293\"; }\n\n.ion-ios7-world:before {\n  content: \"\\F1F8\"; }\n\n.ion-ios7-world-outline:before {\n  content: \"\\F1F7\"; }\n\n.ion-ipad:before {\n  content: \"\\F1F9\"; }\n\n.ion-iphone:before {\n  content: \"\\F1FA\"; }\n\n.ion-ipod:before {\n  content: \"\\F1FB\"; }\n\n.ion-jet:before {\n  content: \"\\F295\"; }\n\n.ion-key:before {\n  content: \"\\F296\"; }\n\n.ion-knife:before {\n  content: \"\\F297\"; }\n\n.ion-laptop:before {\n  content: \"\\F1FC\"; }\n\n.ion-leaf:before {\n  content: \"\\F1FD\"; }\n\n.ion-levels:before {\n  content: \"\\F298\"; }\n\n.ion-lightbulb:before {\n  content: \"\\F299\"; }\n\n.ion-link:before {\n  content: \"\\F1FE\"; }\n\n.ion-load-a:before, .ion-loading-a:before {\n  content: \"\\F29A\"; }\n\n.ion-load-b:before, .ion-loading-b:before {\n  content: \"\\F29B\"; }\n\n.ion-load-c:before, .ion-loading-c:before {\n  content: \"\\F29C\"; }\n\n.ion-load-d:before, .ion-loading-d:before {\n  content: \"\\F29D\"; }\n\n.ion-location:before {\n  content: \"\\F1FF\"; }\n\n.ion-locked:before {\n  content: \"\\F200\"; }\n\n.ion-log-in:before {\n  content: \"\\F29E\"; }\n\n.ion-log-out:before {\n  content: \"\\F29F\"; }\n\n.ion-loop:before, .ion-looping:before {\n  content: \"\\F201\"; }\n\n.ion-magnet:before {\n  content: \"\\F2A0\"; }\n\n.ion-male:before {\n  content: \"\\F2A1\"; }\n\n.ion-man:before {\n  content: \"\\F202\"; }\n\n.ion-map:before {\n  content: \"\\F203\"; }\n\n.ion-medkit:before {\n  content: \"\\F2A2\"; }\n\n.ion-merge:before {\n  content: \"\\F33F\"; }\n\n.ion-mic-a:before {\n  content: \"\\F204\"; }\n\n.ion-mic-b:before {\n  content: \"\\F205\"; }\n\n.ion-mic-c:before {\n  content: \"\\F206\"; }\n\n.ion-minus:before {\n  content: \"\\F209\"; }\n\n.ion-minus-circled:before {\n  content: \"\\F207\"; }\n\n.ion-minus-round:before {\n  content: \"\\F208\"; }\n\n.ion-model-s:before {\n  content: \"\\F2C1\"; }\n\n.ion-monitor:before {\n  content: \"\\F20A\"; }\n\n.ion-more:before {\n  content: \"\\F20B\"; }\n\n.ion-mouse:before {\n  content: \"\\F340\"; }\n\n.ion-music-note:before {\n  content: \"\\F20C\"; }\n\n.ion-navicon:before {\n  content: \"\\F20E\"; }\n\n.ion-navicon-round:before {\n  content: \"\\F20D\"; }\n\n.ion-navigate:before {\n  content: \"\\F2A3\"; }\n\n.ion-network:before {\n  content: \"\\F341\"; }\n\n.ion-no-smoking:before {\n  content: \"\\F2C2\"; }\n\n.ion-nuclear:before {\n  content: \"\\F2A4\"; }\n\n.ion-outlet:before {\n  content: \"\\F342\"; }\n\n.ion-paper-airplane:before {\n  content: \"\\F2C3\"; }\n\n.ion-paperclip:before {\n  content: \"\\F20F\"; }\n\n.ion-pause:before {\n  content: \"\\F210\"; }\n\n.ion-person:before {\n  content: \"\\F213\"; }\n\n.ion-person-add:before {\n  content: \"\\F211\"; }\n\n.ion-person-stalker:before {\n  content: \"\\F212\"; }\n\n.ion-pie-graph:before {\n  content: \"\\F2A5\"; }\n\n.ion-pin:before {\n  content: \"\\F2A6\"; }\n\n.ion-pinpoint:before {\n  content: \"\\F2A7\"; }\n\n.ion-pizza:before {\n  content: \"\\F2A8\"; }\n\n.ion-plane:before {\n  content: \"\\F214\"; }\n\n.ion-planet:before {\n  content: \"\\F343\"; }\n\n.ion-play:before {\n  content: \"\\F215\"; }\n\n.ion-playstation:before {\n  content: \"\\F30A\"; }\n\n.ion-plus:before {\n  content: \"\\F218\"; }\n\n.ion-plus-circled:before {\n  content: \"\\F216\"; }\n\n.ion-plus-round:before {\n  content: \"\\F217\"; }\n\n.ion-podium:before {\n  content: \"\\F344\"; }\n\n.ion-pound:before {\n  content: \"\\F219\"; }\n\n.ion-power:before {\n  content: \"\\F2A9\"; }\n\n.ion-pricetag:before {\n  content: \"\\F2AA\"; }\n\n.ion-pricetags:before {\n  content: \"\\F2AB\"; }\n\n.ion-printer:before {\n  content: \"\\F21A\"; }\n\n.ion-pull-request:before {\n  content: \"\\F345\"; }\n\n.ion-qr-scanner:before {\n  content: \"\\F346\"; }\n\n.ion-quote:before {\n  content: \"\\F347\"; }\n\n.ion-radio-waves:before {\n  content: \"\\F2AC\"; }\n\n.ion-record:before {\n  content: \"\\F21B\"; }\n\n.ion-refresh:before, .ion-refreshing:before {\n  content: \"\\F21C\"; }\n\n.ion-reply:before {\n  content: \"\\F21E\"; }\n\n.ion-reply-all:before {\n  content: \"\\F21D\"; }\n\n.ion-ribbon-a:before {\n  content: \"\\F348\"; }\n\n.ion-ribbon-b:before {\n  content: \"\\F349\"; }\n\n.ion-sad:before {\n  content: \"\\F34A\"; }\n\n.ion-scissors:before {\n  content: \"\\F34B\"; }\n\n.ion-search:before {\n  content: \"\\F21F\"; }\n\n.ion-settings:before {\n  content: \"\\F2AD\"; }\n\n.ion-share:before {\n  content: \"\\F220\"; }\n\n.ion-shuffle:before {\n  content: \"\\F221\"; }\n\n.ion-skip-backward:before {\n  content: \"\\F222\"; }\n\n.ion-skip-forward:before {\n  content: \"\\F223\"; }\n\n.ion-social-android:before {\n  content: \"\\F225\"; }\n\n.ion-social-android-outline:before {\n  content: \"\\F224\"; }\n\n.ion-social-apple:before {\n  content: \"\\F227\"; }\n\n.ion-social-apple-outline:before {\n  content: \"\\F226\"; }\n\n.ion-social-bitcoin:before {\n  content: \"\\F2AF\"; }\n\n.ion-social-bitcoin-outline:before {\n  content: \"\\F2AE\"; }\n\n.ion-social-buffer:before {\n  content: \"\\F229\"; }\n\n.ion-social-buffer-outline:before {\n  content: \"\\F228\"; }\n\n.ion-social-designernews:before {\n  content: \"\\F22B\"; }\n\n.ion-social-designernews-outline:before {\n  content: \"\\F22A\"; }\n\n.ion-social-dribbble:before {\n  content: \"\\F22D\"; }\n\n.ion-social-dribbble-outline:before {\n  content: \"\\F22C\"; }\n\n.ion-social-dropbox:before {\n  content: \"\\F22F\"; }\n\n.ion-social-dropbox-outline:before {\n  content: \"\\F22E\"; }\n\n.ion-social-facebook:before {\n  content: \"\\F231\"; }\n\n.ion-social-facebook-outline:before {\n  content: \"\\F230\"; }\n\n.ion-social-foursquare:before {\n  content: \"\\F34D\"; }\n\n.ion-social-foursquare-outline:before {\n  content: \"\\F34C\"; }\n\n.ion-social-freebsd-devil:before {\n  content: \"\\F2C4\"; }\n\n.ion-social-github:before {\n  content: \"\\F233\"; }\n\n.ion-social-github-outline:before {\n  content: \"\\F232\"; }\n\n.ion-social-google:before {\n  content: \"\\F34F\"; }\n\n.ion-social-google-outline:before {\n  content: \"\\F34E\"; }\n\n.ion-social-googleplus:before {\n  content: \"\\F235\"; }\n\n.ion-social-googleplus-outline:before {\n  content: \"\\F234\"; }\n\n.ion-social-hackernews:before {\n  content: \"\\F237\"; }\n\n.ion-social-hackernews-outline:before {\n  content: \"\\F236\"; }\n\n.ion-social-instagram:before {\n  content: \"\\F351\"; }\n\n.ion-social-instagram-outline:before {\n  content: \"\\F350\"; }\n\n.ion-social-linkedin:before {\n  content: \"\\F239\"; }\n\n.ion-social-linkedin-outline:before {\n  content: \"\\F238\"; }\n\n.ion-social-pinterest:before {\n  content: \"\\F2B1\"; }\n\n.ion-social-pinterest-outline:before {\n  content: \"\\F2B0\"; }\n\n.ion-social-reddit:before {\n  content: \"\\F23B\"; }\n\n.ion-social-reddit-outline:before {\n  content: \"\\F23A\"; }\n\n.ion-social-rss:before {\n  content: \"\\F23D\"; }\n\n.ion-social-rss-outline:before {\n  content: \"\\F23C\"; }\n\n.ion-social-skype:before {\n  content: \"\\F23F\"; }\n\n.ion-social-skype-outline:before {\n  content: \"\\F23E\"; }\n\n.ion-social-tumblr:before {\n  content: \"\\F241\"; }\n\n.ion-social-tumblr-outline:before {\n  content: \"\\F240\"; }\n\n.ion-social-tux:before {\n  content: \"\\F2C5\"; }\n\n.ion-social-twitter:before {\n  content: \"\\F243\"; }\n\n.ion-social-twitter-outline:before {\n  content: \"\\F242\"; }\n\n.ion-social-usd:before {\n  content: \"\\F353\"; }\n\n.ion-social-usd-outline:before {\n  content: \"\\F352\"; }\n\n.ion-social-vimeo:before {\n  content: \"\\F245\"; }\n\n.ion-social-vimeo-outline:before {\n  content: \"\\F244\"; }\n\n.ion-social-windows:before {\n  content: \"\\F247\"; }\n\n.ion-social-windows-outline:before {\n  content: \"\\F246\"; }\n\n.ion-social-wordpress:before {\n  content: \"\\F249\"; }\n\n.ion-social-wordpress-outline:before {\n  content: \"\\F248\"; }\n\n.ion-social-yahoo:before {\n  content: \"\\F24B\"; }\n\n.ion-social-yahoo-outline:before {\n  content: \"\\F24A\"; }\n\n.ion-social-youtube:before {\n  content: \"\\F24D\"; }\n\n.ion-social-youtube-outline:before {\n  content: \"\\F24C\"; }\n\n.ion-speakerphone:before {\n  content: \"\\F2B2\"; }\n\n.ion-speedometer:before {\n  content: \"\\F2B3\"; }\n\n.ion-spoon:before {\n  content: \"\\F2B4\"; }\n\n.ion-star:before {\n  content: \"\\F24E\"; }\n\n.ion-stats-bars:before {\n  content: \"\\F2B5\"; }\n\n.ion-steam:before {\n  content: \"\\F30B\"; }\n\n.ion-stop:before {\n  content: \"\\F24F\"; }\n\n.ion-thermometer:before {\n  content: \"\\F2B6\"; }\n\n.ion-thumbsdown:before {\n  content: \"\\F250\"; }\n\n.ion-thumbsup:before {\n  content: \"\\F251\"; }\n\n.ion-toggle:before {\n  content: \"\\F355\"; }\n\n.ion-toggle-filled:before {\n  content: \"\\F354\"; }\n\n.ion-trash-a:before {\n  content: \"\\F252\"; }\n\n.ion-trash-b:before {\n  content: \"\\F253\"; }\n\n.ion-trophy:before {\n  content: \"\\F356\"; }\n\n.ion-umbrella:before {\n  content: \"\\F2B7\"; }\n\n.ion-university:before {\n  content: \"\\F357\"; }\n\n.ion-unlocked:before {\n  content: \"\\F254\"; }\n\n.ion-upload:before {\n  content: \"\\F255\"; }\n\n.ion-usb:before {\n  content: \"\\F2B8\"; }\n\n.ion-videocamera:before {\n  content: \"\\F256\"; }\n\n.ion-volume-high:before {\n  content: \"\\F257\"; }\n\n.ion-volume-low:before {\n  content: \"\\F258\"; }\n\n.ion-volume-medium:before {\n  content: \"\\F259\"; }\n\n.ion-volume-mute:before {\n  content: \"\\F25A\"; }\n\n.ion-wand:before {\n  content: \"\\F358\"; }\n\n.ion-waterdrop:before {\n  content: \"\\F25B\"; }\n\n.ion-wifi:before {\n  content: \"\\F25C\"; }\n\n.ion-wineglass:before {\n  content: \"\\F2B9\"; }\n\n.ion-woman:before {\n  content: \"\\F25D\"; }\n\n.ion-wrench:before {\n  content: \"\\F2BA\"; }\n\n.ion-xbox:before {\n  content: \"\\F30C\"; }\n\n.modal-backdrop.am-fade {\n  opacity: .5;\n  transition: opacity .15s linear; }\n  .modal-backdrop.am-fade.ng-enter {\n    opacity: 0; }\n    .modal-backdrop.am-fade.ng-enter.ng-enter-active {\n      opacity: .5; }\n  .modal-backdrop.am-fade.ng-leave {\n    opacity: .5; }\n    .modal-backdrop.am-fade.ng-leave.ng-leave-active {\n      opacity: 0; }\n\n.modal-content {\n  border: none;\n  border-radius: 0px;\n  color: #222; }\n\n.modal-header {\n  background: #E9E9E9;\n  box-shadow: 0px 0px 1px #222; }\n\n.edit-form-body {\n  max-height: 900px;\n  overflow-y: auto; }\n\n@media (min-height: 500px) {\n  .edit-form-body {\n    height: 400px; } }\n\n@media (min-height: 800px) {\n  .edit-form-body {\n    height: 700px; } }\n\n.btn-primary {\n  background: #4C8654;\n  border-color: #38663F; }\n  .btn-primary:hover, .btn-primary.active, .btn-primary:focus {\n    background: #3d7345;\n    border-color: #295230; }\n\nbody {\n  background: #EEF3F4;\n  color: #556568; }\n\n.navbar-bamboo {\n  background: #253133;\n  border-radius: 0px; }\n  .navbar-bamboo .navbar-brand {\n    color: white; }\n  .navbar-bamboo .btn-create-service {\n    float: right;\n    margin-top: 7px; }\n\n.service-list {\n  background: white; }\n  .service-list .service-list-title {\n    padding: 5px 0px;\n    font-weight: bold;\n    vertical-align: text-bottom;\n    background: #EEF3F4;\n    border-bottom: 2px solid #CCC; }\n    .service-list .service-list-title span {\n      display: table-cell;\n      vertical-align: middle;\n      line-height: 30px; }\n  .service-list .service-item {\n    vertical-align: text-bottom;\n    border-bottom: 1px solid #CCC;\n    padding: 5px 0px; }\n    .service-list .service-item.service-action-type-marathon {\n      color: rgba(0, 0, 0, 0.5); }\n    .service-list .service-item.service-action-type-service {\n      color: rgba(0, 0, 0, 0.5); }\n    .service-list .service-item.service-action-type-default {\n      background: rgba(103, 164, 111, 0.3); }\n    .service-list .service-item .item-actions {\n      text-align: right; }\n      .service-list .service-item .item-actions .item-actions-group {\n        float: right; }\n    .service-list .service-item i.message {\n      font-size: 11px;\n      font-style: normal; }\n    .service-list .service-item .btn.btn-danger, .service-list .service-item .btn.btn-create-service, .service-list .service-item .btn.btn-default {\n      margin-left: 10px; }\n    .service-list .service-item span {\n      display: table-cell;\n      vertical-align: middle;\n      line-height: 30px; }\n", ""]);
 
 	// exports
 
 
 /***/ },
-/* 208 */
+/* 209 */
 /***/ function(module, exports) {
 
 	/*
@@ -38573,31 +38624,31 @@
 
 
 /***/ },
-/* 209 */
+/* 210 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "152c291c7e65a07a6587ab148e2fe4c6.eot";
 
 /***/ },
-/* 210 */
+/* 211 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "3a3e4c4ddbecd6bd63e17a4057d0771c.ttf";
 
 /***/ },
-/* 211 */
+/* 212 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "c51d32dd8aa851634aa8f7f4d1e0e819.woff";
 
 /***/ },
-/* 212 */
+/* 213 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "ac3c50e4cfa03a5a48b39821746107a2.svg";
 
 /***/ },
-/* 213 */
+/* 214 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
