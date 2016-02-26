@@ -24,17 +24,13 @@ export default React.createClass({
   },
 
   actions () {
-    let items
     if (this.status() === UNDEPLOYED) {
       return (
         <span className="item-actions-group">
           <i className="message">Missing app in Marathon</i>
-          <EditButton id={this.props.id}
-                      config={this.props.config}
-                      mode={EDIT}
-                      onUpdate={this.props.onUpdate} />
-          <DeleteButton id={this.props.id}
-                        onUpdate={this.props.onUpdate}/>
+          <EditButton mode={EDIT}
+                      {...this.props} />
+          <DeleteButton {...this.props} />
         </span>
       )
     }
@@ -42,7 +38,7 @@ export default React.createClass({
       return (
         <span className="item-actions-group">
         <i className="message">Using default proxy rule</i>
-        <EditButton id={this.props.id} mode={NEW} onUpdate={this.props.onUpdate}/>
+        <EditButton mode={NEW} {...this.props}/>
         </span>
     )
 
@@ -50,19 +46,23 @@ export default React.createClass({
     if (this.status() === ACTIVE) {
       return (
         <span className="item-actions-group">
-          <EditButton id={this.props.id}
-                      config={this.props.config}
-                      mode={EDIT}
-                      onUpdate={this.props.onUpdate}/>
-          <DeleteButton id={this.props.id}
-                        onUpdate={this.props.onUpdate}/>
+          <EditButton mode={EDIT}
+                      {...this.props}/>
+          <DeleteButton {...this.props}/>
         </span>
       )
     }
   },
 
   render () {
-    const acl = this.status() === UNCONFIGURED ? '' : this.props.config.Acl
+    let config
+    if (this.status() === UNCONFIGURED) {
+      config = ""
+    } else {
+      config = _.map(_.toPairs(this.props.config),
+                     ([k, v]) => `${k}=${v}`
+                    ).join(', ')
+    }
     const taskCount = this.status() == UNDEPLOYED ? '-' : this.props.tasks.length
     const rowClasses = cx('row', 'service-item',
                           `service-action-type-${actionTypes[this.status()]}`)
@@ -70,7 +70,7 @@ export default React.createClass({
     return (
       <div className={rowClasses}>
         <span className="col-xs-4">{this.props.id}</span>
-        <span className="col-xs-4">{acl}</span>
+        <span className="col-xs-4">{config}</span>
         <span className="col-xs-1 col-instance-count">{taskCount}</span>
         <span className="col-xs-3 item-actions">{this.actions()}</span>
       </div>
