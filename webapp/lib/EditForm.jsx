@@ -20,7 +20,6 @@ export default React.createClass({
   },
 
   submitForm () {
-    console.log(this.state)
     const payload = {
       id: this.state.id,
       config: _.fromPairs(this.state.config)
