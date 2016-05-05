@@ -196,7 +196,7 @@ func createApps(tasksById map[string]marathonTaskList, marathonApps map[string]m
 
 		// split up groups and recombine for how mesos-dns/consul/etc use service name
 		//   "/nested/group/app" -> "app-group-nested"
-		groups := strings.Split(appPath, ",")
+		groups := strings.Split(appPath, "/")
 		reverseGroups := []string{}
 		for i := len(groups) - 1; i >= 0; i-- {
 			if groups[i] != "" {
