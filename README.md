@@ -135,6 +135,32 @@ The default template shipped with Bamboo is aware of `BAMBOO_TCP_PORT`. When thi
 
 In this example, both `BAMBOO_TCP_PORT` and `MY_CUSTOM_ENV` can be accessed in HAProxy template. This enables flexible template customization depending on your preferences.
 
+#### Default Haproxy Template ACL
+
+The default acl rule in the `haproxy_template.cfg` uses the full
+marathon app id, which may include slash-separated groups.
+
+```
+        # This is the default proxy criteria
+        acl {{ $app.EscapedId }}-aclrule path_beg -i {{ $app.Id }}
+```
+
+For example if your app is named "/mygroup/appname", your default acl
+will be `path_beg -i /mygroup/appname`.  This can always be changed
+using the bamboo web UI.
+
+There is also a DNS friendly version of your marathon app Id which can
+be used instead of the slash-separated one.  `MesosDnsId` includes the
+groups as hyphenated suffixes.  For example, if your appname is
+"/another/group/app" then the `MesosDnsId` will be "app-group-another".
+
+You can edit the `haproxy_template.cfg` and use the DNS friendly name
+for your default ACL instead.
+
+```
+    acl {{ $app.EscapedId }}-aclrule hdr_dom(host) -i {{ $app.MesosDnsId }}
+```
+
 ### Environment Variables
 
 Configuration in the `production.json` file can be overridden with environment variables below. This is generally useful when you are building a Docker image for Bamboo and HAProxy. If they are not specified then the values from the configuration file will be used.
