@@ -5,6 +5,26 @@ import (
 	"testing"
 )
 
+func TestGetMesosDnsId_Simple(t *testing.T) {
+	Convey("#getMesosDnsId", t, func() {
+		Convey("should return simple appname", func() {
+			So(getMesosDnsId("appname"), ShouldEqual, "appname")
+		})
+
+		Convey("should return simple appname if slash prefixed", func() {
+			So(getMesosDnsId("/appname"), ShouldEqual, "appname")
+		})
+
+		Convey("should return groups reverse-added to appname", func() {
+			So(getMesosDnsId("/group/appname"), ShouldEqual, "appname-group")
+		})
+
+		Convey("should return groups reverse-added to appname but no blanks", func() {
+			So(getMesosDnsId("//group/again//appname/"), ShouldEqual, "appname-again-group")
+		})
+	})
+}
+
 func TestParseHealthCheckPathTCP(t *testing.T) {
 	Convey("#parseHealthCheckPath", t, func() {
 		checks := []marathonHealthCheck{
