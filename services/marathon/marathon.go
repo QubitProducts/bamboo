@@ -29,6 +29,7 @@ type HealthCheck struct {
 // An app may have multiple processes
 type App struct {
 	Id              string
+	MesosDnsId      string
 	EscapedId       string
 	HealthCheckPath string
 	HealthChecks    []HealthCheck
@@ -196,6 +197,7 @@ func createApps(tasksById map[string]marathonTaskList, marathonApps map[string]m
 		// build App from marathonApp
 		app := App{
 			Id:              appPath,
+			MesosDnsId:      getMesosDnsId(appPath),
 			EscapedId:       strings.Replace(appId, "/", "::", -1),
 			HealthCheckPath: parseHealthCheckPath(mApp.HealthChecks),
 			Env:             mApp.Env,
@@ -234,6 +236,19 @@ func createApps(tasksById map[string]marathonTaskList, marathonApps map[string]m
 		apps = append(apps, app)
 	}
 	return apps
+}
+
+func getMesosDnsId(appPath string) string {
+	// split up groups and recombine for how mesos-dns/consul/etc use service name
+	//   "/nested/group/app" -> "app-group-nested"
+	groups := strings.Split(appPath, "/")
+	reverseGroups := []string{}
+	for i := len(groups) - 1; i >= 0; i-- {
+		if groups[i] != "" {
+			reverseGroups = append(reverseGroups, groups[i])
+		}
+	}
+	return strings.Join(reverseGroups, "-")
 }
 
 func parseHealthCheckPath(checks []marathonHealthCheck) string {
