@@ -28,16 +28,17 @@ type HealthCheck struct {
 
 // An app may have multiple processes
 type App struct {
-	Id              string
-	MesosDnsId      string
-	EscapedId       string
-	HealthCheckPath string
-	HealthChecks    []HealthCheck
-	Tasks           []Task
-	ServicePort     int
-	ServicePorts    []int
-	Env             map[string]string
-	Labels          map[string]string
+	Id                  string
+	MesosDnsId          string
+	EscapedId           string
+	HealthCheckPath     string
+	HealthCheckProtocol string
+	HealthChecks        []HealthCheck
+	Tasks               []Task
+	ServicePort         int
+	ServicePorts        []int
+	Env                 map[string]string
+	Labels              map[string]string
 }
 
 type AppList []App
@@ -196,12 +197,13 @@ func createApps(tasksById map[string]marathonTaskList, marathonApps map[string]m
 
 		// build App from marathonApp
 		app := App{
-			Id:              appPath,
-			MesosDnsId:      getMesosDnsId(appPath),
-			EscapedId:       strings.Replace(appId, "/", "::", -1),
-			HealthCheckPath: parseHealthCheckPath(mApp.HealthChecks),
-			Env:             mApp.Env,
-			Labels:          mApp.Labels,
+			Id:                  appPath,
+			MesosDnsId:          getMesosDnsId(appPath),
+			EscapedId:           strings.Replace(appId, "/", "::", -1),
+			HealthCheckPath:     parseHealthCheckPath(mApp.HealthChecks),
+			HealthCheckProtocol: parseHealthCheckProtocol(mApp.HealthChecks),
+			Env:                 mApp.Env,
+			Labels:              mApp.Labels,
 		}
 
 		app.HealthChecks = make([]HealthCheck, 0, len(mApp.HealthChecks))
@@ -253,10 +255,21 @@ func getMesosDnsId(appPath string) string {
 
 func parseHealthCheckPath(checks []marathonHealthCheck) string {
 	for _, check := range checks {
-		if check.Protocol != "HTTP" {
+		if check.Protocol != "HTTP" && check.Protocol != "HTTPS" {
 			continue
 		}
 		return check.Path
+	}
+	return ""
+}
+
+/* maybe combine this with the above? */
+func parseHealthCheckProtocol(checks []marathonHealthCheck) string {
+	for _, check := range checks {
+		if check.Protocol != "HTTP" && check.Protocol != "HTTPS" {
+			continue
+		}
+		return check.Protocol
 	}
 	return ""
 }
