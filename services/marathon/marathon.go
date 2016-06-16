@@ -11,6 +11,7 @@ import (
 
 // Describes an app process running
 type Task struct {
+	Id    string
 	Host  string
 	Port  int
 	Ports []int
@@ -226,6 +227,7 @@ func createApps(tasksById map[string]marathonTaskList, marathonApps map[string]m
 		for _, mTask := range tasksById[appId] {
 			if len(mTask.Ports) > 0 {
 				t := Task{
+					Id:    mTask.Id,
 					Host:  mTask.Host,
 					Port:  mTask.Ports[0],
 					Ports: mTask.Ports,
