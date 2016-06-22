@@ -256,12 +256,16 @@ func TestServiceDelete(t *testing.T) {
 		params := make(map[string]string)
 		params["_1"] = test.path
 
+		join := make(chan bool)
 		go func() {
-			id := <-store.deleteChan
-			if id != test.expected {
-				t.Errorf("got '%s', wanted '%s'", id, test.expected)
+			if len(test.expected) > 0 {
+				id := <-store.deleteChan
+				if id != test.expected {
+					t.Errorf("got '%s', wanted '%s'", id, test.expected)
+				}
+				store.deleteResultChan <- test.err
 			}
-			store.deleteResultChan <- test.err
+			join <- true
 		}()
 
 		s.Delete(params, w, r)
@@ -273,5 +277,6 @@ func TestServiceDelete(t *testing.T) {
 		if w.Body.String() != test.output {
 			t.Errorf("got '%s', wanted '%s'", w.Body.String(), test.output)
 		}
+		<-join
 	}
 }
