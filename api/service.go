@@ -68,6 +68,10 @@ func (d *ServiceAPI) Put(params martini.Params, w http.ResponseWriter, r *http.R
 
 func (d *ServiceAPI) Delete(params martini.Params, w http.ResponseWriter, r *http.Request) {
 	serviceId := params["_1"]
+	if !strings.HasPrefix(serviceId, "/") {
+		serviceId = "/" + serviceId
+	}
+
 	err := d.Storage.Delete(serviceId)
 	if err != nil {
 		responseError(w, err.Error())
