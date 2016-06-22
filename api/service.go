@@ -67,8 +67,17 @@ func (d *ServiceAPI) Put(params martini.Params, w http.ResponseWriter, r *http.R
 }
 
 func (d *ServiceAPI) Delete(params martini.Params, w http.ResponseWriter, r *http.Request) {
-	serviceId := params["_1"]
-	err := d.Storage.Delete(serviceId)
+	serviceID := params["_1"]
+	if len(serviceID) == 0 {
+		responseError(w, "can not use empty ID")
+		return
+	}
+
+	if !strings.HasPrefix(serviceID, "/") {
+		serviceID = "/" + serviceID
+	}
+
+	err := d.Storage.Delete(serviceID)
 	if err != nil {
 		responseError(w, err.Error())
 		return
@@ -85,6 +94,11 @@ func extractService(r *http.Request) (service.Service, error) {
 	if err != nil {
 		return serviceModel, errors.New("Unable to decode JSON request")
 	}
+
+	if len(serviceModel.Id) == 0 {
+		return serviceModel, errors.New("can not use empty ID")
+	}
+
 	if !strings.HasPrefix(serviceModel.Id, "/") {
 		serviceModel.Id = "/" + serviceModel.Id
 	}
