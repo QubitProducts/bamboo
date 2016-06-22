@@ -103,169 +103,103 @@ func TestServiceAll(t *testing.T) {
 	}
 }
 
-func TestServiceCreate(t *testing.T) {
-	for _, test := range []struct {
-		body     string
-		expected *service.Service
-		err      error
-		status   int
-		output   string
-	}{
-		{
-			body:   "",
-			status: http.StatusBadRequest,
-			output: "Unable to decode JSON request\n",
+type serviceUpdateFunc func(s *ServiceAPI, w http.ResponseWriter, r *http.Request)
+
+func TestServiceUpdate(t *testing.T) {
+	for _, call := range []serviceUpdateFunc{
+		func(s *ServiceAPI, w http.ResponseWriter, r *http.Request) {
+			s.Create(w, r)
 		},
-		{
-			body:   `{}`,
-			status: http.StatusBadRequest,
-			output: "can not use empty ID\n",
-		},
-		{
-			body: `{"Id":"/some/service","Acl":"path_beg /some/service"}`,
-			expected: &service.Service{
-				Id:     "/some/service",
-				Acl:    "path_beg /some/service",
-				Config: nil,
-			},
-			status: http.StatusOK,
-			output: `{"Id":"/some/service","Acl":"path_beg /some/service","Config":null}`,
-		},
-		{
-			body: `{"Id":"some/service","Acl":"path_beg /some/service"}`,
-			expected: &service.Service{
-				Id:     "/some/service",
-				Acl:    "path_beg /some/service",
-				Config: nil,
-			},
-			status: http.StatusOK,
-			output: `{"Id":"/some/service","Acl":"path_beg /some/service","Config":null}`,
-		},
-		{
-			body: `{"Id":"/some/service","Acl":"path_beg /some/service"}`,
-			expected: &service.Service{
-				Id:     "/some/service",
-				Acl:    "path_beg /some/service",
-				Config: nil,
-			},
-			err:    errors.New("test error"),
-			status: http.StatusBadRequest,
-			output: "test error\n",
+		func(s *ServiceAPI, w http.ResponseWriter, r *http.Request) {
+			params := make(map[string]string)
+			s.Put(params, w, r)
 		},
 	} {
-		c := &conf.Configuration{}
-		store := newTestStorage([]service.Service{}, nil)
-		s := &ServiceAPI{
-			Config:  c,
-			Storage: store,
-		}
-
-		r, err := http.NewRequest("POST", "/api/services", strings.NewReader(test.body))
-		if err != nil {
-			t.Fatalf("Error creating request: %s", err)
-		}
-		w := httptest.NewRecorder()
-
-		go func() {
-			service := <-store.upsertChan
-			if !reflect.DeepEqual(service, *test.expected) {
-				t.Errorf("got %#v, wanted %#v", service, test.expected)
+		for _, test := range []struct {
+			body     string
+			expected *service.Service
+			err      error
+			status   int
+			output   string
+		}{
+			{
+				body:   "",
+				status: http.StatusBadRequest,
+				output: "Unable to decode JSON request\n",
+			},
+			{
+				body:   `{}`,
+				status: http.StatusBadRequest,
+				output: "can not use empty ID\n",
+			},
+			{
+				body: `{"Id":"/some/service","Acl":"path_beg /some/service"}`,
+				expected: &service.Service{
+					Id:     "/some/service",
+					Acl:    "path_beg /some/service",
+					Config: nil,
+				},
+				status: http.StatusOK,
+				output: `{"Id":"/some/service","Acl":"path_beg /some/service","Config":null}`,
+			},
+			{
+				body: `{"Id":"some/service","Acl":"path_beg /some/service"}`,
+				expected: &service.Service{
+					Id:     "/some/service",
+					Acl:    "path_beg /some/service",
+					Config: nil,
+				},
+				status: http.StatusOK,
+				output: `{"Id":"/some/service","Acl":"path_beg /some/service","Config":null}`,
+			},
+			{
+				body: `{"Id":"/some/service","Acl":"path_beg /some/service"}`,
+				expected: &service.Service{
+					Id:     "/some/service",
+					Acl:    "path_beg /some/service",
+					Config: nil,
+				},
+				err:    errors.New("test error"),
+				status: http.StatusBadRequest,
+				output: "test error\n",
+			},
+		} {
+			c := &conf.Configuration{}
+			store := newTestStorage([]service.Service{}, nil)
+			s := &ServiceAPI{
+				Config:  c,
+				Storage: store,
 			}
-			store.upsertResultChan <- test.err
-		}()
 
-		s.Create(w, r)
-
-		if w.Code != test.status {
-			t.Errorf("got %d, wanted %d", w.Code, test.status)
-		}
-
-		if w.Body.String() != test.output {
-			t.Errorf("got '%s', wanted '%s'", w.Body.String(), test.output)
-		}
-	}
-}
-
-func TestServicePut(t *testing.T) {
-	for _, test := range []struct {
-		body     string
-		expected *service.Service
-		err      error
-		status   int
-		output   string
-	}{
-		{
-			body:   "",
-			status: http.StatusBadRequest,
-			output: "Unable to decode JSON request\n",
-		},
-		{
-			body:   `{}`,
-			status: http.StatusBadRequest,
-			output: "can not use empty ID\n",
-		},
-		{
-			body: `{"Id":"/some/service","Acl":"path_beg /some/service"}`,
-			expected: &service.Service{
-				Id:     "/some/service",
-				Acl:    "path_beg /some/service",
-				Config: nil,
-			},
-			status: http.StatusOK,
-			output: `{"Id":"/some/service","Acl":"path_beg /some/service","Config":null}`,
-		},
-		{
-			body: `{"Id":"some/service","Acl":"path_beg /some/service"}`,
-			expected: &service.Service{
-				Id:     "/some/service",
-				Acl:    "path_beg /some/service",
-				Config: nil,
-			},
-			status: http.StatusOK,
-			output: `{"Id":"/some/service","Acl":"path_beg /some/service","Config":null}`,
-		},
-		{
-			body: `{"Id":"/some/service","Acl":"path_beg /some/service"}`,
-			expected: &service.Service{
-				Id:     "/some/service",
-				Acl:    "path_beg /some/service",
-				Config: nil,
-			},
-			err:    errors.New("test error"),
-			status: http.StatusBadRequest,
-			output: "test error\n",
-		},
-	} {
-		c := &conf.Configuration{}
-		store := newTestStorage([]service.Service{}, nil)
-		s := &ServiceAPI{
-			Config:  c,
-			Storage: store,
-		}
-
-		r, err := http.NewRequest("POST", "/api/services", strings.NewReader(test.body))
-		if err != nil {
-			t.Fatalf("Error creating request: %s", err)
-		}
-		w := httptest.NewRecorder()
-		params := make(map[string]string)
-
-		go func() {
-			service := <-store.upsertChan
-			if !reflect.DeepEqual(service, *test.expected) {
-				t.Errorf("got %#v, wanted %#v", service, test.expected)
+			r, err := http.NewRequest("POST", "/api/services", strings.NewReader(test.body))
+			if err != nil {
+				t.Fatalf("Error creating request: %s", err)
 			}
-			store.upsertResultChan <- test.err
-		}()
+			w := httptest.NewRecorder()
 
-		s.Put(params, w, r)
+			join := make(chan bool)
+			go func() {
+				if test.expected != nil {
+					service := <-store.upsertChan
+					if !reflect.DeepEqual(service, *test.expected) {
+						t.Errorf("got %#v, wanted %#v", service, test.expected)
+					}
+					store.upsertResultChan <- test.err
+				}
+				join <- true
+			}()
 
-		if w.Code != test.status {
-			t.Errorf("got %d, wanted %d", w.Code, test.status)
-		}
+			// call update function
+			call(s, w, r)
 
-		if w.Body.String() != test.output {
-			t.Errorf("got '%s', wanted '%s'", w.Body.String(), test.output)
+			if w.Code != test.status {
+				t.Errorf("got %d, wanted %d", w.Code, test.status)
+			}
+
+			if w.Body.String() != test.output {
+				t.Errorf("got '%s', wanted '%s'", w.Body.String(), test.output)
+			}
+			<-join
 		}
 	}
 }
