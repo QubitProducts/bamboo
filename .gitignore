@@ -5,7 +5,7 @@ config/private.json
 config/local.json
 Godeps/Readme
 *.iml
-bamboo
+/bamboo
 node_modules
 .sass-cache
 builder/build

@@ -34,23 +34,14 @@ func (d *ServiceAPI) All(w http.ResponseWriter, r *http.Request) {
 }
 
 func (d *ServiceAPI) Create(w http.ResponseWriter, r *http.Request) {
-	service, err := extractService(r)
-
-	if err != nil {
-		responseError(w, err.Error())
-		return
-	}
-
-	err = d.Storage.Upsert(service)
-	if err != nil {
-		responseError(w, err.Error())
-		return
-	}
-
-	responseJSON(w, service)
+	d.updateService(w, r)
 }
 
 func (d *ServiceAPI) Put(params martini.Params, w http.ResponseWriter, r *http.Request) {
+	d.updateService(w, r)
+}
+
+func (d *ServiceAPI) updateService(w http.ResponseWriter, r *http.Request) {
 	service, err := extractService(r)
 	if err != nil {
 		responseError(w, err.Error())
