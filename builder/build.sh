@@ -2,7 +2,7 @@
 set -e
 set -u
 name=bamboo
-version=${_BAMBOO_VERSION:-"1.0.0"}
+version=${_BAMBOO_VERSION:-"0.2.20"}
 description="Bamboo is a DNS based HAProxy auto configuration and auto service discovery for Mesos Marathon."
 url="https://github.com/QuBitProducts/bamboo"
 arch="all"
