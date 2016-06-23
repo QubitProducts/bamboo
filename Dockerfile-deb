@@ -3,7 +3,7 @@ FROM golang:1.6.2
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update -yqq
-RUN apt-get install -yqq software-properties-common curl git mercurial ruby-dev gcc make
+RUN apt-get install -yqq software-properties-common curl git mercurial ruby-dev gcc make rubygems
 RUN gem install fpm
 
 ADD . /go/src/github.com/QubitProducts/bamboo
