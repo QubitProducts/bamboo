@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/samuel/go-zookeeper/zk"
+	"github.com/samuel/go-zookeeper/zk"
 	c "github.com/QubitProducts/bamboo/configuration"
 )
 
