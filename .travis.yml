@@ -25,10 +25,10 @@ install:
 
 # Tests should fail if go fmt is required
 script:
+  - godep restore
   - '[[ -z "$(go fmt ./... | tee -a /dev/stderr)" ]]'
   - go vet ./...
   - go test -v ./...
-  - godep restore
   - overalls -project=github.com/QubitProducts/bamboo -covermode=count -debug -ignore=Godeps,webapp,builder,.git,vendor
   - goveralls -coverprofile=./overalls.coverprofile -service=travis-ci
 
