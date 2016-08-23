@@ -14,15 +14,15 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/go-martini/martini"
-	"github.com/kardianos/osext"
-	"github.com/natefinch/lumberjack"
-	"github.com/samuel/go-zookeeper/zk"
 	"github.com/QubitProducts/bamboo/api"
 	"github.com/QubitProducts/bamboo/configuration"
 	"github.com/QubitProducts/bamboo/qzk"
 	"github.com/QubitProducts/bamboo/services/event_bus"
 	"github.com/QubitProducts/bamboo/services/service"
+	"github.com/go-martini/martini"
+	"github.com/kardianos/osext"
+	"github.com/natefinch/lumberjack"
+	"github.com/samuel/go-zookeeper/zk"
 )
 
 /*

@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/samuel/go-zookeeper/zk"
 	conf "github.com/QubitProducts/bamboo/configuration"
+	"github.com/samuel/go-zookeeper/zk"
 	"log"
 	"net/url"
 )

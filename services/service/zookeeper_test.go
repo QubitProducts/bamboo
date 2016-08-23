@@ -7,8 +7,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/samuel/go-zookeeper/zk"
 	"github.com/QubitProducts/bamboo/configuration"
+	"github.com/samuel/go-zookeeper/zk"
 )
 
 var zkTimeout = time.Second
