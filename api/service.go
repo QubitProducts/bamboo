@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/go-martini/martini"
 	conf "github.com/QubitProducts/bamboo/configuration"
 	"github.com/QubitProducts/bamboo/services/service"
+	"github.com/go-martini/martini"
 )
 
 type ServiceAPI struct {
