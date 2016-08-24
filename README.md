@@ -324,7 +324,7 @@ Bamboo is started by supervisord in this Docker image. The [default Supervisord 
 
 We use [godep](https://github.com/tools/godep) managing Go package dependencies; Goconvey for unit testing; CommonJS and SASS for frontend development and build distribution.
  
-* Golang 1.3
+* Golang 1.7
 * Node.js 0.10.x+
 
 Golang:
