@@ -191,7 +191,7 @@ func fetchTasks(endpoint string, conf *configuration.Configuration) (map[string]
 	return tasksById, nil
 }
 
-func calculateTaskHealth(healthCheckResults []HealthCheckResult, healthChecks []HealthChecks) bool {
+func calculateTaskHealth(healthCheckResults []HealthCheckResult, healthChecks []marathonHealthCheck) bool {
 	//If we don't even have health check results for every health check, don't count the task as healthy
 	if len(healthChecks) > len(healthCheckResults) {
 		return false
@@ -251,7 +251,7 @@ func createApps(tasksById map[string]marathonTaskList, marathonApps map[string]m
 					Host:  mTask.Host,
 					Port:  mTask.Ports[0],
 					Ports: mTask.Ports,
-					Alive: calculateTaskHealth(mTask.healthCheckResults, mApp.HealthChecks),
+					Alive: calculateTaskHealth(mTask.HealthCheckResults, mApp.HealthChecks),
 				}
 				tasks = append(tasks, t)
 			}
