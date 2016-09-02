@@ -16,7 +16,7 @@ install:
   - export PATH=$PATH:$HOME/gopath/bin
 
   # Install build dependencies
-  - go get bitbucket.org/tebeka/go2xunit
+  - go get github.com/tebeka/go2xunit
   - go get github.com/smartystreets/assertions
   - go get -t github.com/smartystreets/goconvey
   - go get -v -u github.com/tools/godep
