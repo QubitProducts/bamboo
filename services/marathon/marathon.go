@@ -15,6 +15,7 @@ type Task struct {
 	Host  string
 	Port  int
 	Ports []int
+	Alive bool
 }
 
 // A health check on the application
@@ -40,6 +41,7 @@ type App struct {
 	ServicePorts        []int
 	Env                 map[string]string
 	Labels              map[string]string
+	SplitId             []string
 }
 
 type AppList []App
@@ -62,6 +64,10 @@ type marathonTasks struct {
 	Tasks marathonTaskList `json:"tasks"`
 }
 
+type HealthCheckResult struct {
+	Alive bool
+}
+
 type marathonTask struct {
 	AppId        string
 	Id           string
@@ -71,6 +77,7 @@ type marathonTask struct {
 	StartedAt    string
 	StagedAt     string
 	Version      string
+	HealthCheckResults []HealthCheckResult
 }
 
 func (slice marathonTaskList) Len() int {
@@ -184,8 +191,20 @@ func fetchTasks(endpoint string, conf *configuration.Configuration) (map[string]
 	return tasksById, nil
 }
 
-func createApps(tasksById map[string]marathonTaskList, marathonApps map[string]marathonApp) AppList {
+func calculateTaskHealth(healthCheckResults []HealthCheckResult, healthChecks []HealthChecks) bool {
+	//If we don't even have health check results for every health check, don't count the task as healthy
+	if len(healthChecks) > len(healthCheckResults) {
+		return false;
+	}
+	for _, healthCheck := range healthCheckResults {
+		if !healthCheck.Alive {
+			return false;
+		}
+	}
+	return true;
+}
 
+func createApps(tasksById map[string]marathonTaskList, marathonApps map[string]marathonApp) AppList {
 	apps := AppList{}
 
 	for appId, mApp := range marathonApps {
@@ -205,6 +224,7 @@ func createApps(tasksById map[string]marathonTaskList, marathonApps map[string]m
 			HealthCheckProtocol: parseHealthCheckProtocol(mApp.HealthChecks),
 			Env:                 mApp.Env,
 			Labels:              mApp.Labels,
+			SplitId:             strings.Split(appId, "/"),
 		}
 
 		app.HealthChecks = make([]HealthCheck, 0, len(mApp.HealthChecks))
@@ -231,6 +251,7 @@ func createApps(tasksById map[string]marathonTaskList, marathonApps map[string]m
 					Host:  mTask.Host,
 					Port:  mTask.Ports[0],
 					Ports: mTask.Ports,
+					Alive: calculateTaskHealth(mTask.healthCheckResults, mApp.HealthChecks)
 				}
 				tasks = append(tasks, t)
 			}
