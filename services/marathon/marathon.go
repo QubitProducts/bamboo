@@ -69,14 +69,14 @@ type HealthCheckResult struct {
 }
 
 type marathonTask struct {
-	AppId        string
-	Id           string
-	Host         string
-	Ports        []int
-	ServicePorts []int
-	StartedAt    string
-	StagedAt     string
-	Version      string
+	AppId              string
+	Id                 string
+	Host               string
+	Ports              []int
+	ServicePorts       []int
+	StartedAt          string
+	StagedAt           string
+	Version            string
 	HealthCheckResults []HealthCheckResult
 }
 
@@ -191,17 +191,17 @@ func fetchTasks(endpoint string, conf *configuration.Configuration) (map[string]
 	return tasksById, nil
 }
 
-func calculateTaskHealth(healthCheckResults []HealthCheckResult, healthChecks []HealthChecks) bool {
+func calculateTaskHealth(healthCheckResults []HealthCheckResult, healthChecks []marathonHealthCheck) bool {
 	//If we don't even have health check results for every health check, don't count the task as healthy
 	if len(healthChecks) > len(healthCheckResults) {
-		return false;
+		return false
 	}
 	for _, healthCheck := range healthCheckResults {
 		if !healthCheck.Alive {
-			return false;
+			return false
 		}
 	}
-	return true;
+	return true
 }
 
 func createApps(tasksById map[string]marathonTaskList, marathonApps map[string]marathonApp) AppList {
@@ -251,7 +251,7 @@ func createApps(tasksById map[string]marathonTaskList, marathonApps map[string]m
 					Host:  mTask.Host,
 					Port:  mTask.Ports[0],
 					Ports: mTask.Ports,
-					Alive: calculateTaskHealth(mTask.healthCheckResults, mApp.HealthChecks)
+					Alive: calculateTaskHealth(mTask.HealthCheckResults, mApp.HealthChecks),
 				}
 				tasks = append(tasks, t)
 			}
