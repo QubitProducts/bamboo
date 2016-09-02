@@ -251,7 +251,7 @@ func createApps(tasksById map[string]marathonTaskList, marathonApps map[string]m
 					Host:  mTask.Host,
 					Port:  mTask.Ports[0],
 					Ports: mTask.Ports,
-					Alive: calculateTaskHealth(mTask.healthCheckResults, mApp.HealthChecks)
+					Alive: calculateTaskHealth(mTask.healthCheckResults, mApp.HealthChecks),
 				}
 				tasks = append(tasks, t)
 			}
