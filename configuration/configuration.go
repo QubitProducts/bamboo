@@ -45,6 +45,9 @@ func FromFile(filePath string) (Configuration, error) {
 	conf := &Configuration{}
 	err := conf.FromFile(filePath)
 	setValueFromEnv(&conf.Marathon.Endpoint, "MARATHON_ENDPOINT")
+	setValueFromEnv(&conf.Marathon.Zookeeper.Host, "MARATHON_ZK_HOST")
+	setValueFromEnv(&conf.Marathon.Zookeeper.Path, "MARATHON_ZK_PATH")
+	setBoolValueFromEnv(&conf.Marathon.UseZookeeper, "MARATHON_USE_ZK")
 	setValueFromEnv(&conf.Marathon.User, "MARATHON_USER")
 	setValueFromEnv(&conf.Marathon.Password, "MARATHON_PASSWORD")
 	setBoolValueFromEnv(&conf.Marathon.UseEventStream, "MARATHON_USE_EVENT_STREAM")
