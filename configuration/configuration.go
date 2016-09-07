@@ -45,6 +45,9 @@ func FromFile(filePath string) (Configuration, error) {
 	conf := &Configuration{}
 	err := conf.FromFile(filePath)
 	setValueFromEnv(&conf.Marathon.Endpoint, "MARATHON_ENDPOINT")
+	setValueFromEnv(&conf.Marathon.User, "MARATHON_USER")
+	setValueFromEnv(&conf.Marathon.Password, "MARATHON_PASSWORD")
+	setBoolValueFromEnv(&conf.Marathon.UseEventStream, "MARATHON_USE_EVENT_STREAM")
 
 	setValueFromEnv(&conf.Bamboo.Endpoint, "BAMBOO_ENDPOINT")
 	setValueFromEnv(&conf.Bamboo.Zookeeper.Host, "BAMBOO_ZK_HOST")
@@ -53,6 +56,9 @@ func FromFile(filePath string) (Configuration, error) {
 	setValueFromEnv(&conf.HAProxy.TemplatePath, "HAPROXY_TEMPLATE_PATH")
 	setValueFromEnv(&conf.HAProxy.OutputPath, "HAPROXY_OUTPUT_PATH")
 	setValueFromEnv(&conf.HAProxy.ReloadCommand, "HAPROXY_RELOAD_CMD")
+	setValueFromEnv(&conf.HAProxy.ReloadValidationCommand, "HAPROXY_RELOAD_VALIDATION_CMD")
+	setValueFromEnv(&conf.HAProxy.ReloadCleanupCommand, "HAPROXY_RELOAD_CLEANUP_CMD")
+
 	setValueFromEnv(&conf.StatsD.Host, "STATSD_HOST")
 	setValueFromEnv(&conf.StatsD.Prefix, "STATSD_PREFIX")
 	setBoolValueFromEnv(&conf.StatsD.Enabled, "STATSD_ENABLED")
@@ -68,15 +74,15 @@ func setValueFromEnv(field *string, envVar string) {
 }
 
 func setBoolValueFromEnv(field *bool, envVar string) {
-env := os.Getenv(envVar)
-if len(env) > 0 {
-	log.Printf("Using environment override %s=%t", envVar, env)
-	x, err := strconv.ParseBool(env)
-	if err != nil {
-		log.Printf("Error converting boolean value: %s\n", err)
+	env := os.Getenv(envVar)
+	if len(env) > 0 {
+		log.Printf("Using environment override %s=%s", envVar, env)
+		x, err := strconv.ParseBool(env)
+		if err != nil {
+			log.Printf("Error converting boolean value: %s\n", err)
+		}
+		*field = x
+	} else {
+		log.Printf("Environment variable not set: %s", envVar)
 	}
-	*field = x
-} else {
-	log.Printf("Environment variable not set: %s", envVar)
-}
 }

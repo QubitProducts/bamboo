@@ -1,25 +1,28 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"path"
+	"strings"
 	"syscall"
 	"time"
-
-	"github.com/kardianos/osext"
-	lumberjack "github.com/natefinch/lumberjack"
-	"github.com/samuel/go-zookeeper/zk"
-	"github.com/zenazn/goji"
 
 	"github.com/QubitProducts/bamboo/api"
 	"github.com/QubitProducts/bamboo/configuration"
 	"github.com/QubitProducts/bamboo/qzk"
 	"github.com/QubitProducts/bamboo/services/event_bus"
+	"github.com/QubitProducts/bamboo/services/service"
+	"github.com/go-martini/martini"
+	"github.com/kardianos/osext"
+	"github.com/natefinch/lumberjack"
+	"github.com/samuel/go-zookeeper/zk"
 )
 
 /*
@@ -27,10 +30,12 @@ import (
 */
 var configFilePath string
 var logPath string
+var serverBindPort string
 
 func init() {
 	flag.StringVar(&configFilePath, "config", "config/development.json", "Full path of the configuration JSON file")
 	flag.StringVar(&logPath, "log", "", "Log path to a file. Default logs to stdout")
+	flag.StringVar(&serverBindPort, "bind", ":8000", "Bind HTTP server to a specific port")
 }
 
 func main() {
@@ -64,40 +69,57 @@ func main() {
 	// Create Zookeeper connection
 	zkConn := listenToZookeeper(conf, eventBus)
 
+	// Create the storage backend
+	storage, err := service.NewZKStorage(zkConn, conf.Bamboo.Zookeeper)
+	if err != nil {
+		log.Panicf("Failed to create ZK storage: %v", err)
+	}
+
 	// Register handlers
-	handlers := event_bus.Handlers{Conf: &conf, Zookeeper: zkConn}
+	handlers := event_bus.Handlers{Conf: &conf, Storage: storage}
 	eventBus.Register(handlers.MarathonEventHandler)
 	eventBus.Register(handlers.ServiceEventHandler)
+	eventBus.Publish(event_bus.MarathonEvent{EventType: "bamboo_startup", Timestamp: time.Now().Format(time.RFC3339)})
+
+	// Handle gracefully exit
+	registerOSSignals()
 
 	// Start server
-	initServer(&conf, zkConn, eventBus)
+	initServer(&conf, storage, eventBus)
 }
 
-func initServer(conf *configuration.Configuration, conn *zk.Conn, eventBus *event_bus.EventBus) {
-	stateAPI := api.StateAPI{Config: conf, Zookeeper: conn}
-	serviceAPI := api.ServiceAPI{Config: conf, Zookeeper: conn}
+func initServer(conf *configuration.Configuration, storage service.Storage, eventBus *event_bus.EventBus) {
+	stateAPI := api.StateAPI{Config: conf, Storage: storage}
+	serviceAPI := api.ServiceAPI{Config: conf, Storage: storage}
 	eventSubAPI := api.EventSubscriptionAPI{Conf: conf, EventBus: eventBus}
 
 	conf.StatsD.Increment(1.0, "restart", 1)
 	// Status live information
-	goji.Get("/status", api.HandleStatus)
+	router := martini.Classic()
+	router.Get("/status", api.HandleStatus)
 
-	// State API
-	goji.Get("/api/state", stateAPI.Get)
-
-	// Service API
-	goji.Get("/api/services", serviceAPI.All)
-	goji.Post("/api/services", serviceAPI.Create)
-	goji.Put("/api/services/:id", serviceAPI.Put)
-	goji.Delete("/api/services/:id", serviceAPI.Delete)
-	goji.Post("/api/marathon/event_callback", eventSubAPI.Callback)
+	// API
+	router.Group("/api", func(api martini.Router) {
+		// State API
+		api.Get("/state", stateAPI.Get)
+		// Service API
+		api.Get("/services", serviceAPI.All)
+		api.Post("/services", serviceAPI.Create)
+		api.Put("/services/**", serviceAPI.Put)
+		api.Delete("/services/**", serviceAPI.Delete)
+		api.Post("/marathon/event_callback", eventSubAPI.Callback)
+	})
 
 	// Static pages
-	goji.Get("/*", http.FileServer(http.Dir(path.Join(executableFolder(), "webapp"))))
+	router.Use(martini.Static(path.Join(executableFolder(), "webapp")))
 
-	registerMarathonEvent(conf)
-
-	goji.Serve()
+	if conf.Marathon.UseEventStream {
+		// Listen events stream from Marathon
+		listenToMarathonEventStream(conf, eventSubAPI)
+	} else {
+		registerMarathonEvent(conf)
+	}
+	router.RunOnAddr(serverBindPort)
 }
 
 // Get current executable folder path
@@ -117,7 +139,26 @@ func registerMarathonEvent(conf *configuration.Configuration) {
 		url := marathon + "/v2/eventSubscriptions?callbackUrl=" + conf.Bamboo.Endpoint + "/api/marathon/event_callback"
 		req, _ := http.NewRequest("POST", url, nil)
 		req.Header.Add("Content-Type", "application/json")
-		client.Do(req)
+		if len(conf.Marathon.User) > 0 && len(conf.Marathon.Password) > 0 {
+			req.SetBasicAuth(conf.Marathon.User, conf.Marathon.Password)
+		}
+		resp, err := client.Do(req)
+		if err != nil {
+			errorMsg := "An error occurred while accessing Marathon callback system: %s\n"
+			log.Printf(errorMsg, err)
+			return
+		}
+		bodyBytes, err := ioutil.ReadAll(resp.Body)
+		resp.Body.Close()
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
+		body := string(bodyBytes)
+		if strings.HasPrefix(body, "{\"message") {
+			warningMsg := "Access to the callback system of Marathon seems to be failed, response: %s\n"
+			log.Printf(warningMsg, body)
+		}
 	}
 }
 
@@ -146,6 +187,66 @@ func listenToZookeeper(conf configuration.Configuration, eventBus *event_bus.Eve
 	return serviceConn
 }
 
+func listenToMarathonEventStream(conf *configuration.Configuration, sub api.EventSubscriptionAPI) {
+	client := &http.Client{}
+	client.Timeout = 0 * time.Second
+
+	for _, marathon := range conf.Marathon.Endpoints() {
+		ticker := time.NewTicker(1 * time.Second)
+		eventsURL := marathon + "/v2/events"
+		go func() {
+			for _ = range ticker.C {
+				req, err := http.NewRequest("GET", eventsURL, nil)
+				req.Header.Set("Accept", "text/event-stream")
+				if len(conf.Marathon.User) > 0 && len(conf.Marathon.Password) > 0 {
+					req.SetBasicAuth(conf.Marathon.User, conf.Marathon.Password)
+				}
+				if err != nil {
+					errorMsg := "An error occurred while creating request to Marathon events system: %s\n"
+					log.Printf(errorMsg, err)
+					continue
+				}
+
+				resp, err := client.Do(req)
+				if err != nil {
+					errorMsg := "An error occurred while making a request to Marathon events system: %s\n"
+					log.Printf(errorMsg, err)
+					continue
+				}
+
+				defer resp.Body.Close()
+
+				reader := bufio.NewReader(resp.Body)
+				for {
+					line, err := reader.ReadString('\n')
+					if err != nil {
+						if err != io.EOF {
+							errorMsg := "An error occurred while reading Marathon event: %s\n"
+							log.Printf(errorMsg, err)
+						}
+						break
+					}
+
+					if len(strings.TrimSpace(line)) == 0 {
+						continue
+					}
+
+					if !strings.HasPrefix(line, "data: ") {
+						errorMsg := "Wrong event format: %s\n"
+						log.Printf(errorMsg, line)
+						continue
+					}
+
+					line = line[6:]
+					sub.Notify([]byte(line))
+				}
+
+				log.Println("Event stream connection was closed. Re-opening...")
+			}
+		}()
+	}
+}
+
 func configureLog() {
 	if len(logPath) > 0 {
 		log.SetOutput(io.MultiWriter(&lumberjack.Logger{
@@ -157,4 +258,15 @@ func configureLog() {
 			MaxAge: 28,
 		}, os.Stdout))
 	}
+}
+
+func registerOSSignals() {
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	go func() {
+		for _ = range c {
+			log.Println("Server Stopped")
+			os.Exit(0)
+		}
+	}()
 }

@@ -11,11 +11,6 @@ module.exports = ["$resource", function ($resource) {
     destroy: { method: "DELETE", params: { id: "@id"} }
   });
 
-  var encodeId = function (params) {
-    params.id = encodeURIComponent(params.id);
-    return params;
-  };
-
   return {
     all: function () {
       return index.get().$promise;
@@ -24,13 +19,13 @@ module.exports = ["$resource", function ($resource) {
     create: function (params) {
       return index.create(params).$promise;
     },
-
+    
     update: function (params) {
-      return entity.update(encodeId(params)).$promise;
+      return entity.update(params).$promise;
     },
 
     destroy: function (params) {
-      return entity.destroy(encodeId(params)).$promise;
+      return entity.destroy(params).$promise;
     }
   }
 }];

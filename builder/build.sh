@@ -2,7 +2,7 @@
 set -e
 set -u
 name=bamboo
-version=${_BAMBOO_VERSION:-"1.0.0"}
+version=${_BAMBOO_VERSION:-"0.2.20"}
 description="Bamboo is a DNS based HAProxy auto configuration and auto service discovery for Mesos Marathon."
 url="https://github.com/QuBitProducts/bamboo"
 arch="all"
@@ -14,6 +14,7 @@ workspace="builder"
 pkgtype=${_PKGTYPE:-"deb"}
 builddir="build"
 installdir="opt"
+outputdir="output"
 function cleanup() {
     cd ${origdir}/${workspace}
     rm -rf ${name}*.{deb,rpm}
@@ -68,7 +69,8 @@ function mkdeb() {
     --prefix=/ \
     -s dir \
     -- .
-  mv ${name}*.${pkgtype} ${origdir}/${workspace}/
+  mkdir -p ${origdir}/${outputdir}
+  mv ${name}*.${pkgtype} ${origdir}/${outputdir}/
   popd
 }
 

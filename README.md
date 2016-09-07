@@ -1,4 +1,4 @@
-# Bamboo  [![Build Status](https://travis-ci.org/QubitProducts/bamboo.svg?branch=master)](https://travis-ci.org/QubitProducts/bamboo)
+# Bamboo  [![Build Status](https://travis-ci.org/QubitProducts/bamboo.svg?branch=master)](https://travis-ci.org/QubitProducts/bamboo) [![Coverage Status](https://coveralls.io/repos/QubitProducts/bamboo/badge.svg?branch=master&service=github)](https://coveralls.io/github/QubitProducts/bamboo?branch=coverage)
 
 ![bamboo-logo](https://cloud.githubusercontent.com/assets/37033/4110258/a8cc58bc-31ef-11e4-87c9-dd20bd2468c2.png)
 
@@ -18,13 +18,21 @@ It features:
 
 ### Compatibility
 
-Bamboo v0.1.1 supports Marathon 0.6 and Mesos 0.19.x
+v0.1.1 supports Marathon 0.6 and Mesos 0.19.x
 
-Bamboo v0.2.9 supports Marathon 0.7.* (with [http_callback enabled](https://mesosphere.github.io/marathon/docs/rest-api.html#event-subscriptions)) and Mesos 0.21.x. Since v0.2.2, Bamboo supports both DNS and non-DNS proxy ACL rules. v0.2.8 Supports both HTTP & TCP via custom Marathon enviroment variables (read below for details).
+v0.2.2 supports both DNS and non-DNS proxy ACL rules
+
+v0.2.8 supports both HTTP & TCP via custom Marathon enviroment variables (read below for details)
+
+v0.2.9 supports Marathon 0.7.* (with [http_callback
+enabled](https://mesosphere.github.io/marathon/docs/rest-api.html#event-subscriptions)) and Mesos 0.21.x
+
+v0.2.11 improves API, deprecate previous API endpoint
+
 
 ### Releases and changelog
 
-Since Marathon API and behaviour may change over time, espeically in this early days. You should expect we aim to catch up those changes, improve design and adding new features. We aim to maintain backwards compatibility when possible. Releases and changelog are maintained in the [releases page](https://github.com/QubitProducts/bamboo/releases). Please read them when upgrading.
+Since Marathon API and behaviour may change over time, especially in this early days. You should expect we aim to catch up those changes, improve design and adding new features. We aim to maintain backwards compatibility when possible. Releases and changelog are maintained in the [releases page](https://github.com/QubitProducts/bamboo/releases). Please read them when upgrading.
 
 ## Deployment Guide
 
@@ -56,15 +64,18 @@ This section tries to explain usage in code comment style:
 {
   // Marathon instance configuration
   "Marathon": {
-    // Marathon service HTTP endpoint
-    "Endpoint": "http://localhost:8080"
+    // Marathon service HTTP endpoints
+    "Endpoint": "http://marathon1:8080,http://marathon2:8080,http://marathon3:8080",
+    // Use the Marathon HTTP event streaming feature (Bamboo 0.2.16, Marathon v0.9.0)
+    "UseEventStream": true
   },
 
   "Bamboo": {
-
     // Bamboo's HTTP address can be accessed by Marathon
-    // This is used for Marathon HTTP callback; must be reachable by Marathon
-    "Host": "http://localhost:8000",
+    // This is used for Marathon HTTP callback, and each instance of Bamboo
+    // must be provided a unique Endpoint directly addressable by Marathon
+    // (e.g., the IP address of each server)
+    "Endpoint": "http://localhost:8000",
 
     // Proxy setting information is stored in Zookeeper
     // Bamboo will create this path if it does not already exist
@@ -75,15 +86,20 @@ This section tries to explain usage in code comment style:
       "ReportingDelay": 5
     }
   }
-  
-  
+
+
   // Make sure using absolute path on production
   "HAProxy": {
     "TemplatePath": "/var/bamboo/haproxy_template.cfg",
     "OutputPath": "/etc/haproxy/haproxy.cfg",
-    "ReloadCommand": "read PIDS < /var/run/haproxy.pid; haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -sf $PIDS && while ps -p $PIDS; do sleep 0.2; done"
+    "ReloadCommand": "haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -D -sf $(cat /var/run/haproxy.pid)",
+    // A command that will validate the config before running reload command.
+    // '{{.}}' will be expanded to a temporary path that contains the config contents
+    "ReloadValidationCommand": "haproxy -c -f {{.}}",
+    // A command that will always be run after ReloadCommand, even if the reload fails
+    "ReloadCleanupCommand": "exit 0"
   },
-  
+
   // Enable or disable StatsD event tracking
   "StatsD": {
     "Enabled": false,
@@ -119,6 +135,32 @@ The default template shipped with Bamboo is aware of `BAMBOO_TCP_PORT`. When thi
 
 In this example, both `BAMBOO_TCP_PORT` and `MY_CUSTOM_ENV` can be accessed in HAProxy template. This enables flexible template customization depending on your preferences.
 
+#### Default Haproxy Template ACL
+
+The default acl rule in the `haproxy_template.cfg` uses the full
+marathon app id, which may include slash-separated groups.
+
+```
+        # This is the default proxy criteria
+        acl {{ $app.EscapedId }}-aclrule path_beg -i {{ $app.Id }}
+```
+
+For example if your app is named "/mygroup/appname", your default acl
+will be `path_beg -i /mygroup/appname`.  This can always be changed
+using the bamboo web UI.
+
+There is also a DNS friendly version of your marathon app Id which can
+be used instead of the slash-separated one.  `MesosDnsId` includes the
+groups as hyphenated suffixes.  For example, if your appname is
+"/another/group/app" then the `MesosDnsId` will be "app-group-another".
+
+You can edit the `haproxy_template.cfg` and use the DNS friendly name
+for your default ACL instead.
+
+```
+    acl {{ $app.EscapedId }}-aclrule hdr_dom(host) -i {{ $app.MesosDnsId }}
+```
+
 ### Environment Variables
 
 Configuration in the `production.json` file can be overridden with environment variables below. This is generally useful when you are building a Docker image for Bamboo and HAProxy. If they are not specified then the values from the configuration file will be used.
@@ -126,6 +168,8 @@ Configuration in the `production.json` file can be overridden with environment v
 Environment Variable | Corresponds To
 ---------------------|---------------
 `MARATHON_ENDPOINT` | Marathon.Endpoint
+`MARATHON_USER` | Marathon.User
+`MARATHON_PASSWORD` | Marathon.Password
 `BAMBOO_ENDPOINT` | Bamboo.Endpoint
 `BAMBOO_ZK_HOST` | Bamboo.Zookeeper.Host
 `BAMBOO_ZK_PATH` | Bamboo.Zookeeper.Path
@@ -149,29 +193,53 @@ Shows the data structure used for rendering template
 curl -i http://localhost:8000/api/state
 ```
 
-#### POST /api/services
+#### GET /api/services
 
-Creates a service configuration for a Marathon application ID
+Shows all service configurations
 
 ```bash
-curl -i -X POST -d '{"id":"/app-1","acl":"hdr(host) -i app-1.example.com"}' http://localhost:8000/api/services
+curl -i http://localhost:8000/api/services
+```
+
+Example result:
+
+```json
+{
+    "/authentication-service": {
+        "Id": "/authentication-service",
+        "Acl": "path_beg -i /authentication-service"
+    },
+    "/payment-service": {
+        "Id": "/payment-service",
+        "Acl": "path_beg -i /payment-service"
+    }
+}
+```
+
+#### POST /api/services
+
+Creates a service configuration for a Marathon Application ID
+
+```bash
+curl -i -X POST -d '{"id":"/ExampleAppGroup/app1","acl":"hdr(host) -i app-1.example.com"}' http://localhost:8000/api/services
 ```
 
 #### PUT /api/services/:id
 
-Updates an existing service configuraiton for a Marathon application. `:id` is  URI encoded Marathon application ID
+Updates an existing or creates a new service configuration for a Marathon application. `:id` is the Marathon Application ID
 
 ```bash
-curl -i -X PUT -d '{"id":"/app-1", "acl":"path_beg -i /group/app-1"}' http://localhost:8000/api/services/%252Fapp-1
+curl -i -X PUT -d '{"id":"/ExampleAppGroup/app1", "acl":"path_beg -i /group/app-1"}' http://localhost:8000/api/services//ExampleAppGroup/app1
 ```
 
+**Note**: Create semantics are available since version 0.2.11.
 
 #### DELETE /api/services/:id
 
-Deletes an existing service configuration. `:id` is  URI encoded Marathon application ID
+Deletes an existing service configuration. `:id` Marathon Application ID
 
 ```bash
-curl -i -X DELETE http://localhost:8000/api/services/%252Fapp-1
+curl -i -X DELETE http://localhost:8000/api/services//ExampleAppGroup/app1
 ```
 
 #### GET /status
@@ -186,18 +254,24 @@ curl -i http://localhost:8000/status
 ## Deployment
 
 We recommend installing binary with deb or rpm package. 
-The repository includes examples of [a Jenkins build script](https://github.com/QubitProducts/bamboo/blob/master/builder/ci-jenkins.sh)
-and [a deb packages build script](https://github.com/QubitProducts/bamboo/blob/master/builder/build.sh).
-Read comments in the script to customize your build distribution workflow.
 
-In short, [install fpm](https://github.com/jordansissel/fpm) and run the following command:
+The repository includes an example deb package build script called [builder/build.sh](./builder/build.sh) which generates a deb package in `./output`. For this install [fpm](https://github.com/jordansissel/fpm) and run:
 
 ```
 go build bamboo.go
 ./builder/build.sh
 ```
 
-A deb package will be generated in `./builder` directory. You can copy to a server or publish to your own apt repository.
+Moreover, there is
+- a [Jenkins build script](builder/ci-jenkins.sh) to run `build.sh` from a Jenkins job
+- and a [Docker build container](builder/build.sh) which will generate the deb package in the volume mounted output directory:
+
+```
+docker build -f Dockerfile-deb -t bamboo-build .
+docker run -it -v $(pwd)/output:/output bamboo-build
+```
+
+Independently how you build the deb package, you can copy it to a server or publish to your own apt repository.
 
 The example deb package deploys:
 
@@ -230,17 +304,17 @@ docker build -t bamboo .
 
 #### Running Bamboo as a Docker container
 
-Once the image has been built, running as a container is straightforward - you do however still need to provide the configuration to the image as environment variables. Docker allows two options for this - using the `-e` option  or by putting them in a file and using the `--env-file` option. For this example we will use the former and we will map through ports 8000 and 80 to the docker host (obviously the hosts configured here will need to be reachable from this container):
+Once the image has been built, running as a container is straightforward - you do however still need to provide the configuration to the image as environment variables. Docker allows two options for this - using the `-e` option  or by putting them in a file and using the `--env-file` option. Bamboo use Marathon event bus to get app info, so make sure set `--event_subscriber http_callback` or env `MARATHON_EVENT_SUBSCRIBER=http_callback` before start marathon instance.For this example we will use the former and we will map through ports 8000 and 80 to the docker host (obviously the hosts configured here will need to be reachable from this container):
 
 ````
 docker run -t -i --rm -p 8000:8000 -p 80:80 \
-    -e MARATHON_ENDPOINT=http://marathon:8080 \
+    -e MARATHON_ENDPOINT=http://marathon1:8080,http://marathon2:8080,http://marathon3:8080 \
     -e BAMBOO_ENDPOINT=http://bamboo:8000 \
-    -e BAMBOO_ZK_HOST=zk:2181 \
+    -e BAMBOO_ZK_HOST=zk01.example.com:2181,zk02.example.com:2181 \
     -e BAMBOO_ZK_PATH=/bamboo \
-    -e BIND=":8000"
-    -e CONFIG_PATH="config/production.example.json"
-    -e BAMBOO_DOCKER_AUTO_HOST=true
+    -e BIND=":8000" \
+    -e CONFIG_PATH="config/production.example.json" \
+    -e BAMBOO_DOCKER_AUTO_HOST=true \
     bamboo
 ````
 
@@ -250,7 +324,7 @@ Bamboo is started by supervisord in this Docker image. The [default Supervisord 
 
 We use [godep](https://github.com/tools/godep) managing Go package dependencies; Goconvey for unit testing; CommonJS and SASS for frontend development and build distribution.
  
-* Golang 1.3
+* Golang 1.7
 * Node.js 0.10.x+
 
 Golang:
@@ -258,15 +332,15 @@ Golang:
 ```bash
 # Pakcage manager
 go get github.com/tools/godep
+# Testing Toolkit
 go get -t github.com/smartystreets/goconvey
 
 cd $GOPATH/src/github.com/QubitProducts/bamboo
-godep restore
 
 # Build your binary
 go build
 
-# Run test
+# Run test (requires a local zookeeper running)
 goconvey
 ```
 

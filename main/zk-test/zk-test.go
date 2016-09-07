@@ -6,10 +6,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/samuel/go-zookeeper/zk"
-
 	conf "github.com/QubitProducts/bamboo/configuration"
 	"github.com/QubitProducts/bamboo/qzk"
+	"github.com/samuel/go-zookeeper/zk"
 )
 
 func showEvents(evts chan zk.Event) {
@@ -31,7 +30,6 @@ func init() {
 }
 
 func main() {
-
 
 	config, err := conf.FromFile(configFilePath)
 

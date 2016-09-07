@@ -1,7 +1,14 @@
 language: go
 
+sudo: false
+
+addons:
+  apt:
+    packages:
+      - zookeeperd
+
 go:
-  - 1.3
+  - 1.7
 
 install:
   # WORKING DIR
@@ -9,16 +16,21 @@ install:
   - export PATH=$PATH:$HOME/gopath/bin
 
   # Install build dependencies
-  - go get bitbucket.org/tebeka/go2xunit
+  - go get github.com/tebeka/go2xunit
   - go get github.com/smartystreets/assertions
   - go get -t github.com/smartystreets/goconvey
   - go get -v -u github.com/tools/godep
+  - go get github.com/mattn/goveralls
+  - go get github.com/go-playground/overalls
 
-  # Restore project dependencies
+# Tests should fail if go fmt is required
+script:
   - godep restore
-
-  # Travis auto execute go test
-  #  - go test -v ./...
+  - '[[ -z "$(go fmt ./... | tee -a /dev/stderr)" ]]'
+  - go vet ./...
+  - go test -v ./...
+  - overalls -project=github.com/QubitProducts/bamboo -covermode=count -debug -ignore=Godeps,webapp,builder,.git,vendor
+  - goveralls -coverprofile=./overalls.coverprofile -service=travis-ci
 
 notifications:
   email: false

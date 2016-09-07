@@ -23,7 +23,6 @@ go get -t github.com/smartystreets/goconvey
 cd $BAMBOO_PROJECT_DIR
 export _BAMBOO_VERSION=`(cat VERSION)`
 
-godep restore
 go build
 go test -v github.com/QubitProducts/bamboo/... | go2xunit > $WORKSPACE/test_output/tests.xml
 
@@ -35,4 +34,4 @@ if ! gem spec fpm > /dev/null 2>&1; then gem install fpm; fi
 ./builder/build.sh
 
 # Copy files to workspace root directory
-cp $BAMBOO_PROJECT_DIR/builder/*.deb $WORKSPACE/
+cp $BAMBOO_PROJECT_DIR/output/*.deb $WORKSPACE/

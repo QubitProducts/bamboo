@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
 	"strings"
-
-	"github.com/samuel/go-zookeeper/zk"
+	"time"
 
 	c "github.com/QubitProducts/bamboo/configuration"
+	"github.com/samuel/go-zookeeper/zk"
 )
 
 var logger = log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lshortfile)

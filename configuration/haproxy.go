@@ -1,11 +1,9 @@
 package configuration
 
-import (
-//	"text/template"
-)
-
 type HAProxy struct {
-	TemplatePath  string
-	OutputPath    string
-	ReloadCommand string
+	TemplatePath            string
+	OutputPath              string
+	ReloadCommand           string
+	ReloadValidationCommand string
+	ReloadCleanupCommand    string
 }

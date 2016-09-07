@@ -1,10 +1,20 @@
 {
 	"ImportPath": "github.com/QubitProducts/bamboo",
-	"GoVersion": "go1.3.3",
+	"GoVersion": "go1.7",
+	"GodepVersion": "v74",
 	"Deps": [
 		{
+			"ImportPath": "github.com/codegangsta/inject",
+			"Comment": "v1.0-rc1-10-g33e0aa1",
+			"Rev": "33e0aa1cb7c019ccc3fbe049a8262a6403d30504"
+		},
+		{
+			"ImportPath": "github.com/go-martini/martini",
+			"Comment": "v1.0-117-g2047b73",
+			"Rev": "2047b7394d319aa3feb49db1452202336fb66fb6"
+		},
+		{
 			"ImportPath": "github.com/kardianos/osext",
-			"Comment": "null-15",
 			"Rev": "0af7634e455e7ecd558a196743d8a3f700b945c0"
 		},
 		{
@@ -19,10 +29,6 @@
 		{
 			"ImportPath": "github.com/samuel/go-zookeeper/zk",
 			"Rev": "041700315ab94d5f506317d8798adc9a6674c547"
-		},
-		{
-			"ImportPath": "github.com/zenazn/goji",
-			"Rev": "17b9035bcd162f59e1a1247d4a755124c37052c5"
 		}
 	]
 }

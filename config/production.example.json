@@ -6,7 +6,7 @@
   "Bamboo": {
     "Endpoint": "http://haproxy-ip-address:8000",
     "Zookeeper": {
-      "Host": "localhost",
+      "Host": "zk01.example.com:2181,zk02.example.com:2181",
       "Path": "/marathon-haproxy/state",
       "ReportingDelay": 5
     }
@@ -15,7 +15,8 @@
   "HAProxy": {
     "TemplatePath": "config/haproxy_template.cfg",
     "OutputPath": "/etc/haproxy/haproxy.cfg",
-    "ReloadCommand": "PIDS=`pidof haproxy`; haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -sf $PIDS && while ps -p $PIDS; do sleep 0.2; done"
+    "ReloadCommand": "haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -D -sf $(cat /var/run/haproxy.pid)",
+    "ReloadValidationCommand": "haproxy -c -f {{.}}"
   },
 
   "StatsD": {

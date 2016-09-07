@@ -30,7 +30,9 @@ module.exports = ["$scope", "$modal", "$rootScope", function ($scope, $modal, $r
     $scope.loading = true;
     $scope.makeRequest({
         id: $scope.service.id,
-        acl: $scope.service.acl
+        config: {
+          Acl: $scope.service.acl
+        }
       })
      .then(handleSuccess, handleError);
   };
