@@ -3,6 +3,7 @@ package template
 import (
 	. "github.com/smartystreets/goconvey/convey"
 	"testing"
+	"github.com/QubitProducts/bamboo/services/marathon"
 )
 
 func TestTemplateWriter(t *testing.T) {
@@ -14,6 +15,60 @@ func TestTemplateWriter(t *testing.T) {
 		Convey("should render template as string", func() {
 			content, _ := RenderTemplate(templateName, templateContent, params)
 			So(content, ShouldEqual, "app example.com")
+		})
+	})
+}
+
+type TemplateData struct {
+        Apps     marathon.AppList
+}
+
+func TestTemplateGetAppEnvValuesFunction(t *testing.T) {
+	Convey("#RenderTemplate", t, func() {
+		templateName := "templateName"
+		apps := marathon.AppList{}
+		apps = append(apps, marathon.App{
+		     Id: "app1",
+		     Env: map[string]string{
+		     	  "BAMBOO_TCP_PORT": "10001",
+		     },
+		     })
+		apps = append(apps, marathon.App{
+		     Id: "app2",
+		     Env: map[string]string{
+		     	  "BAMBOO_TCP_PORT": "10001",
+		     },
+		     })
+		apps = append(apps, marathon.App{
+		     Id: "app3",
+		     Env: map[string]string{
+		     	  "BAMBOO_TCP_PORT": "10002",
+		     },
+		     })
+		apps = append(apps, marathon.App{
+		     Id: "app4",
+		     Env: map[string]string{
+		     	  "BAMBOO_TCP_PORT": "10001",
+		     },
+		     })
+		apps = append(apps, marathon.App{
+		     Id: "app5",
+		     Env: map[string]string{
+		     	  "BAMBOO_TCP_PORT": "10003",
+		     },
+		     })
+		apps = append(apps, marathon.App{
+		     Id: "app6",
+		     Env: map[string]string{
+		     	  "BAMBOO_TCP_PORT": "10002",
+		     },
+		     })
+
+		templateData := TemplateData{Apps: apps}
+		templateContent := "{{ range $port := .Apps | getAppEnvValues \"BAMBOO_TCP_PORT\" }}{{ $port }} {{ end }}"
+		Convey("should list the three unique ports", func() {
+			content, _ := RenderTemplate(templateName, templateContent, templateData)
+			So(content, ShouldEqual, "10001 10002 10003 ")
 		})
 	})
 }
