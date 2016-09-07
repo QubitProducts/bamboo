@@ -86,6 +86,20 @@ func TestTemplateSplitFunction(t *testing.T) {
 	})
 }
 
+func TestTemplateUniqueFunction(t *testing.T) {
+	Convey("#RenderTemplate", t, func() {
+		templateName := "templateName"
+		domains := []string{"example.com", "example.com", "example.org", "example.com", "example.org", "example.net"}
+		params := map[string][]string{"domains": domains}
+
+		templateContent := "{{ range unique .domains }}{{ . }} {{ end }}"
+		Convey("should create a list of three distinct domains", func() {
+			content, _ := RenderTemplate(templateName, templateContent, params)
+			So(content, ShouldEqual, "example.com example.org example.net ")
+		})
+	})
+}
+
 func TestTemplateContainsFunction(t *testing.T) {
 	Convey("#RenderTemplate", t, func() {
 		templateName := "templateName"
