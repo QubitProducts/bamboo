@@ -188,17 +188,23 @@ func listenToZookeeper(conf configuration.Configuration, eventBus *event_bus.Eve
 }
 
 func listenToMarathonEventStream(conf *configuration.Configuration, sub api.EventSubscriptionAPI) {
-	go func() {
-		ticker := time.NewTicker(1 * time.Second)
-		for _ = range ticker.C {
-			for _, marathon := range conf.Marathon.Endpoints() {
-				ch := connectToMarathonEventStream(marathon, conf.Marathon.User, conf.Marathon.Password)
-				for payload := range ch {
-					sub.Notify(payload)
-				}
+	ticker := time.NewTicker(1 * time.Second)
+	go listenToMarathonEventStreamLoop(conf, &sub, ticker.C)
+}
+
+type eventBusSink interface {
+	Notify(payload []byte)
+}
+
+func listenToMarathonEventStreamLoop(conf *configuration.Configuration, sink eventBusSink, ticker <-chan time.Time) {
+	for _ = range ticker {
+		for _, marathon := range conf.Marathon.Endpoints() {
+			ch := connectToMarathonEventStream(marathon, conf.Marathon.User, conf.Marathon.Password)
+			for payload := range ch {
+				sink.Notify(payload)
 			}
 		}
-	}()
+	}
 }
 
 func connectToMarathonEventStream(marathon, user, password string) <-chan []byte {

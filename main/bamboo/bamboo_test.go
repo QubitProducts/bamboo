@@ -5,7 +5,11 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"reflect"
+	"strings"
 	"testing"
+	"time"
+
+	"github.com/QubitProducts/bamboo/configuration"
 )
 
 func eventSourceHandler(lines ...string) http.Handler {
@@ -116,4 +120,88 @@ func TestConnectToMarathonEventStream(t *testing.T) {
 			t.Errorf("got %d payloads, wanted none", count)
 		}
 	})
+}
+
+type stubEventSink struct {
+	payloads [][]byte
+}
+
+func (s *stubEventSink) Notify(payload []byte) {
+	s.payloads = append(s.payloads, payload)
+}
+
+func TestListenToMarathonEventStream(t *testing.T) {
+	for _, test := range []struct {
+		name     string
+		handlers []http.Handler
+		ticks    []time.Time
+		payloads [][]byte
+	}{
+		{
+			name: "no-ticks",
+		},
+		{
+			name: "invalid-server",
+			ticks: []time.Time{
+				time.Unix(0, 0),
+			},
+		},
+		{
+			name: "single server",
+			handlers: []http.Handler{
+				eventSourceHandler("data: payload"),
+			},
+			ticks: []time.Time{
+				time.Unix(0, 0),
+			},
+			payloads: [][]byte{
+				[]byte("payload\n"),
+			},
+		},
+		{
+			name: "failover",
+			handlers: []http.Handler{
+				eventSourceHandler("data: payload", "data: payload2"),
+				eventSourceHandler("data: payload3", "data: payload4"),
+			},
+			ticks: []time.Time{
+				time.Unix(0, 0),
+			},
+			payloads: [][]byte{
+				[]byte("payload\n"),
+				[]byte("payload2\n"),
+				[]byte("payload3\n"),
+				[]byte("payload4\n"),
+			},
+		},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			stubSink := &stubEventSink{}
+			ticker := make(chan time.Time)
+
+			urls := []string{}
+			for _, h := range test.handlers {
+				s := httptest.NewServer(h)
+				urls = append(urls, s.URL)
+			}
+			conf := &configuration.Configuration{
+				Marathon: configuration.Marathon{
+					Endpoint: strings.Join(urls, ","),
+				},
+			}
+
+			go func() {
+				for _, t := range test.ticks {
+					ticker <- t
+				}
+				close(ticker)
+			}()
+
+			listenToMarathonEventStreamLoop(conf, stubSink, ticker)
+
+			if !reflect.DeepEqual(stubSink.payloads, test.payloads) {
+				t.Errorf("got payloads %s, wanted %s", stubSink.payloads, test.payloads)
+			}
+		})
+	}
 }
