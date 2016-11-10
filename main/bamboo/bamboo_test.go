@@ -56,6 +56,11 @@ func TestConnectToMarathonEventStream(t *testing.T) {
 			count:   0,
 		},
 		{
+			desc:    "unexpected line",
+			handler: eventSourceHandler("unexpected line"),
+			count:   0,
+		},
+		{
 			desc:    "mixed content",
 			handler: eventSourceHandler("", "event: eventName", "data: payload", "", "", "event: eventName2", "data: payload2", ""),
 			count:   2,
@@ -65,6 +70,7 @@ func TestConnectToMarathonEventStream(t *testing.T) {
 			},
 		},
 	} {
+		test := test
 		t.Run(test.desc, func(t *testing.T) {
 			t.Parallel()
 
@@ -177,6 +183,7 @@ func TestListenToMarathonEventStream(t *testing.T) {
 			},
 		},
 	} {
+		test := test
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
 
