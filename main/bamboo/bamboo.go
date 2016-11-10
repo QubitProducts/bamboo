@@ -211,14 +211,15 @@ func connectToMarathonEventStream(marathon, user, password string) <-chan []byte
 
 		eventsURL := marathon + "/v2/events"
 		req, err := http.NewRequest("GET", eventsURL, nil)
-		req.Header.Set("Accept", "text/event-stream")
-		if len(user) > 0 && len(password) > 0 {
-			req.SetBasicAuth(user, password)
-		}
 		if err != nil {
 			errorMsg := "An error occurred while creating request to Marathon events system: %s\n"
 			log.Printf(errorMsg, err)
 			return
+		}
+
+		req.Header.Set("Accept", "text/event-stream")
+		if len(user) > 0 && len(password) > 0 {
+			req.SetBasicAuth(user, password)
 		}
 
 		resp, err := client.Do(req)
