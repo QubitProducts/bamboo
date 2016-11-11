@@ -66,6 +66,8 @@ func TestConnectToMarathonEventStream(t *testing.T) {
 		},
 	} {
 		t.Run(test.desc, func(t *testing.T) {
+			t.Parallel()
+
 			server := httptest.NewServer(test.handler)
 			defer server.Close()
 
@@ -176,6 +178,8 @@ func TestListenToMarathonEventStream(t *testing.T) {
 		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+
 			stubSink := &stubEventSink{}
 			ticker := make(chan time.Time)
 

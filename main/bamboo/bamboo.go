@@ -197,8 +197,9 @@ type eventBusSink interface {
 }
 
 func listenToMarathonEventStreamLoop(conf *configuration.Configuration, sink eventBusSink, ticker <-chan time.Time) {
-	for _ = range ticker {
+	for range ticker {
 		for _, marathon := range conf.Marathon.Endpoints() {
+			log.Printf("Connecting event stream to %s", marathon)
 			ch := connectToMarathonEventStream(marathon, conf.Marathon.User, conf.Marathon.Password)
 			for payload := range ch {
 				sink.Notify(payload)
@@ -261,8 +262,6 @@ func connectToMarathonEventStream(marathon, user, password string) <-chan []byte
 			line = line[6:]
 			payloadChan <- []byte(line)
 		}
-
-		log.Println("Event stream connection was closed. Re-opening...")
 	}()
 
 	return payloadChan
