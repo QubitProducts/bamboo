@@ -253,6 +253,10 @@ func connectToMarathonEventStream(marathon, user, password string) <-chan []byte
 				continue
 			}
 
+			if strings.HasPrefix(line, "event: ") {
+				continue
+			}
+
 			if !strings.HasPrefix(line, "data: ") {
 				errorMsg := "Wrong event format: %s\n"
 				log.Printf(errorMsg, line)
