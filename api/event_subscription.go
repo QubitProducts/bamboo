@@ -7,8 +7,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/QubitProducts/bamboo/configuration"
-	eb "github.com/QubitProducts/bamboo/services/event_bus"
+	"github.com/cloverstd/bamboo/configuration"
+	eb "github.com/cloverstd/bamboo/services/event_bus"
 )
 
 type EventSubscriptionAPI struct {

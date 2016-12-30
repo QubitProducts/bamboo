@@ -1,0 +1,20 @@
+language: go
+go:
+  - 1.1.2
+  - tip
+
+branches:
+  only:
+    - master
+
+before_install:
+  - wget http://mirrors.sonic.net/apache/zookeeper/zookeeper-3.4.5/zookeeper-3.4.5.tar.gz
+  - tar -zxvf zookeeper*tar.gz
+
+script:
+  - go build ./...
+  - go fmt ./...
+  - (go version | grep "version go1.1") || go get code.google.com/p/go.tools/cmd/vet
+  - go vet ./...
+  - go test -i -race ./...
+  - go test -v -race ./...

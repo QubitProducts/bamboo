@@ -1,9 +1,9 @@
 package haproxy
 
 import (
-	conf "github.com/QubitProducts/bamboo/configuration"
-	"github.com/QubitProducts/bamboo/services/marathon"
-	"github.com/QubitProducts/bamboo/services/service"
+	conf "github.com/cloverstd/bamboo/configuration"
+	"github.com/cloverstd/bamboo/services/marathon"
+	"github.com/cloverstd/bamboo/services/service"
 )
 
 type templateData struct {

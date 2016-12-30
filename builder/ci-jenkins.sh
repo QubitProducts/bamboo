@@ -2,11 +2,11 @@
 
 # Jenkins Setting
 # - Repository URL: git@github.com:QubitProducts/bamboo.git
-# - Checkout to a sub-directory: go/src/github.com/QubitProducts/bamboo
+# - Checkout to a sub-directory: go/src/github.com/cloverstd/bamboo
 # - Post build action / Archive the artifacts: *.deb
 # - Test output: test_output/tests.xml
 
-export BAMBOO_PROJECT_DIR=$WORKSPACE/go/src/github.com/QubitProducts/bamboo
+export BAMBOO_PROJECT_DIR=$WORKSPACE/go/src/github.com/cloverstd/bamboo
 export GOPATH=$WORKSPACE/go
 export PATH=$GOPATH/bin:/usr/local/go/bin/:$PATH
 
@@ -24,7 +24,7 @@ cd $BAMBOO_PROJECT_DIR
 export _BAMBOO_VERSION=`(cat VERSION)`
 
 go build
-go test -v github.com/QubitProducts/bamboo/... | go2xunit > $WORKSPACE/test_output/tests.xml
+go test -v github.com/cloverstd/bamboo/... | go2xunit > $WORKSPACE/test_output/tests.xml
 
 # Requires fpm to build package
 # Install fpm if missing

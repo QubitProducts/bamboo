@@ -1,0 +1,25 @@
+package: github.com/cloverstd/bamboo
+import:
+- package: github.com/go-martini/martini
+  version: 2047b7394d319aa3feb49db1452202336fb66fb6
+- package: github.com/kardianos/osext
+  version: 0af7634e455e7ecd558a196743d8a3f700b945c0
+- package: github.com/natefinch/lumberjack
+  version: d28785c2f27cd682d872df46ccd8232843629f54
+- package: github.com/peterbourgon/g2s
+  version: 44d08dabf4b5a94ed9c24e47e7f4badcf0d3b034
+- package: github.com/samuel/go-zookeeper
+  version: 041700315ab94d5f506317d8798adc9a6674c547
+  subpackages:
+  - zk
+- package: github.com/codegangsta/inject
+  version: 33e0aa1cb7c019ccc3fbe049a8262a6403d30504
+- package: github.com/jtolds/gls
+  version: f1ac7f4f24f50328e6bc838ca4437d1612a0243c
+- package: github.com/smartystreets/assertions
+  version: 75acd402ca38dc205641a826bb58b9de014926dd
+- package: github.com/smartystreets/goconvey
+  subpackages:
+  - convey
+- package: github.com/cloverstd/open_falcon_haproxy_stats
+  version: ~0.1.1

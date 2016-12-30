@@ -5,9 +5,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/QubitProducts/bamboo/configuration"
-	"github.com/QubitProducts/bamboo/services/haproxy"
-	"github.com/QubitProducts/bamboo/services/service"
+	"github.com/cloverstd/bamboo/configuration"
+	"github.com/cloverstd/bamboo/services/haproxy"
+	"github.com/cloverstd/bamboo/services/service"
 )
 
 type StateAPI struct {

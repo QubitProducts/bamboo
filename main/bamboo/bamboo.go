@@ -14,15 +14,16 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/go-martini/martini"
-	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/kardianos/osext"
-	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/natefinch/lumberjack"
-	"github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/samuel/go-zookeeper/zk"
-	"github.com/QubitProducts/bamboo/api"
-	"github.com/QubitProducts/bamboo/configuration"
-	"github.com/QubitProducts/bamboo/qzk"
-	"github.com/QubitProducts/bamboo/services/event_bus"
-	"github.com/QubitProducts/bamboo/services/service"
+	"github.com/go-martini/martini"
+	"github.com/kardianos/osext"
+	"github.com/natefinch/lumberjack"
+	"github.com/samuel/go-zookeeper/zk"
+	"github.com/cloverstd/bamboo/api"
+	"github.com/cloverstd/bamboo/configuration"
+	"github.com/cloverstd/bamboo/qzk"
+	"github.com/cloverstd/bamboo/services/event_bus"
+	"github.com/cloverstd/bamboo/services/service"
+	haproxy_stats "github.com/cloverstd/open_falcon_haproxy_stats/stats"
 )
 
 /*
@@ -83,7 +84,7 @@ func main() {
 
 	// Handle gracefully exit
 	registerOSSignals()
-
+	go haproxy_stats.Stats()
 	// Start server
 	initServer(&conf, storage, eventBus)
 }

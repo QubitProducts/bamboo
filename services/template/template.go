@@ -2,7 +2,7 @@ package template
 
 import (
 	"bytes"
-	"github.com/QubitProducts/bamboo/services/service"
+	"github.com/cloverstd/bamboo/services/service"
 	"strings"
 	"text/template"
 )

@@ -4,7 +4,7 @@ set -u
 name=bamboo
 version=${_BAMBOO_VERSION:-"1.0.0"}
 description="Bamboo is a DNS based HAProxy auto configuration and auto service discovery for Mesos Marathon."
-url="https://github.com/QuBitProducts/bamboo"
+url="https://github.com/cloverstd/bamboo"
 arch="all"
 section="misc"
 license="Apache Software License 2.0"

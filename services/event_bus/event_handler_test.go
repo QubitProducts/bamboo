@@ -6,9 +6,9 @@ import (
 	"math/rand"
 	"testing"
 
-	. "github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/smartystreets/goconvey/convey"
+	. "github.com/smartystreets/goconvey/convey"
 
-	"github.com/QubitProducts/bamboo/configuration"
+	"github.com/cloverstd/bamboo/configuration"
 )
 
 // Yanked off http://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-golang

@@ -1,10 +1,10 @@
 package event_bus
 
 import (
-	"github.com/QubitProducts/bamboo/configuration"
-	"github.com/QubitProducts/bamboo/services/haproxy"
-	"github.com/QubitProducts/bamboo/services/service"
-	"github.com/QubitProducts/bamboo/services/template"
+	"github.com/cloverstd/bamboo/configuration"
+	"github.com/cloverstd/bamboo/services/haproxy"
+	"github.com/cloverstd/bamboo/services/service"
+	"github.com/cloverstd/bamboo/services/template"
 	"io/ioutil"
 	"log"
 	"os"

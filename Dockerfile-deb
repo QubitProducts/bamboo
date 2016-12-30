@@ -6,9 +6,9 @@ RUN apt-get update -yqq
 RUN apt-get install -yqq software-properties-common curl git mercurial ruby-dev gcc make
 RUN gem install fpm
 
-ADD . /go/src/github.com/QubitProducts/bamboo
+ADD . /go/src/github.com/cloverstd/bamboo
 
-WORKDIR /go/src/github.com/QubitProducts/bamboo
+WORKDIR /go/src/github.com/cloverstd/bamboo
 RUN go get github.com/tools/godep && \
     go get -t github.com/smartystreets/goconvey && \
     go build

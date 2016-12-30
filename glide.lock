@@ -1,0 +1,34 @@
+hash: 4b154511fa4cd85367e4f681c82dfe26ebb649c9312561ac58c206f8aae177f5
+updated: 2016-12-30T13:40:35.103444028+08:00
+imports:
+- name: github.com/cloverstd/open_falcon_haproxy_stats
+  version: edefbd4b580e721145cf72cf98eb1835fdef32ff
+  subpackages:
+  - stats
+- name: github.com/codegangsta/inject
+  version: 33e0aa1cb7c019ccc3fbe049a8262a6403d30504
+- name: github.com/go-martini/martini
+  version: 2047b7394d319aa3feb49db1452202336fb66fb6
+- name: github.com/jtolds/gls
+  version: f1ac7f4f24f50328e6bc838ca4437d1612a0243c
+- name: github.com/kardianos/osext
+  version: 0af7634e455e7ecd558a196743d8a3f700b945c0
+- name: github.com/natefinch/lumberjack
+  version: d28785c2f27cd682d872df46ccd8232843629f54
+- name: github.com/peterbourgon/g2s
+  version: 44d08dabf4b5a94ed9c24e47e7f4badcf0d3b034
+- name: github.com/samuel/go-zookeeper
+  version: 041700315ab94d5f506317d8798adc9a6674c547
+  subpackages:
+  - zk
+- name: github.com/smartystreets/assertions
+  version: 75acd402ca38dc205641a826bb58b9de014926dd
+  subpackages:
+  - internal/oglematchers
+- name: github.com/smartystreets/goconvey
+  version: 3c2572876754c4669ae7417b219f0b30a29b32c7
+  subpackages:
+  - convey
+  - convey/gotest
+  - convey/reporting
+testImports: []

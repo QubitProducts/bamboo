@@ -1,7 +1,7 @@
 package template
 
 import (
-	. "github.com/QubitProducts/bamboo/Godeps/_workspace/src/github.com/smartystreets/goconvey/convey"
+	. "github.com/smartystreets/goconvey/convey"
 	"testing"
 )
 

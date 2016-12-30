@@ -12,7 +12,7 @@ go:
 
 install:
   # WORKING DIR
-  # $HOME/gopath/src/github.com/QubitProducts/bamboo
+  # $HOME/gopath/src/github.com/cloverstd/bamboo
   - export PATH=$PATH:$HOME/gopath/bin
 
   # Install build dependencies
@@ -28,7 +28,7 @@ script:
   - '[[ -z "$(go fmt ./... | tee -a /dev/stderr)" ]]'
   - go vet ./...
   - go test -v ./...
-  - overalls -project=github.com/QubitProducts/bamboo -covermode=count -debug -ignore=Godeps,webapp,builder,.git
+  - overalls -project=github.com/cloverstd/bamboo -covermode=count -debug -ignore=Godeps,webapp,builder,.git
   - goveralls -coverprofile=./overalls.coverprofile -service=travis-ci
 
 notifications:
