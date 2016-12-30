@@ -84,7 +84,9 @@ func main() {
 
 	// Handle gracefully exit
 	registerOSSignals()
-	go haproxy_stats.Stats()
+	if os.Getenv("ENABLE_HAPROXY_STATS") == "1" {
+		go haproxy_stats.Stats()
+	}
 	// Start server
 	initServer(&conf, storage, eventBus)
 }
