@@ -7,13 +7,35 @@ import (
 	"net/http"
 	"sort"
 	"strings"
+	_ "fmt"
 )
+
+type TaskIPAddress struct {
+	IPAddress string `json:"ipAddress"`
+	protocol string `json:"protocol"`
+}
+
+type IPAddressDiscoveryPort struct {
+	Number int `json:"number"`
+	Name string `json:"name"`
+	Protocol string `json:"protocol"`
+	Label map[string]interface{} `json:"label"`
+}
+
+type IPAddressDiscoveryPorts struct {
+	Ports []IPAddressDiscoveryPort `json:"ports"`
+}
+
+type AppIPAddress struct {
+	Discovery IPAddressDiscoveryPorts `json:"discovery"`
+}
 
 // Describes an app process running
 type Task struct {
 	Host  string
 	Port  int
 	Ports []int
+	IPAddresses []TaskIPAddress
 }
 
 // A health check on the application
@@ -39,6 +61,7 @@ type App struct {
 	ServicePorts        []int
 	Env                 map[string]string
 	Labels              map[string]string
+	IPAddress AppIPAddress
 }
 
 type AppList []App
@@ -70,6 +93,7 @@ type marathonTask struct {
 	StartedAt    string
 	StagedAt     string
 	Version      string
+	IPAddresses []TaskIPAddress `json:"ipAddresses"`
 }
 
 func (slice marathonTaskList) Len() int {
@@ -94,6 +118,7 @@ type marathonApp struct {
 	Ports        []int                 `json:"ports"`
 	Env          map[string]string     `json:"env"`
 	Labels       map[string]string     `json:"labels"`
+	IPAddress AppIPAddress `json:"ipAddress"`
 }
 
 type marathonHealthCheck struct {
@@ -164,7 +189,6 @@ func fetchTasks(endpoint string, conf *configuration.Configuration) (map[string]
 	if err != nil {
 		return nil, err
 	}
-
 	taskList := tasks.Tasks
 	sort.Sort(taskList)
 
@@ -204,6 +228,7 @@ func createApps(tasksById map[string]marathonTaskList, marathonApps map[string]m
 			HealthCheckProtocol: parseHealthCheckProtocol(mApp.HealthChecks),
 			Env:                 mApp.Env,
 			Labels:              mApp.Labels,
+			IPAddress: 	     mApp.IPAddress,
 		}
 
 		app.HealthChecks = make([]HealthCheck, 0, len(mApp.HealthChecks))
@@ -215,23 +240,69 @@ func createApps(tasksById map[string]marathonTaskList, marathonApps map[string]m
 			}
 			app.HealthChecks = append(app.HealthChecks, check)
 		}
-
+		if _, ok := mApp.Labels["HAPROXY_NETWORK"]; !ok {
+			mApp.Labels["HAPROXY_NETWORK"] = "bridge"
+		}
+		if _, ok := mApp.Labels["HAPROXY_NETWORK_MODE"]; !ok {
+			mApp.Labels["HAPROXY_NETWORK_MODE"] = "http"
+		}
 		if len(mApp.Ports) > 0 {
 			app.ServicePort = mApp.Ports[0]
 			app.ServicePorts = mApp.Ports
+		} else if len(mApp.IPAddress.Discovery.Ports) > 0 {
+			app.ServicePort = mApp.IPAddress.Discovery.Ports[0].Number
+			ports := make([]int, len(mApp.IPAddress.Discovery.Ports))
+			for index, value := range mApp.IPAddress.Discovery.Ports {
+				ports[index] = value.Number
+			}
+			app.ServicePorts = ports
+
+		}
+		//fmt.Printf("marathon %s mode %s\n", mApp.Id, strings.ToLower(mApp.Labels["HAPROXY_NETWORK_MODE"]))
+
+		if strings.ToLower(mApp.Labels["HAPROXY_NETWORK_MODE"]) != "tcp" {
+			app.ServicePorts = nil
+			app.ServicePort = 0
 		}
 
 		// build Tasks for this App
 		tasks := []Task{}
 		for _, mTask := range tasksById[appId] {
+			var t Task
 			if len(mTask.Ports) > 0 {
-				t := Task{
+				t = Task{
 					Host:  mTask.Host,
 					Port:  mTask.Ports[0],
 					Ports: mTask.Ports,
 				}
-				tasks = append(tasks, t)
+
+			} else {
+				t = Task{
+					Host:  mTask.Host,
+					Port:  0,
+					Ports: mTask.Ports,
+					IPAddresses: mTask.IPAddresses,
+				}
 			}
+
+			switch strings.ToLower(mApp.Labels["HAPROXY_NETWORK"]) {
+			case "bridge":
+			case "calico", "host":
+				if len(t.IPAddresses) == 0 {
+					continue
+				} else {
+					t.Host = t.IPAddresses[0].IPAddress
+					ports := make([]int, len(mApp.IPAddress.Discovery.Ports))
+					for index, value := range mApp.IPAddress.Discovery.Ports {
+						ports[index] = value.Number
+					}
+					t.Port = ports[0]
+					t.Ports = ports
+				}
+
+			}
+
+			tasks = append(tasks, t)
 		}
 		app.Tasks = tasks
 
@@ -302,7 +373,13 @@ func _fetchApps(url string, conf *configuration.Configuration) (AppList, error) 
 	if err != nil {
 		return nil, err
 	}
-
+	//for key, value := range tasks {
+	//	for _, task := range value {
+	//		for _, ip := range task.IPAddresses {
+	//			fmt.Println(key, ip.IPAddress)
+	//		}
+	//	}
+	//}
 	marathonApps, err := fetchMarathonApps(url, conf)
 	if err != nil {
 		return nil, err
