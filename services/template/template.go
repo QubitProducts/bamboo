@@ -2,8 +2,8 @@ package template
 
 import (
 	"bytes"
-	"github.com/QubitProducts/bamboo/services/service"
 	"github.com/QubitProducts/bamboo/services/marathon"
+	"github.com/QubitProducts/bamboo/services/service"
 	"strings"
 	"text/template"
 )
@@ -32,7 +32,7 @@ func unique(strings []string) (uniqueStrings []string) {
 	seen := make(map[string]bool)
 	for _, s := range strings {
 		if !seen[s] {
-			uniqueStrings = append(uniqueStrings, s)	    
+			uniqueStrings = append(uniqueStrings, s)
 			seen[s] = true
 		}
 	}
@@ -47,13 +47,13 @@ func RenderTemplate(templateName string, templateContent string, data interface{
 		"hasKey":          hasKey,
 		"getService":      getService,
 		"getAppEnvValues": getAppEnvValues,
-		"Split":      	   strings.Split,
-		"Contains":   	   strings.Contains,
-		"Join":       	   strings.Join,
-		"Replace":    	   strings.Replace,
-		"ToUpper":    	   strings.ToUpper,
-		"ToLower":    	   strings.ToLower,
-		"unique":     	   unique}
+		"Split":           strings.Split,
+		"Contains":        strings.Contains,
+		"Join":            strings.Join,
+		"Replace":         strings.Replace,
+		"ToUpper":         strings.ToUpper,
+		"ToLower":         strings.ToLower,
+		"unique":          unique}
 
 	tpl := template.Must(template.New(templateName).Funcs(funcMap).Parse(templateContent))
 
