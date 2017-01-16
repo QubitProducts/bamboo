@@ -5,7 +5,7 @@ import (
 	"github.com/QubitProducts/bamboo/services/service"
 	"strconv"
 	"strings"
-	"text/template"	
+	"text/template"
 )
 
 func hasKey(data map[string]service.Service, appId string) bool {
