@@ -3,6 +3,7 @@ package template
 import (
 	"bytes"
 	"github.com/QubitProducts/bamboo/services/service"
+	"strconv"
 	"strings"
 	"text/template"
 )
@@ -29,7 +30,8 @@ func RenderTemplate(templateName string, templateContent string, data interface{
 		"Join":       strings.Join,
 		"Replace":    strings.Replace,
 		"ToUpper":    strings.ToUpper,
-		"ToLower":    strings.ToLower}
+		"ToLower":    strings.ToLower,
+		"ToInt":      strconv.Atoi}
 
 	tpl := template.Must(template.New(templateName).Funcs(funcMap).Parse(templateContent))
 
