@@ -3,9 +3,9 @@ package template
 import (
 	"bytes"
 	"github.com/QubitProducts/bamboo/services/service"
-	"strings"
-	"text/template"
 	"strconv"
+	"strings"
+	"text/template"	
 )
 
 func hasKey(data map[string]service.Service, appId string) bool {
