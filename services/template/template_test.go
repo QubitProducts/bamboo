@@ -96,3 +96,18 @@ func TestTemplateToLowerFunction(t *testing.T) {
 		})
 	})
 }
+
+func TestTemplateToIntFunction(t *testing.T) {
+        Convey("#RenderTemplate", t, func() {
+                templateName := "templateName"
+                domains := []string{"example.com", "example.net"}
+                params := map[string]interface{}{"idx": "1", "domains": domains}
+
+                templateContent := "{{index .domains (ToInt .idx)}}"
+                Convey("should transform an indexo to integer", func() {
+                        content, _ := RenderTemplate(templateName, templateContent, params)
+                        So(content, ShouldEqual, "example.net")
+                })
+        })
+}
+
