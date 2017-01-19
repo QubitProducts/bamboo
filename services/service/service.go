@@ -13,4 +13,5 @@ type Storage interface {
 	All() ([]Service, error)
 	Upsert(service Service) error
 	Delete(serviceId string) error
+	DeleteServiceSocks(serviceId string) error
 }

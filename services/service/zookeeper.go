@@ -1,6 +1,8 @@
 package service
 
 import (
+	"os"
+	"path"
 	"github.com/samuel/go-zookeeper/zk"
 	conf "github.com/cloverstd/bamboo/configuration"
 	"log"
@@ -101,6 +103,46 @@ func (z *ZKStorage) Upsert(service Service) (err error) {
 		}
 	}
 	return
+}
+
+func (z *ZKStorage) DeleteServiceSocks(serviceId string) error {
+	servicePath := z.servicePath(serviceId)
+
+	body, _, err := z.conn.Get(servicePath)
+	if err != nil {
+		return err
+	}
+
+	childPath, err := unescapePath(serviceId)
+	if err != nil {
+		return err
+	}
+
+	// We tolerate being unable to decode a service body, as may be new version running simultaneously
+	repr, err := ParseServiceRepr(body, childPath)
+	if err != nil {
+		log.Printf("Failed to parse service at %v: %v", servicePath, err)
+	}
+	config := repr.Service().Config
+
+	unixSock, ok := config["unixSock"]
+	if !ok {
+		log.Printf("Failed to find unixSock and remove sock files.")
+	} else {
+		baseSockPath := os.Getenv("HAPROXY_SOCKS_BASE_PATH")
+		if baseSockPath == ""  {
+			baseSockPath = "/etc/haproxy/socks"
+		}
+		sockOldPath := path.Join(baseSockPath, unixSock + "_final_cluster_old.sock")
+		sockNewPath := path.Join(baseSockPath, unixSock + "_final_cluster_new.sock")
+		sockConditionPath := path.Join(baseSockPath, unixSock + "_condition.sock")
+		os.Remove(sockOldPath)
+		os.Remove(sockNewPath)
+		os.Remove(sockConditionPath)
+		log.Print(sockOldPath, sockNewPath, sockConditionPath)
+	}
+
+	return err
 }
 
 func (z *ZKStorage) Delete(serviceId string) error {
