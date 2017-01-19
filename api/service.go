@@ -1,6 +1,7 @@
 package api
 
 import (
+	"log"
 	"encoding/json"
 	"errors"
 	"io/ioutil"
@@ -72,6 +73,11 @@ func (d *ServiceAPI) Delete(params martini.Params, w http.ResponseWriter, r *htt
 	if err != nil {
 		responseError(w, err.Error())
 		return
+	}
+
+	err = d.Storage.DeleteServiceSocks(serviceId)
+	if err != nil {
+		log.Printf("Failed to find unixSock and remove sock files.")
 	}
 
 	responseJSON(w, new(map[string]string))
