@@ -8,7 +8,7 @@ GROUP="bamboo"
 SHELL="/bin/false"
 
 case "$1" in
-	configure)
+	""|configure) # Work around https://github.com/jordansissel/fpm/issues/1272
         if [ ! -d "${DATADIR}/log" ]; then
 			mkdir -p ${DATADIR}/log
 		fi

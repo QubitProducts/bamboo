@@ -36,7 +36,7 @@ function build() {
     cp ${origdir}/bamboo ${name}/${installdir}/bamboo/bamboo
     chmod 755 ${name}/${installdir}/bamboo/bamboo
 
-    # Link default confiugration
+    # Link default configuration
     cp -rp ${origdir}/config/* ${name}/${installdir}/bamboo/config/.
 
     # Distribute UI webapp
@@ -65,6 +65,8 @@ function mkdeb() {
     --before-remove ../../build.before-remove \
     -m "${USER}@${HOSTNAME}" \
     --deb-upstart ../../bamboo-server \
+    --deb-systemd ../../bamboo.service \
+    --deb-default ../../bamboo.default \
     --license "${license}" \
     --prefix=/ \
     -s dir \
