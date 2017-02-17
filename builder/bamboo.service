@@ -1,0 +1,21 @@
+[Unit]
+Description=MESOS Marathon Bamboo
+Requires=network-online.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+EnvironmentFile=/etc/default/bamboo
+Type=simple
+Restart=on-failure
+RestartSec=15s
+TimeoutSec=5min
+IgnoreSIGPIPE=no
+KillMode=process
+PIDFile=/run/bamboo.pid
+RemainAfterExit=no
+User=bamboo
+Group=bamboo
+ExecStart=/opt/bamboo/bamboo -config $BAMBOO_CONFIG -log $BAMBOO_LOG
+

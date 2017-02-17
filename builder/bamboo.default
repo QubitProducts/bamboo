@@ -1,0 +1,4 @@
+# Bamboo default parameters
+BAMBOO_CONFIG=/opt/bamboo/config/development.json
+BAMBOO_LOG=/var/bamboo/log/bamboo.log
+
