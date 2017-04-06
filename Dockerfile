@@ -1,10 +1,19 @@
-FROM golang:1.6.2
+FROM golang:1.8
 
 ENV DEBIAN_FRONTEND noninteractive
 
+RUN echo deb http://httpredir.debian.org/debian jessie-backports main | \
+      sed 's/\(.*-backports\) \(.*\)/&@\1-sloppy \2/' | tr @ '\n' | \
+      tee /etc/apt/sources.list.d/backports.list && \
+    curl https://haproxy.debian.net/bernat.debian.org.gpg | \
+      apt-key add - && \
+    echo deb http://haproxy.debian.net jessie-backports-1.5 main | \
+      tee /etc/apt/sources.list.d/haproxy.list
+
 RUN apt-get update -yqq && \
     apt-get install -yqq software-properties-common && \
-    apt-get install -yqq haproxy git mercurial supervisor && \
+    apt-get install -yqq git mercurial supervisor && \
+    apt-get install -yqq haproxy -t jessie-backports-1.5 && \
     rm -rf /var/lib/apt/lists/*
 
 ADD . /go/src/github.com/QubitProducts/bamboo
@@ -31,3 +40,4 @@ RUN apt-get clean && \
 EXPOSE 80 8000
 
 CMD /run.sh
+
