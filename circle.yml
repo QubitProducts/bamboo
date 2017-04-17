@@ -1,0 +1,20 @@
+# circle.yml
+machine:
+  services:
+    - docker
+
+dependencies:
+  override:
+    - docker build -t placeable/qubit-bamboo:$CIRCLE_BRANCH-$CIRCLE_BUILD_NUM_$CIRCLE_SHA1 .
+    - docker tag placeable/qubit-bamboo:$CIRCLE_BRANCH-$CIRCLE_BUILD_NUM_$CIRCLE_SHA1 placeable/qubit-bamboo:latest
+
+test:
+  override:
+    - docker images
+
+deployment:
+  hub:
+    branch: ab_rebase_to_qubit
+    commands:
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      - docker push placeable/qubit-bamboo
