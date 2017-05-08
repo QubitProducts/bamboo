@@ -16,15 +16,17 @@ RUN apt-get update -yqq && \
     apt-get install -yqq haproxy -t jessie-backports-1.5 && \
     rm -rf /var/lib/apt/lists/*
 
-ADD . /go/src/github.com/QubitProducts/bamboo
 ADD builder/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 ADD builder/run.sh /run.sh
 
 WORKDIR /go/src/github.com/QubitProducts/bamboo
 
 RUN go get github.com/tools/godep && \
-    go get -t github.com/smartystreets/goconvey && \
-    go build && \
+    go get -t github.com/smartystreets/goconvey
+
+ADD . /go/src/github.com/QubitProducts/bamboo
+
+RUN go build && \
     ln -s /go/src/github.com/QubitProducts/bamboo /var/bamboo && \
     mkdir -p /run/haproxy && \
     mkdir -p /var/log/supervisor
