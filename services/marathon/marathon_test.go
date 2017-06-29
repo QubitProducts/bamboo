@@ -189,10 +189,12 @@ func TestFetchApps(t *testing.T) {
 			"id": "/app2WithSlash",
 			"tasks": [
 				{
+					"host":"localhost",
 					"id": "task2",
 					"ports": [8002]
 				},
 				{
+					"host":"localhost",
 					"id": "task1",
 					"ports": [8001]
 				}
@@ -202,12 +204,46 @@ func TestFetchApps(t *testing.T) {
 			"id": "app1WithoutSlash",
 			"tasks": [
 				{
+					"host":"localhost",
 					"id": "task1",
 					"ports": [8001]
 				},
 				{
+					"host":"localhost",
 					"id": "task2",
 					"ports": [8002]
+				}
+			]
+		},
+		{
+			"id": "app3WithIpAddress",
+			"ipAddress": {
+				"discovery":{
+					"ports": [
+						{
+							"number": 80	
+						}
+					]
+				}	
+			},
+			"tasks": [
+				{
+					"host":"localhost",
+					"ipAddresses":[
+						{
+							"ipAddress": "127.0.0.1"
+						}
+					],
+					"id": "task1"
+				},
+				{
+					"host":"localhost",
+					"ipAddresses":[
+						{
+							"ipAddress": "127.0.0.1"
+						}
+					],
+					"id": "task2"
 				}
 			]
 		}
@@ -237,8 +273,13 @@ func TestFetchApps(t *testing.T) {
 	}
 	assertFetchedApp(t, 2, "/app2WithSlash", apps[1])
 
-	if len(apps) > 2 {
-		t.Fatalf("got %d apps, want 2", len(apps))
+	if len(apps) < 3 {
+		t.Fatal("missing third app")
+	}
+	assertFetchedApp(t, 3, "/app3WithIpAddress", apps[2])
+
+	if len(apps) > 3 {
+		t.Fatalf("got %d apps, want 3", len(apps))
 	}
 }
 
