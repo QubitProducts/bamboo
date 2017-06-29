@@ -49,6 +49,26 @@ type App struct {
 	Env                 map[string]string
 	Labels              map[string]string
 	SplitId             []string
+	IpAddress           AppIpAddress `json:"ipAddress"`
+}
+
+type AppIpAddress struct {
+	Discovery Discovery `json:"discovery"`
+}
+
+type Discovery struct {
+	Ports []Port `json:"ports"`
+}
+
+type Port struct {
+	Number   int    `json:"number"`
+	Name     string `json:"name"`
+	Protocol string `json:"protocol"`
+}
+
+type TaskIpAddress struct {
+	IpAddress string `json:"ipAddress"`
+	Protocol  string `json:"protocol"`
 }
 
 type AppList []App
@@ -79,6 +99,7 @@ type marathonTask struct {
 	StartedAt          string
 	StagedAt           string
 	Version            string
+	IpAddresses        []TaskIpAddress `json:"IpAddresses"`
 	HealthCheckResults []HealthCheckResult
 }
 
@@ -110,6 +131,7 @@ type marathonApp struct {
 	Tasks                 marathonTaskList         `json:"tasks"`
 	ReadinessChecks       []marathonReadinessCheck `json:"readinessChecks"`
 	ReadinessCheckResults []readinessCheckResult   `json:"readinessCheckResults"`
+	IpAddress             AppIpAddress             `json:"ipAddress"`
 }
 
 type marathonHealthCheck struct {
@@ -216,6 +238,7 @@ func createApps(marathonApps []marathonApp) AppList {
 			Env:                 mApp.Env,
 			Labels:              mApp.Labels,
 			SplitId:             strings.Split(appId, "/"),
+			IpAddress:           mApp.IpAddress,
 		}
 
 		app.HealthChecks = make([]HealthCheck, 0, len(mApp.HealthChecks))
@@ -236,11 +259,24 @@ func createApps(marathonApps []marathonApp) AppList {
 		// build Tasks for this App
 		tasks := []Task{}
 		for _, mTask := range mApp.Tasks {
+			var host string
+			var port int
 			if len(mTask.Ports) > 0 {
+				host = mTask.Host
+				port = mTask.Ports[0]
+			}
+			if len(app.IpAddress.Discovery.Ports) > 0 {
+				if len(mTask.IpAddresses) > 0 {
+					host = mTask.IpAddresses[0].IpAddress
+					port = app.IpAddress.Discovery.Ports[0].Number
+				}
+			}
+
+			if host != "" && port != 0 {
 				t := Task{
 					Id:    mTask.Id,
-					Host:  mTask.Host,
-					Port:  mTask.Ports[0],
+					Host:  host,
+					Port:  port,
 					Ports: mTask.Ports,
 					Alive: calculateTaskHealth(mTask.HealthCheckResults, mApp.HealthChecks),
 					State: mTask.State,
