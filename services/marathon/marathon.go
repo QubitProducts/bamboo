@@ -7,11 +7,26 @@ import (
 	"net/http"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/QubitProducts/bamboo/configuration"
 )
 
-const taskStateRunning = "TASK_RUNNING"
+const (
+	taskStateRunning                           = "TASK_RUNNING"
+	readinessCheckDefaultTimeout time.Duration = 10 * time.Second
+	readinessCheckSafetyMargin   time.Duration = 5 * time.Second
+)
+
+type readinessCalculator struct {
+	checkDefaultTimeout time.Duration
+	checkSafetyMargin   time.Duration
+}
+
+var readyCalculator = readinessCalculator{
+	checkDefaultTimeout: readinessCheckDefaultTimeout,
+	checkSafetyMargin:   readinessCheckSafetyMargin,
+}
 
 // Describes an app process running
 type Task struct {
@@ -141,7 +156,8 @@ type marathonHealthCheck struct {
 }
 
 type marathonReadinessCheck struct {
-	Path string `json:"path"`
+	Path           string `json:"path"`
+	TimeoutSeconds int    `json:"timeoutSeconds"`
 }
 
 type deployment struct {
@@ -279,8 +295,8 @@ func createApps(marathonApps []marathonApp) AppList {
 					Port:  port,
 					Ports: mTask.Ports,
 					Alive: calculateTaskHealth(mTask.HealthCheckResults, mApp.HealthChecks),
+					Ready: readyCalculator.calculate(mTask, mApp),
 					State: mTask.State,
-					Ready: calculateReadiness(mTask, mApp),
 				}
 				tasks = append(tasks, t)
 			}
@@ -348,7 +364,7 @@ func calculateTaskHealth(healthCheckResults []HealthCheckResult, healthChecks []
 	return true
 }
 
-func calculateReadiness(task marathonTask, maraApp marathonApp) bool {
+func (rc *readinessCalculator) calculate(task marathonTask, maraApp marathonApp) bool {
 	switch {
 	case task.State != taskStateRunning:
 		// By definition, a task not running cannot be ready.
@@ -382,26 +398,49 @@ func calculateReadiness(task marathonTask, maraApp marathonApp) bool {
 	// health check result being included in the API response. This only happens
 	// in a very short (yet unlucky) time frame and does not repeat for subsequent
 	// tasks of the same deployment.
-	// We identify this situation by checking that we are looking at a part of the
-	// deployment representing a new task (i.e., it has the most recent version
-	// timestamp while other timestamps exist as well). If that's the case, we
-	// err on the side of caution and mark it as non-ready.
-	versions := map[string]bool{}
-	var maxVersion string
-	for _, task := range maraApp.Tasks {
-		versions[task.Version] = true
-		if maxVersion == "" || maxVersion < task.Version {
-			maxVersion = task.Version
-		}
+	// Complicating matters, the situation may occur for both initially deploying
+	// applications as well as rolling-upgraded ones where one or more tasks from
+	// a previous deployment exist already and are joined by new tasks from a
+	// subsequent deployment. We must always make sure that pre-existing tasks
+	// maintain their ready state while newly launched tasks must be considered
+	// unready until a check result appears.
+	// We distinguish the two cases by comparing the current time with the start
+	// time of the task: It should take Marathon at most one readiness check timeout
+	// interval (plus some safety margin to account for the delayed nature of
+	// distributed systems) for readiness check results to be returned along the API
+	// response. Once the task turns old enough, we assume it to be part of a
+	// pre-existing deployment and mark it as ready. Note that it is okay to err
+	// on the side of caution and consider a task unready until the safety time
+	// window has elapsed because a newly created task should be readiness-checked
+	// and be given a result fairly shortly after its creation (i.e., on the scale
+	// of seconds).
+	readinessCheckTimeoutSecs := maraApp.ReadinessChecks[0].TimeoutSeconds
+	readinessCheckTimeout := time.Duration(readinessCheckTimeoutSecs) * time.Second
+	if readinessCheckTimeout == 0 {
+		log.Printf("task %s app %s: readiness check timeout not set, using default value %s", task.Id, maraApp.Id, rc.checkDefaultTimeout)
+		readinessCheckTimeout = rc.checkDefaultTimeout
+	} else {
+		readinessCheckTimeout += rc.checkSafetyMargin
 	}
-	if len(versions) > 1 && task.Version == maxVersion {
-		log.Printf("task %s app %s: ready = false [new task with version %s not included in readiness check results yet]", task.Id, maraApp.Id, maxVersion)
+
+	startTime, err := time.Parse(time.RFC3339, task.StartedAt)
+	if err != nil {
+		// An unparseable start time should never occur; if it does, we assume the
+		// problem should be surfaced as quickly as possible, which is easiest if
+		// we shun the task from rotation.
+		log.Printf("task %s app %s: ready = false [task start-time %s not parseable]", task.Id, maraApp.Id, task.StartedAt)
+		return false
+	}
+
+	since := time.Since(startTime)
+	if since < readinessCheckTimeout {
+		log.Printf("task %s app %s: ready = false [task with start-time %s not within assumed check timeout window of %s (elapsed time since task start: %s)]", task.Id, maraApp.Id, startTime.Format(time.RFC3339), readinessCheckTimeout, since)
 		return false
 	}
 
 	// Finally, we can be certain this task is not part of the deployment (i.e.,
 	// it's an old task that's going to transition into the TASK_KILLING and/or
 	// TASK_KILLED state as new tasks' readiness checks gradually turn green.)
-	log.Printf("task %s app %s: ready = true [task not involved in deployment]", task.Id, maraApp.Id)
+	log.Printf("task %s app %s: ready = true [task with start-time %s not involved in deployment (elapsed time since task start: %s)]", task.Id, maraApp.Id, startTime.Format(time.RFC3339), since)
 	return true
 }

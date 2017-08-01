@@ -3,6 +3,7 @@ package marathon
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"net/http"
 	"net/http/httptest"
@@ -288,6 +289,7 @@ func TestCalculateReadiness(t *testing.T) {
 		desc      string
 		task      marathonTask
 		app       marathonApp
+		rc        readinessCalculator
 		wantReady bool
 	}{
 		{
@@ -373,11 +375,11 @@ func TestCalculateReadiness(t *testing.T) {
 			wantReady: true,
 		},
 		{
-			desc: "ready task's readiness check result outstanding",
+			desc: "no readiness check result with default timeout",
 			task: marathonTask{
-				Id:      "newTaskId",
-				State:   taskStateRunning,
-				Version: "2017-01-15T00:00:00.000Z",
+				Id:        "newTaskId",
+				State:     taskStateRunning,
+				StartedAt: timestampOffsetFromNow(3 * time.Minute),
 			},
 			app: marathonApp{
 				Deployments: []deployment{
@@ -389,25 +391,62 @@ func TestCalculateReadiness(t *testing.T) {
 					},
 				},
 				ReadinessCheckResults: []readinessCheckResult{},
-				Tasks: marathonTaskList{
-					marathonTask{
-						Id:      "newTaskId",
-						Version: "2017-01-15T00:00:00.000Z",
-					},
-					marathonTask{
-						Id:      "oldTaskId",
-						Version: "2017-01-01T00:00:00.000Z",
+			},
+			rc: readinessCalculator{
+				checkDefaultTimeout: 5 * time.Minute,
+			},
+			wantReady: false,
+		},
+		{
+			desc: "no readiness check result with readiness check timeout",
+			task: marathonTask{
+				Id:        "newTaskId",
+				State:     taskStateRunning,
+				StartedAt: timestampOffsetFromNow(4 * time.Minute),
+			},
+			app: marathonApp{
+				Deployments: []deployment{
+					deployment{ID: "deploymentId"},
+				},
+				ReadinessChecks: []marathonReadinessCheck{
+					marathonReadinessCheck{
+						Path:           "/ready",
+						TimeoutSeconds: int((3 * time.Minute).Seconds()),
 					},
 				},
+				ReadinessCheckResults: []readinessCheckResult{},
+			},
+			rc: readinessCalculator{
+				checkSafetyMargin: 3 * time.Minute,
+			},
+			wantReady: false,
+		},
+		{
+			desc: "invalid task start time",
+			task: marathonTask{
+				Id:        "newTaskId",
+				State:     taskStateRunning,
+				StartedAt: "invalid",
+			},
+			app: marathonApp{
+				Deployments: []deployment{
+					deployment{ID: "deploymentId"},
+				},
+				ReadinessChecks: []marathonReadinessCheck{
+					marathonReadinessCheck{
+						Path: "/ready",
+					},
+				},
+				ReadinessCheckResults: []readinessCheckResult{},
 			},
 			wantReady: false,
 		},
 		{
 			desc: "task not involved in deployment",
 			task: marathonTask{
-				Id:      "oldTaskId",
-				State:   taskStateRunning,
-				Version: "2017-01-01T00:00:00.000Z",
+				Id:        "oldTaskId",
+				State:     taskStateRunning,
+				StartedAt: timestampOffsetFromNow(1 * time.Hour),
 			},
 			app: marathonApp{
 				Deployments: []deployment{
@@ -419,16 +458,9 @@ func TestCalculateReadiness(t *testing.T) {
 					},
 				},
 				ReadinessCheckResults: []readinessCheckResult{},
-				Tasks: marathonTaskList{
-					marathonTask{
-						Id:      "newTaskId",
-						Version: "2017-01-15T00:00:00.000Z",
-					},
-					marathonTask{
-						Id:      "oldTaskId",
-						Version: "2017-01-01T00:00:00.000Z",
-					},
-				},
+			},
+			rc: readinessCalculator{
+				checkDefaultTimeout: 10 * time.Second,
 			},
 			wantReady: true,
 		},
@@ -438,7 +470,14 @@ func TestCalculateReadiness(t *testing.T) {
 		test := test
 		t.Run(test.desc, func(t *testing.T) {
 			t.Parallel()
-			gotReady := calculateReadiness(test.task, test.app)
+			rc := readyCalculator
+			if test.rc.checkDefaultTimeout > 0 {
+				rc.checkDefaultTimeout = test.rc.checkDefaultTimeout
+			}
+			if test.rc.checkSafetyMargin > 0 {
+				rc.checkSafetyMargin = test.rc.checkSafetyMargin
+			}
+			gotReady := test.rc.calculate(test.task, test.app)
 			if gotReady != test.wantReady {
 				t.Errorf("got ready = %t, want ready = %t", gotReady, test.wantReady)
 			}
@@ -458,4 +497,8 @@ func assertFetchedApp(t *testing.T, index int, id string, app App) {
 	case app.Tasks[1].Id != "task2":
 		t.Errorf("app #%d: got ID '%s' for task #2, want 'task2", index, app.Tasks[1].Id)
 	}
+}
+
+func timestampOffsetFromNow(offset time.Duration) string {
+	return time.Now().Add(-offset).Format(time.RFC3339)
 }
