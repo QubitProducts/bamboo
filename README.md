@@ -34,6 +34,11 @@ enabled](https://mesosphere.github.io/marathon/docs/rest-api.html#event-subscrip
 v0.2.11 improves API, deprecate previous API endpoint
 
 
+### Marathon Compatibility
+
+Marathon >= 1.5.0 Deprecated event registration method; Make sure configure Bamboo with `"UseEventStream": true` 
+
+
 ### Releases and changelog
 
 Since Marathon API and behaviour may change over time, especially in this early days. You should expect we aim to catch up those changes, improve design and adding new features. We aim to maintain backwards compatibility when possible. Releases and changelog are maintained in the [releases page](https://github.com/QubitProducts/bamboo/releases). Please read them when upgrading.
@@ -71,6 +76,7 @@ This section tries to explain usage in code comment style:
     // Marathon service HTTP endpoints
     "Endpoint": "http://marathon1:8080,http://marathon2:8080,http://marathon3:8080",
     // Use the Marathon HTTP event streaming feature (Bamboo 0.2.16, Marathon v0.9.0)
+    // Required set to true if Marathon version is >= 1.5.0
     "UseEventStream": true
   },
 
